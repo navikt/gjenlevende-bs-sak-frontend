@@ -42,4 +42,5 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
-          IMAGE: ${{ steps.docker-build-push.outputs.image }}
+          WORKLOAD_IMAGE: ${{ steps.docker-build-push.outputs.image }}
+          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}

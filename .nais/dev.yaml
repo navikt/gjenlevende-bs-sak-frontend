@@ -8,7 +8,6 @@ metadata:
 
 spec:
   # Applikasjon konfigurasjon
-  image: {{ image }}
   port: 8080
   replicas:
     max: 1
