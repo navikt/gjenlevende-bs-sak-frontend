@@ -19,8 +19,12 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
       - name: Install npm dependencies
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
         run: npm ci
+      - name: Build application
+        run: |
+          npm run build
+          npm run build:server
       - name: Determine what to do
         id: changed-files
         uses: "nais/what-changed@bc3dad0463b36ad29044134bba5898f0af73c34c" # ratchet:nais/what-changed@main
@@ -33,9 +37,10 @@ jobs:
         with:
           team: etterlatte
       - name: Deploy to Nais
+        if: steps.changed-files.outputs.changed != 'only-inputs'
         uses: nais/deploy/actions/deploy@961addd1e4d4211f1a7333ada5fde85f7c9aa5b7 # ratchet:nais/deploy/actions/deploy@v2
         env:
-          CLUSTER: dev.gcp
+          CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
           WORKLOAD_IMAGE: ${{ steps.docker-build-push.outputs.image }}
           TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}

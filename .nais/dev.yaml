@@ -3,21 +3,15 @@ kind: Application
 metadata:
   name: gjenlevende-bs-sak-frontend
   namespace: etterlatte
+  labels:
+    team: etterlatte
+
 spec:
-  ingresses:
-    - https://gjenlevende-bs.intern.dev.nav.no
-    - https://gjenlevende-bs.ansatt.dev.nav.no
-  image: {{image}}
+  # Applikasjon konfigurasjon
   port: 8080
   replicas:
     max: 1
     min: 1
-  liveness:
-    path: /isAlive
-    initialDelay: 5
-  readiness:
-    path: /isReady
-    initialDelay: 5
   resources:
     limits:
       cpu: 500m
@@ -25,9 +19,22 @@ spec:
     requests:
       cpu: 200m
       memory: 256Mi
+
+  # Nettverk
+  ingresses:
+    - https://gjenlevende-bs.intern.dev.nav.no
+    - https://gjenlevende-bs.ansatt.dev.nav.no
+
+  # Helse
+  liveness:
+    path: /isAlive
+    initialDelay: 5
+  readiness:
+    path: /isReady
+    initialDelay: 5
+
+  # Autentisering
   azure:
     application:
       enabled: true
       allowAllUsers: true
-      sidecar:
-        autoLogin: true
