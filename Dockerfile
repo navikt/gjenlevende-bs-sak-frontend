@@ -9,6 +9,8 @@ COPY dist/ ./dist/
 COPY build/ ./build/
 COPY node_modules/ ./node_modules/
 
+ENV NODE_ENV=production
+
 EXPOSE 8080
 
 CMD ["dist/server.js"]
