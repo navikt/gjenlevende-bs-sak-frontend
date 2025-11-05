@@ -8,8 +8,11 @@ const viteDevServer: ViteDevServer | undefined =
     ? undefined
     : await import("vite").then((vite) =>
         vite.createServer({
-          server: { middlewareMode: true },
-        }),
+          server: {
+            middlewareMode: true,
+            host: true,
+          },
+        })
       );
 
 const app = express();
@@ -30,7 +33,7 @@ if (viteDevServer) {
     express.static("build/client/assets", {
       immutable: true,
       maxAge: "1y",
-    }),
+    })
   );
 }
 
@@ -39,7 +42,7 @@ app.use(express.static("build/client", { maxAge: "1h" }));
 const getBuild = async (): Promise<ServerBuild> => {
   if (viteDevServer) {
     return viteDevServer.ssrLoadModule(
-      "virtual:react-router/server-build",
+      "virtual:react-router/server-build"
     ) as Promise<ServerBuild>;
   }
   // @ts-ignore
