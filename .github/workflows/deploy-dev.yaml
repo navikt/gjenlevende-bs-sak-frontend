@@ -37,9 +37,9 @@ jobs:
         with:
           team: etterlatte
       - name: Deploy to Nais
+        if: steps.changed-files.outputs.changed != 'only-inputs'
         uses: nais/deploy/actions/deploy@961addd1e4d4211f1a7333ada5fde85f7c9aa5b7 # ratchet:nais/deploy/actions/deploy@v2
         env:
-          CLUSTER: dev.gcp
+          CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
-          WORKLOAD_IMAGE: ${{ steps.docker-build-push.outputs.image }}
-          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
+          IMAGE: ${{ steps.docker-build-push.outputs.image }}
