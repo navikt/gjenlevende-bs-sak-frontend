@@ -11,4 +11,4 @@ COPY node_modules/ ./node_modules/
 
 EXPOSE 8080
 
-CMD ["/nodejs/bin/node", "dist/server.js"]
+CMD ["dist/server.js"]
