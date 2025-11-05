@@ -21,6 +21,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
         run: npm ci
+      - name: Build application
+        run: |
+          npm run build
+          npm run build:server
       - name: Determine what to do
         id: changed-files
         uses: "nais/what-changed@bc3dad0463b36ad29044134bba5898f0af73c34c" # ratchet:nais/what-changed@main
