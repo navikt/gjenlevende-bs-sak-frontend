@@ -46,7 +46,7 @@ const getBuild = async (): Promise<ServerBuild> => {
     ) as Promise<ServerBuild>;
   }
   // @ts-ignore
-  return import("./build/server/index.js");
+  return import("/app/build/server/index.js");
 };
 
 const requestListener = createRequestListener({
