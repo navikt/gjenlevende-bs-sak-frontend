@@ -5,9 +5,10 @@ metadata:
   namespace: etterlatte
 spec:
   ingresses:
-    - https://gjenlevende-bs.intern.dev.nav.no
-    - https://gjenlevende-bs.ansatt.dev.nav.no
-  image: {{image}}
+    - 'https://gjenlevende-bs.intern.dev.nav.no'
+    - 'https://gjenlevende-bs.ansatt.dev.nav.no'
+  image:
+    image: {{ image }}
   port: 8080
   replicas:
     max: 1
