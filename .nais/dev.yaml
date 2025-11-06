@@ -43,7 +43,7 @@ spec:
       allowAllUsers: false
       tenant: trygdeetaten.no
       replyURLs:
-        - https://gjenlevende-bs.ansatt.dev.nav.no/oauth2/callback
+        - https://gjenlevende-bs.intern.dev.nav.no/oauth2/callback
         - https://gjenlevende-bs.ansatt.dev.nav.no/oauth2/callback
 
   accessPolicy:
