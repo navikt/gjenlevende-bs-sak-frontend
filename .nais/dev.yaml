@@ -36,15 +36,22 @@ spec:
   # Autentisering
   azure:
     application:
+      enabled: true
+      allowAllUsers: false
+      replyURLs:
+        - https://gjenlevende-bs.intern.dev.nav.no/oauth2/callback
       claims:
         groups:
           - id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # 0000-GA-Enslig-Forsorger-Saksbehandler (MIDLERTIDLIG - for testing)
+    sidecar:
       enabled: true
-      allowAllUsers: false
-      tenant: trygdeetaten.no
-      replyURLs:
-        - https://gjenlevende-bs.intern.dev.nav.no/oauth2/callback
-        - https://gjenlevende-bs.ansatt.dev.nav.no/oauth2/callback
+      autoLogin: true
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      memory: 256Mi
+      cpu: 50m
 
   accessPolicy:
     outbound:
