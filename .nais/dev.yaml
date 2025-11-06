@@ -57,3 +57,9 @@ spec:
     outbound:
       rules:
         - application: gjenlevende-bs-sak
+
+  env:
+    - name: APP_VERSION
+      value: '{{version}}'
+    - name: ENV
+      value: preprod
