@@ -40,6 +40,7 @@ spec:
         groups:
           - id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # 0000-GA-Enslig-Forsorger-Saksbehandler (MIDLERTIDLIG - for testing)
       enabled: true
+      allowAllUsers: false
       tenant: trygdeetaten.no
       replyURLs:
         - https://gjenlevende-bs.ansatt.dev.nav.no/oauth2/callback
