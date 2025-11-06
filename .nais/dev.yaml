@@ -37,7 +37,12 @@ spec:
   azure:
     application:
       enabled: true
-      allowAllUsers: true
+      replyURLs:
+        - https://gjenlevende-bs.ansatt.dev.nav.no/oauth2/callback
+        - https://gjenlevende-bs.ansatt.dev.nav.no/oauth2/callback
+      sidecar:
+        autoLogin: true
+        enabled: true
 
   accessPolicy:
     outbound:
