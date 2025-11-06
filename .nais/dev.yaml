@@ -38,6 +38,7 @@ spec:
     application:
       enabled: true
       allowAllUsers: false
+      tenant: trygdeetaten.no
       replyURLs:
         - https://gjenlevende-bs.intern.dev.nav.no/oauth2/callback
       claims:
