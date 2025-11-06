@@ -36,11 +36,9 @@ spec:
   # Autentisering
   azure:
     application:
-      allowAllUsers: true
       claims:
         groups:
           - id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # 0000-GA-Enslig-Forsorger-Saksbehandler (MIDLERTIDLIG - for testing)
-          - id: 59865891-62a0-4fe3-b282-2e38210d1fbb # teamfamilie-ef-forvaltning (MIDLERTIDLIG - for testing)
       enabled: true
       tenant: nav.no
       replyURLs:
