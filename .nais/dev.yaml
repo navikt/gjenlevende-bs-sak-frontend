@@ -59,6 +59,9 @@ spec:
       rules:
         - application: gjenlevende-bs-sak
 
+  envFrom:
+    - secret: gjenlevende-bs-sak-azure
+
   env:
     - name: APP_VERSION
       value: '{{version}}'
@@ -66,5 +69,3 @@ spec:
       value: preprod
     - name: BACKEND_URL
       value: http://gjenlevende-bs-sak
-    - name: BACKEND_AUDIENCE
-      value: api://dev-gcp.etterlatte.gjenlevende-bs-sak

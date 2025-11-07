@@ -47,9 +47,13 @@ app.use(
           console.log("✓ Token hentet fra request");
 
           // Bytt token til backend-spesifikk token via OBO
-          const backendAudience =
-            process.env.BACKEND_AUDIENCE ||
-            "dev-gcp:etterlatte:gjenlevende-bs-sak";
+          // Bruker backend sin Azure App Client ID som audience (fra gjenlevende-bs-sak-azure secret)
+          const backendAudience = process.env.AZURE_APP_CLIENT_ID;
+
+          if (!backendAudience) {
+            console.error("❌ AZURE_APP_CLIENT_ID mangler - kan ikke gjøre OBO exchange");
+            return;
+          }
 
           console.log(`→ Forsøker OBO token exchange med audience: ${backendAudience}`);
 
