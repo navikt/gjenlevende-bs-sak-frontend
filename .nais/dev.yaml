@@ -67,4 +67,4 @@ spec:
     - name: BACKEND_URL
       value: http://gjenlevende-bs-sak
     - name: BACKEND_AUDIENCE
-      value: dev-gcp:etterlatte:gjenlevende-bs-sak
+      value: api://dev-gcp.etterlatte.gjenlevende-bs-sak
