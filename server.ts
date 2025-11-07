@@ -59,13 +59,10 @@ app.use(
             proxyReq.setHeader("Authorization", `Bearer ${oboResult.token}`);
             console.log("✓ OBO token exchanged og Authorization header satt");
           } else {
-            console.error("Feil ved OBO token exchange:", {
-              error: oboResult.error,
-              message: "Token exchange feilet - backend vil sannsynligvis returnere 401/403"
-            });
+            console.error("❌ Feil ved OBO token exchange - backend vil sannsynligvis returnere 401/403", oboResult);
           }
         } catch (error) {
-          console.error("Feil ved token-håndtering:", error);
+          console.error("❌ Feil ved token-håndtering:", error);
         }
       },
       error: (err: any, req: any, res: any) => {
