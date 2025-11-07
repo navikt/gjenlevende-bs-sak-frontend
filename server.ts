@@ -47,17 +47,12 @@ app.use(
           console.log("✓ Token hentet fra request");
 
           // Bytt token til backend-spesifikk token via OBO
-          // Bruker backend sin Azure App Client ID som audience (fra gjenlevende-bs-sak-azure secret)
-          const backendAudience = process.env.AZURE_APP_CLIENT_ID;
+          // Bruker backend sin Application ID URI som scope
+          const backendScope = process.env.BACKEND_SCOPE || "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
 
-          if (!backendAudience) {
-            console.error("❌ AZURE_APP_CLIENT_ID mangler - kan ikke gjøre OBO exchange");
-            return;
-          }
+          console.log(`→ Forsøker OBO token exchange med scope: ${backendScope}`);
 
-          console.log(`→ Forsøker OBO token exchange med audience: ${backendAudience}`);
-
-          const oboResult = await requestAzureOboToken(token, backendAudience);
+          const oboResult = await requestAzureOboToken(token, backendScope);
 
           if (oboResult.ok) {
             proxyReq.setHeader("Authorization", `Bearer ${oboResult.token}`);
