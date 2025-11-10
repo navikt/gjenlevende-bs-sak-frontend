@@ -1,0 +1,26 @@
+# https://github.com/navikt/tilleggsstonader-sak-frontend/blob/main/.nais/azure-ad-app-lokal.yaml
+# 
+# Denne er brukt til å gjøre det mulig å bruke tokens lokalt secret kan hentes fra cluster med:
+# "kubectl -n etterlatte get secret azuread-gjenlevende-sak-frontend-lokal -o json | jq '.data | map_values(@base64d)'"
+#
+# Kjøres en gang eller ved endringer med
+# kubectl apply -f .deploy/azure-ad-app-lokal.yaml
+
+apiVersion: nais.io/v1
+kind: AzureAdApplication
+metadata:
+  name: gjenlevende-bs-sak-frontend-lokal
+  namespace: etterlatte
+  labels:
+    team: etterlatte
+spec:
+  secretName: azuread-gjenlevende-bs-sak-frontend-lokal
+  logoutUrl: "http://localhost:8080"
+  tenant: trygdeetaten.no
+  replyUrls:
+    - url: "http://localhost:8080/oauth2/callback"
+  claims:
+    extra:
+      - "NAVident"
+    groups:
+      - id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # 0000-GA-Enslig-Forsorger-Saksbehandler (MIDLERTIDLIG - for testing)
