@@ -1,4 +1,5 @@
-import { Heading, BodyShort, Button } from "@navikt/ds-react";
+import { Heading, BodyShort, Button, VStack } from "@navikt/ds-react";
+import { useRouteLoaderData } from "react-router";
 import type { Route } from "./+types/landingsside";
 import type { Saksbehandler } from "~/server/types";
 
@@ -13,41 +14,23 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ context }: Route.LoaderArgs) {
-  return {
-    saksbehandler: (context.saksbehandler || null) as Saksbehandler | null,
-  };
-}
-
-export default function Landingsside({ loaderData }: Route.ComponentProps) {
-  const { saksbehandler } = loaderData;
+export default function Landingsside() {
+  const { saksbehandler } =
+    useRouteLoaderData<{ saksbehandler: Saksbehandler | null }>("root") || {};
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <VStack gap="8">
       <Heading level="1" size="large" spacing>
         Gjenlevende barnetilsyn og skolepenger
       </Heading>
 
       {saksbehandler && (
-        <div>
+        <VStack gap="4">
           <BodyShort spacing>
             Velkommen, {saksbehandler.navn || saksbehandler.brukernavn}!
           </BodyShort>
-          <BodyShort size="small">Epost: {saksbehandler.epost}</BodyShort>
-          {saksbehandler.navident && (
-            <BodyShort size="small">Ident: {saksbehandler.navident}</BodyShort>
-          )}
-          <Button
-            as="a"
-            href="/oauth2/logout"
-            variant="secondary"
-            size="small"
-            style={{ marginTop: "1rem" }}
-          >
-            Logg ut
-          </Button>
-        </div>
+        </VStack>
       )}
-    </div>
+    </VStack>
   );
 }
