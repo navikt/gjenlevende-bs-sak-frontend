@@ -15,9 +15,9 @@ import {
   handleLogin,
   handleCallback,
   handleLogout,
-} from "./auth";
-import type { Saksbehandler } from "./types";
-import { MILJØ } from "./env";
+} from "./auth.js";
+import type { Saksbehandler } from "./types.js";
+import { MILJØ } from "./env.js";
 
 const ÅTTE_TIMER = 1000 * 60 * 60 * 8;
 
