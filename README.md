@@ -8,17 +8,24 @@ Saksbehandlingsløsning for gjenlevende barnetilsyn og skolepenger
 
 Install the dependencies:
 
-```bash
+```
 npm install
+```
+
+### Hent og sett miljøvariabler
+
+Kjør shell scriptet hent-og-lagre-miljovariabler
+
+```
+sh hent-og-lagre-miljovariabler.sh
 ```
 
 ### Development
 
 Start the development server with HMR:
 
-```bash
+```
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
-test
+Gå til http://localhost:8080/
