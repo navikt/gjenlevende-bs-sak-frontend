@@ -43,7 +43,9 @@ const viteDevServer: ViteDevServer | undefined =
 const app = express();
 const saksbehandlerStorage = new AsyncLocalStorage<any>();
 
-if (process.env.NODE_ENV !== "production") {
+const erLokalDev = process.env.NODE_ENV !== "production";
+
+if (erLokalDev) {
   app.use(cookieParser());
   app.use(
     session({
@@ -67,6 +69,31 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
+function hentSaksbehandlerInfoFraHeaders(req: Request): Saksbehandler | null {
+  const token = req.headers["authorization"]?.split(" ")[1];
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(
+      Buffer.from(token.split(".")[1], "base64").toString()
+    );
+
+    return {
+      navn: payload.name || "",
+      epost: payload.email || payload.upn || "",
+      oid: payload.oid || "",
+      navident: payload.NAVident || "",
+      brukernavn: payload.preferred_username || "",
+    };
+  } catch (error) {
+    console.error("Feil med token:", error);
+    return null;
+  }
+}
+
 app.get("/isAlive", (_req: Request, res: Response) => {
   res.status(200).send("OK");
 });
@@ -75,7 +102,7 @@ app.get("/isReady", (_req: Request, res: Response) => {
   res.status(200).send("OK");
 });
 
-if (process.env.NODE_ENV !== "production") {
+if (erLokalDev) {
   app.get("/oauth2/login", handleLogin);
   app.get("/oauth2/callback", handleCallback);
   app.get("/oauth2/logout", handleLogout);
@@ -98,10 +125,9 @@ if (process.env.NODE_ENV !== "production") {
 
     next();
   });
-
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    res.locals.user = req.session.user;
-    next();
+} else {
+  app.get("/oauth2/logout", (_req: Request, res: Response) => {
+    res.redirect("/oauth2/logout");
   });
 }
 
@@ -137,8 +163,11 @@ const requestListener = createRequestListener({
 });
 
 app.all("*", (req, res) => {
-  const user = req.session?.user || null;
-  saksbehandlerStorage.run(user, () => {
+  const saksbehandler = erLokalDev
+    ? req.session?.user || null
+    : hentSaksbehandlerInfoFraHeaders(req);
+
+  saksbehandlerStorage.run(saksbehandler, () => {
     requestListener(req, res);
   });
 });
