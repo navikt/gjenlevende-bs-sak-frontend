@@ -1,12 +1,7 @@
-import express, {
-  type Request,
-  type Response,
-  type NextFunction,
-} from "express";
+import express, { type Request, type Response } from "express";
 import { createRequestListener } from "@react-router/node";
 import type { ServerBuild } from "react-router";
 import type { ViteDevServer } from "vite";
-import session from "express-session";
 import cookieParser from "cookie-parser";
 import { AsyncLocalStorage } from "node:async_hooks";
 import "dotenv/config";
@@ -18,8 +13,17 @@ import {
 } from "./auth.js";
 import type { Saksbehandler } from "./types.js";
 import { MILJØ } from "./env.js";
+import { hentSaksbehandlerFraHeaders } from "./utils/token.js";
+import { lagApiProxy } from "./api-proxy.js";
+import { kreverAuthMiddleware } from "./auth-middleware.js";
+import { session, lagSessionMiddleware } from "./session.js";
+import { lagViteDevServer } from "./vite-dev.js";
 
-const ÅTTE_TIMER = 1000 * 60 * 60 * 8;
+const BACKEND_URL = "https://gjenlevende-bs-sak.intern.dev.nav.no";
+
+if (!BACKEND_URL) {
+  throw new Error("BACKEND_URL miljøvariabel må være satt");
+}
 
 declare module "express-session" {
   interface SessionData {
@@ -33,14 +37,7 @@ declare module "express-session" {
 const erLokal = MILJØ.erLokal;
 
 const viteDevServer: ViteDevServer | undefined = erLokal
-  ? await import("vite").then((vite) =>
-      vite.createServer({
-        server: {
-          middlewareMode: true,
-          host: true,
-        },
-      })
-    )
+  ? await lagViteDevServer()
   : undefined;
 
 const app = express();
@@ -48,18 +45,7 @@ const saksbehandlerStorage = new AsyncLocalStorage<any>();
 
 if (erLokal) {
   app.use(cookieParser());
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET || "fallback-secret-key",
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: false,
-        httpOnly: true,
-        maxAge: ÅTTE_TIMER,
-      },
-    })
-  );
+  app.use(session(lagSessionMiddleware()));
 
   if (process.env.CLIENT_ID && process.env.CLIENT_SECRET) {
     initializeAuth({
@@ -71,28 +57,7 @@ if (erLokal) {
 }
 
 function hentSaksbehandlerInfoFraHeaders(req: Request): Saksbehandler | null {
-  const token = req.headers["authorization"]?.split(" ")[1];
-
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const payload = JSON.parse(
-      Buffer.from(token.split(".")[1], "base64").toString()
-    );
-
-    return {
-      navn: payload.name || "",
-      epost: payload.email || payload.upn || "",
-      oid: payload.oid || "",
-      navident: payload.NAVident || "",
-      brukernavn: payload.preferred_username || "",
-    };
-  } catch (error) {
-    console.error("Feil med token:", error);
-    return null;
-  }
+  return hentSaksbehandlerFraHeaders(req);
 }
 
 app.get("/isAlive", (_req: Request, res: Response) => {
@@ -103,29 +68,14 @@ app.get("/isReady", (_req: Request, res: Response) => {
   res.status(200).send("OK");
 });
 
+app.use("/api", lagApiProxy(BACKEND_URL, erLokal));
+
 if (erLokal) {
   app.get("/oauth2/login", handleLogin);
   app.get("/oauth2/callback", handleCallback);
   app.get("/oauth2/logout", handleLogout);
 
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    const publicPaths = [
-      "/oauth2/login",
-      "/oauth2/callback",
-      "/oauth2/logout",
-      "/isAlive",
-      "/isReady",
-    ];
-    const isPublicPath = publicPaths.some((path) => req.path.startsWith(path));
-    const isAsset = req.path.startsWith("/assets") || req.path.includes(".");
-
-    if (!isPublicPath && !isAsset && !req.session.user) {
-      res.redirect("/oauth2/login");
-      return;
-    }
-
-    next();
-  });
+  app.use(kreverAuthMiddleware);
 } else {
   app.get("/oauth2/logout", (_req: Request, res: Response) => {
     res.redirect("/oauth2/logout");

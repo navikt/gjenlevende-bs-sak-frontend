@@ -51,12 +51,18 @@ export async function handleLogin(req: Request, res: Response): Promise<void> {
   req.session.nonce = nonce;
   req.session.codeVerifier = codeVerifier;
 
+  const backendScope = process.env.GJENLEVENDE_BS_SAK_SCOPE;
+  if (!backendScope) {
+    res.status(500).send("GJENLEVENDE_BS_SAK_SCOPE miljøvariabel må være satt");
+    return;
+  }
+
   const params = new URLSearchParams({
     client_id: authConfig.clientId,
     response_type: "code",
     redirect_uri: authConfig.redirectUri,
     response_mode: "query",
-    scope: "openid profile email",
+    scope: `openid profile email ${backendScope}`,
     state,
     nonce,
     code_challenge: codeChallenge,
@@ -127,6 +133,7 @@ export async function handleCallback(
       oid: idTokenPayload.oid,
       navident: idTokenPayload.NAVident,
       brukernavn: idTokenPayload.preferred_username,
+      accessToken: tokens.access_token,
     } as Saksbehandler;
 
     delete req.session.state;
