@@ -40,9 +40,19 @@ export function hentAccessToken(
     return req.session.user?.accessToken;
   } else {
     const authHeader = req.headers["authorization"];
+    console.log(
+      "Sjekker token i dev. Authorization header finnes:",
+      !!authHeader
+    );
+
     if (authHeader?.startsWith("Bearer ")) {
-      return authHeader.substring(7);
+      const token = authHeader.substring(7);
+      console.log("Token funnet:", token);
+      return token;
     }
+
+    console.error("Ingen Bearer token funnet i Authorization header");
+    console.error("Authorization header verdi:", authHeader || "undefined");
   }
   return undefined;
 }

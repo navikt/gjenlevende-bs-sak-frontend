@@ -19,11 +19,15 @@ import { kreverAuthMiddleware } from "./auth-middleware.js";
 import { session, lagSessionMiddleware } from "./session.js";
 import { lagViteDevServer } from "./vite-dev.js";
 
-const BACKEND_URL = "https://gjenlevende-bs-sak.intern.dev.nav.no";
+const BACKEND_URL = MILJØ.erLokal
+  ? "https://gjenlevende-bs-sak.intern.dev.nav.no"
+  : "http://gjenlevende-bs-sak";
 
 if (!BACKEND_URL) {
   throw new Error("BACKEND_URL miljøvariabel må være satt");
 }
+
+console.log(`Backend URL: ${BACKEND_URL} (erLokal: ${MILJØ.erLokal})`);
 
 declare module "express-session" {
   interface SessionData {

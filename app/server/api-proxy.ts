@@ -1,14 +1,48 @@
 import type { Request, Response } from "express";
 import { hentAccessToken } from "./utils/token.js";
+import { exchangeTokenForBackend } from "./obo-token-exchange.js";
 
 export function lagApiProxy(backendUrl: string, erLokal: boolean) {
   return async (req: Request, res: Response) => {
     try {
-      const token = hentAccessToken(req, erLokal);
+      let token = hentAccessToken(req, erLokal);
 
       if (!token) {
+        console.error("Ingen token funnet. erLokal:", erLokal);
+        if (!erLokal) {
+          console.error("Headers:", JSON.stringify(req.headers, null, 2));
+        }
         res.status(401).json({ error: "Ikke autentisert" });
         return;
+      }
+
+      if (!erLokal) {
+        const clientId = process.env.AZURE_APP_CLIENT_ID;
+        const clientSecret = process.env.AZURE_APP_CLIENT_SECRET;
+        const backendScope =
+          "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
+
+        if (!clientId || !clientSecret) {
+          console.error("Mangler Azure AD konfigurasjon");
+          res.status(500).json({ error: "Server konfigurasjonsfeil" });
+          return;
+        }
+
+        try {
+          token = await exchangeTokenForBackend(
+            token,
+            clientId,
+            clientSecret,
+            backendScope
+          );
+        } catch (error) {
+          console.error("OBO token exchange feilet:", error);
+          res.status(500).json({
+            error: "Token exchange feilet",
+            melding: error instanceof Error ? error.message : "Ukjent feil",
+          });
+          return;
+        }
       }
 
       const fullBackendUrl = `${backendUrl}/api${req.path}`;
@@ -18,6 +52,7 @@ export function lagApiProxy(backendUrl: string, erLokal: boolean) {
         : fullBackendUrl;
 
       console.log("Proxying request til:", urlWithQuery);
+      console.log("Med token fra:", erLokal ? "session" : "OBO exchange");
 
       const backendResponse = await fetch(urlWithQuery, {
         method: req.method,
@@ -30,6 +65,8 @@ export function lagApiProxy(backendUrl: string, erLokal: boolean) {
             ? JSON.stringify(req.body)
             : undefined,
       });
+
+      console.log("Backend response status:", backendResponse.status);
 
       const contentType = backendResponse.headers.get("content-type");
       let data;
