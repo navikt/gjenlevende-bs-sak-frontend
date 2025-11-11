@@ -14,5 +14,6 @@ export interface AuthConfig {
 
 export interface AppLoadContext {
   saksbehandler: Saksbehandler | null;
+  env: "local" | "development" | "production";
   [key: string]: any;
 }

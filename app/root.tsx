@@ -8,8 +8,16 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import type { Saksbehandler } from "~/server/types";
 import Header from "komponenter/header/Header";
 import "@navikt/ds-css";
+
+export async function loader({ context }: Route.LoaderArgs) {
+  return {
+    saksbehandler: (context.saksbehandler || null) as Saksbehandler | null,
+    env: context.env as "local" | "development" | "production",
+  };
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

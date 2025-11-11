@@ -9,6 +9,7 @@ import type { ViteDevServer } from "vite";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import { AsyncLocalStorage } from "node:async_hooks";
+import "dotenv/config";
 import {
   initializeAuth,
   handleLogin,
@@ -16,6 +17,7 @@ import {
   handleLogout,
 } from "./auth.js";
 import type { Saksbehandler } from "./types.js";
+import { MILJØ } from "./env.js";
 
 const ÅTTE_TIMER = 1000 * 60 * 60 * 8;
 
@@ -28,24 +30,23 @@ declare module "express-session" {
   }
 }
 
-const viteDevServer: ViteDevServer | undefined =
-  process.env.NODE_ENV === "production"
-    ? undefined
-    : await import("vite").then((vite) =>
-        vite.createServer({
-          server: {
-            middlewareMode: true,
-            host: true,
-          },
-        })
-      );
+const erLokal = MILJØ.erLokal;
+
+const viteDevServer: ViteDevServer | undefined = erLokal
+  ? await import("vite").then((vite) =>
+      vite.createServer({
+        server: {
+          middlewareMode: true,
+          host: true,
+        },
+      })
+    )
+  : undefined;
 
 const app = express();
 const saksbehandlerStorage = new AsyncLocalStorage<any>();
 
-const erLokalDev = process.env.NODE_ENV !== "production";
-
-if (erLokalDev) {
+if (erLokal) {
   app.use(cookieParser());
   app.use(
     session({
@@ -102,7 +103,7 @@ app.get("/isReady", (_req: Request, res: Response) => {
   res.status(200).send("OK");
 });
 
-if (erLokalDev) {
+if (erLokal) {
   app.get("/oauth2/login", handleLogin);
   app.get("/oauth2/callback", handleCallback);
   app.get("/oauth2/logout", handleLogout);
@@ -156,14 +157,15 @@ const getBuild = async (): Promise<ServerBuild> => {
 };
 
 const requestListener = createRequestListener({
-  build: viteDevServer ? getBuild : await getBuild(),
+  build: getBuild,
   getLoadContext: () => ({
     saksbehandler: saksbehandlerStorage.getStore() || null,
+    env: MILJØ.env,
   }),
 });
 
 app.all("*", (req, res) => {
-  const saksbehandler = erLokalDev
+  const saksbehandler = erLokal
     ? req.session?.user || null
     : hentSaksbehandlerInfoFraHeaders(req);
 
@@ -174,5 +176,5 @@ app.all("*", (req, res) => {
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(`Express server listening on port ${port}`);
+  console.log(`\nhttp://localhost:${port}/`);
 });
