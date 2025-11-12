@@ -49,10 +49,10 @@ spec:
       autoLogin: true
   resources:
     limits:
-      memory: 512Mi
+      memory: 96Mi
     requests:
-      memory: 256Mi
-      cpu: 50m
+      memory: 96Mi
+      cpu: 22m
 
   accessPolicy:
     outbound:
