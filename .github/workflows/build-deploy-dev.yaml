@@ -35,13 +35,11 @@ jobs:
         with:
           files: .nais/dev.yaml
       - name: Build and push image and SBOM to OCI registry
-        if: steps.changed-files.outputs.changed != 'only-inputs'
         uses: nais/docker-build-push@791ebb6f74b82849c742a9bc9c97abe44c6c111f # ratchet:nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: etterlatte
       - name: Deploy to Nais
-        if: steps.changed-files.outputs.changed != 'only-inputs'
         uses: nais/deploy/actions/deploy@961addd1e4d4211f1a7333ada5fde85f7c9aa5b7 # ratchet:nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
