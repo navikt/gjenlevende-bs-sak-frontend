@@ -1,3 +1,5 @@
+import { hentCachetToken, lagreTokenICache } from "./token-cache.js";
+
 const TOKEN_ENDPOINT =
   "https://login.microsoftonline.com/trygdeetaten.no/oauth2/v2.0/token";
 
@@ -21,6 +23,11 @@ export async function exchangeTokenForBackend(
     navIdent = payload.NAVident || "ukjent";
   } catch (e) {
     console.error("Kunne ikke parse innkommende token:", e);
+  }
+
+  const cachetToken = hentCachetToken(userToken);
+  if (cachetToken) {
+    return cachetToken;
   }
 
   console.log(`Gjør OBO token exchange for ${navIdent}`);
@@ -53,6 +60,13 @@ export async function exchangeTokenForBackend(
   const tokenResponse = (await response.json()) as OboTokenResponse;
 
   console.log(`OBO token exchange fullført for ${navIdent}`);
+
+  lagreTokenICache(
+    userToken,
+    navIdent,
+    tokenResponse.access_token,
+    tokenResponse.expires_in
+  );
 
   return tokenResponse.access_token;
 }
