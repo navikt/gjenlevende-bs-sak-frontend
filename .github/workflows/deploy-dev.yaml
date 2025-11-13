@@ -48,4 +48,5 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
-          IMAGE: ${{ needs.build.outputs.image }}
+          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}
+          TELEMETRY: ${{ needs.build.outputs.telemetry }}
