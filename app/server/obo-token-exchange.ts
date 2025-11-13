@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 const TOKEN_ENDPOINT =
   "https://login.microsoftonline.com/trygdeetaten.no/oauth2/v2.0/token";
 
@@ -14,8 +16,12 @@ interface TokenCache {
 
 const tokenCache = new Map<string, TokenCache>();
 
-function getCachedToken(userToken: string): string | null {
-  const cacheKey = userToken.substring(0, 50); // Bruk første del av token som nøkkel
+export const lagTokenCacheKey = (userToken: string): string => {
+  return createHash("sha256").update(userToken).digest("hex");
+};
+
+function hentCachedToken(userToken: string): string | null {
+  const cacheKey = lagTokenCacheKey(userToken);
   const cached = tokenCache.get(cacheKey);
 
   if (!cached) {
@@ -37,7 +43,7 @@ function cacheToken(
   accessToken: string,
   expiresIn: number
 ): void {
-  const cacheKey = userToken.substring(0, 50);
+  const cacheKey = lagTokenCacheKey(userToken);
   const expiresAt = Date.now() + expiresIn * 1000;
 
   tokenCache.set(cacheKey, {
@@ -52,7 +58,7 @@ export async function exchangeTokenForBackend(
   clientSecret: string,
   backendScope: string
 ): Promise<string> {
-  const cachedToken = getCachedToken(userToken);
+  const cachedToken = hentCachedToken(userToken);
   if (cachedToken) {
     console.log("Bruker cached OBO token");
     return cachedToken;
