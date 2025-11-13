@@ -35,6 +35,14 @@ export function lagApiProxy(backendUrl: string, erLokal: boolean) {
             clientSecret,
             backendScope
           );
+          
+          // Logg NAVident fra OBO-tokenet for debugging
+          try {
+            const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+            console.log(`OBO token inneholder NAVident: ${payload.NAVident || "ikke funnet"}`);
+          } catch (e) {
+            console.log("Kunne ikke parse OBO token");
+          }
         } catch (error) {
           console.error("OBO token exchange feilet:", error);
           res.status(500).json({
