@@ -118,7 +118,7 @@ const requestListener = createRequestListener({
   }),
 });
 
-app.all("/*splat", (req, res) => {
+app.all("*splat", (req, res) => {
   const saksbehandler = erLokal
     ? req.session?.user || null
     : hentSaksbehandlerInfoFraHeaders(req);

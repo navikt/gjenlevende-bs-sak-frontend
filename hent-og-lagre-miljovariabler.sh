@@ -1,6 +1,7 @@
 #!/bin/bash
 
 kubectl config use-context dev-gcp
+kubectl config set-context --current --namespace=etterlatte
 
 function get_secrets() {
   local repo=$1
@@ -13,12 +14,6 @@ GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_ID=$(echo "$GJENLEVENDE_BS_SAK_FRONTEND_LOKAL
 GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_SECRET=$(echo "$GJENLEVENDE_BS_SAK_FRONTEND_LOKAL_SECRETS" | jq -r '.AZURE_APP_CLIENT_SECRET')
 
 # Generate random 32 character strings for the cookie and session keys
-COOKIE_KEY1=$(openssl rand -hex 16)
-COOKIE_KEY2=$(openssl rand -hex 16)
-PASSPORTCOOKIE_KEY1=$(openssl rand -hex 16)
-PASSPORTCOOKIE_KEY2=$(openssl rand -hex 16)
-PASSPORTCOOKIE_KEY3=$(openssl rand -hex 16)
-PASSPORTCOOKIE_KEY4=$(openssl rand -hex 16)
 SESSION_SECRET=$(openssl rand -hex 16)
 
 if [ -z "$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_ID" ]
@@ -31,12 +26,6 @@ fi
 cat << EOF > .env
 # Denne filen er generert automatisk ved å kjøre \`hent-og-lagre-miljovariabler.sh\`
 
-COOKIE_KEY1='$COOKIE_KEY1'
-COOKIE_KEY2='$COOKIE_KEY2'
-PASSPORTCOOKIE_KEY1='$PASSPORTCOOKIE_KEY1'
-PASSPORTCOOKIE_KEY2='$PASSPORTCOOKIE_KEY2'
-PASSPORTCOOKIE_KEY3='$PASSPORTCOOKIE_KEY3'
-PASSPORTCOOKIE_KEY4='$PASSPORTCOOKIE_KEY4'
 SESSION_SECRET='$SESSION_SECRET'
 
 CLIENT_ID='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_ID'
