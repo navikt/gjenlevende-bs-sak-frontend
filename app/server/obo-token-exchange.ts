@@ -16,7 +16,7 @@ interface TokenCache {
 
 const tokenCache = new Map<string, TokenCache>();
 
-export const lagTokenCacheKey = (userToken: string): string => {
+const lagTokenCacheKey = (userToken: string): string => {
   return createHash("sha256").update(userToken).digest("hex");
 };
 
@@ -58,13 +58,32 @@ export async function exchangeTokenForBackend(
   clientSecret: string,
   backendScope: string
 ): Promise<string> {
+  const cacheKey = lagTokenCacheKey(userToken);
   const cachedToken = hentCachedToken(userToken);
-  if (cachedToken) {
-    console.log("Bruker cached OBO token");
-    return cachedToken;
-  }
 
-  console.log("Gjør OBO token exchange for backend");
+  try {
+    const payload = JSON.parse(
+      Buffer.from(userToken.split(".")[1], "base64").toString()
+    );
+    const navIdent = payload.NAVident || "ukjent";
+
+    if (cachedToken) {
+      console.log(
+        `Bruker cached OBO token for ${navIdent} (cache key: ${cacheKey.substring(0, 16)}...)`
+      );
+      return cachedToken;
+    }
+
+    console.log(
+      `Gjør OBO token exchange for ${navIdent} (cache key: ${cacheKey.substring(0, 16)}...)`
+    );
+  } catch (e) {
+    if (cachedToken) {
+      console.log("Bruker cached OBO token");
+      return cachedToken;
+    }
+    console.log("Gjør OBO token exchange for backend");
+  }
 
   const params = new URLSearchParams({
     grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
