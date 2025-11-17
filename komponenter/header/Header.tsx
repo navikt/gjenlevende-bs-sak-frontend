@@ -26,7 +26,9 @@ export const Header: React.FC<{}> = () => {
   return (
     <div>
       <InternalHeader className={erDev ? styles.devHeader : undefined}>
-        <InternalHeader.Title as="h1">Gjenlevende BS</InternalHeader.Title>
+        <InternalHeader.Title as="a" href="/">
+          Gjenlevende BS
+        </InternalHeader.Title>
         <Spacer />
 
         <Dropdown defaultOpen>

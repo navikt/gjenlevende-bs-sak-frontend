@@ -1,0 +1,20 @@
+.navbar {
+  border-bottom: 1px solid lightgray;
+}
+
+.link {
+  color: var(--a-text-default);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.link:hover {
+  background-color: var(--a-surface-hover);
+  text-decoration: none;
+}
+
+.link.active {
+  border-bottom: 1px solid var(--a-border-action-selected);
+}

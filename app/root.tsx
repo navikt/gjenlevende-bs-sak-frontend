@@ -10,6 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import type { Saksbehandler } from "~/server/types";
 import Header from "komponenter/header/Header";
+import Navbar from "komponenter/navbar/Navbar";
 import "@navikt/ds-css";
 
 export async function loader({ context }: Route.LoaderArgs) {
@@ -43,6 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Header />
+        <Navbar />
         {children}
         <ScrollRestoration />
         <Scripts />
