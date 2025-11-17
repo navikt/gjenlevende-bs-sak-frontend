@@ -1,4 +1,4 @@
-import { HStack, Link } from "@navikt/ds-react";
+import { HStack } from "@navikt/ds-react";
 import { NavLink } from "react-router";
 import styles from "./Navbar.module.css";
 
