@@ -1,3 +1,4 @@
+import React from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -10,7 +11,6 @@ import {
 import type { Route } from "./+types/root";
 import type { Saksbehandler } from "~/server/types";
 import Header from "komponenter/header/Header";
-import Navbar from "komponenter/navbar/Navbar";
 import "@navikt/ds-css";
 
 export async function loader({ context }: Route.LoaderArgs) {

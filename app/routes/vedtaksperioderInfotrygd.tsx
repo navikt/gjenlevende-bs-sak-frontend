@@ -1,7 +1,8 @@
+import React from "react";
 import { Heading, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/vedtaksperioderInfotrygd";
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_: Route.MetaArgs) {
   return [
     { title: "Historikk vedtaksperioder Infotrygd" },
     {

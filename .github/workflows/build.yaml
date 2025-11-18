@@ -5,7 +5,7 @@ on:
 
 jobs:
   typecheck:
-    name: Typecheck
+    name: Typecheck & Lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,6 +22,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
         run: npm ci
+      - name: Kjør ESLint
+        run: npm run lint
       - name: Kjør typecheck
         run: npm run typecheck
 
