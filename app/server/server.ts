@@ -45,7 +45,7 @@ const viteDevServer: ViteDevServer | undefined = erLokal
   : undefined;
 
 const app = express();
-const saksbehandlerStorage = new AsyncLocalStorage<any>();
+const saksbehandlerStorage = new AsyncLocalStorage<Saksbehandler | null>();
 
 if (erLokal) {
   app.use(cookieParser());
@@ -106,6 +106,7 @@ const getBuild = async (): Promise<ServerBuild> => {
       "virtual:react-router/server-build"
     ) as Promise<ServerBuild>;
   }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return import("/app/build/server/index.js");
 };

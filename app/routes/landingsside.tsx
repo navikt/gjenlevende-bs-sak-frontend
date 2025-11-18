@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Heading,
   BodyShort,
@@ -12,7 +13,7 @@ import type { Saksbehandler } from "~/server/types";
 import { useState } from "react";
 import { pingBackend, testMedAuth } from "~/api/backend";
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_: Route.MetaArgs) {
   return [
     { title: "Landingsside" },
     {

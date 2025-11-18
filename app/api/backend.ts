@@ -1,10 +1,10 @@
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   melding?: string;
 }
 
-async function apiCall<T = any>(
+async function apiCall<T = unknown>(
   endpoint: string,
   options?: RequestInit
 ): Promise<ApiResponse<T>> {

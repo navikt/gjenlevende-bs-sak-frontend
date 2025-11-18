@@ -27,6 +27,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
         run: npm ci
+      - name: Kjør ESLint
+        run: npm run lint
       - name: Bygg applikasjon
         run: |
           npm run build
