@@ -59,3 +59,17 @@ export async function testMedAuth(): Promise<
 > {
   return apiCall("/test/infotrygd/autentisert");
 }
+
+export const hentHistorikkForPerson = async (
+  fagsakPersonId: string
+): Promise<ApiResponse<unknown>> => {
+  // TODO: Må mappe om fagsakPersonId til personident på sikt
+
+  return apiCall(`/test/infotrygd/perioder`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ personident: fagsakPersonId }),
+  });
+};

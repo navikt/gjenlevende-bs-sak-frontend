@@ -72,6 +72,8 @@ app.get("/isReady", (_req: Request, res: Response) => {
   res.status(200).send("OK");
 });
 
+app.use(express.json());
+
 app.use("/api", lagApiProxy(BACKEND_URL, erLokal));
 
 if (erLokal) {
