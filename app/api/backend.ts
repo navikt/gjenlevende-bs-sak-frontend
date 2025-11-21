@@ -43,23 +43,6 @@ async function apiCall<T = unknown>(
   }
 }
 
-export async function pingBackend(): Promise<ApiResponse<string>> {
-  return apiCall<string>("/test/infotrygd/ping");
-}
-
-export async function testMedAuth(): Promise<
-  ApiResponse<{
-    navIdent: string;
-    navn: string;
-    epost: string;
-    grupper: string[];
-    tokenUtstedtTid: string;
-    tokenUtløperTid: string;
-  }>
-> {
-  return apiCall("/test/infotrygd/autentisert");
-}
-
 export const hentHistorikkForPerson = async (
   fagsakPersonId: string
 ): Promise<ApiResponse<unknown>> => {
