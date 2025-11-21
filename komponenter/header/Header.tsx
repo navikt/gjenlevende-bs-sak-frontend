@@ -40,6 +40,7 @@ export const Header: React.FC = () => {
           onSubmit={(e) => {
             e.preventDefault();
             navigate(`/person/${søk}/vedtaksperioder`);
+            settSøk("");
           }}
         >
           <Search
@@ -50,10 +51,11 @@ export const Header: React.FC = () => {
             onChange={(e) => {
               settSøk(e);
             }}
+            value={søk}
           />
         </HStack>
 
-        <Dropdown defaultOpen>
+        <Dropdown>
           <InternalHeader.UserButton
             as={Dropdown.Toggle}
             name={saksbehandlerNavn}
