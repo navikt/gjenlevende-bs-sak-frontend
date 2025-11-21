@@ -7,11 +7,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
 import type { Route } from "./+types/root";
 import type { Saksbehandler } from "~/server/types";
 import Header from "komponenter/header/Header";
 import "@navikt/ds-css";
+import { TogglesProvider } from "./contexts/TogglesContext";
 
 export async function loader({ context }: Route.LoaderArgs) {
   return {
@@ -53,7 +53,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <TogglesProvider>
+      <Outlet />
+    </TogglesProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
