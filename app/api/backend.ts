@@ -73,3 +73,9 @@ export const hentHistorikkForPerson = async (
     body: JSON.stringify({ personident: fagsakPersonId }),
   });
 };
+
+export async function hentToggles(): Promise<
+  ApiResponse<Record<string, boolean>>
+> {
+  return apiCall("/unleash/toggles");
+}

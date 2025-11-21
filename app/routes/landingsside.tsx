@@ -12,6 +12,8 @@ import type { Route } from "./+types/landingsside";
 import type { Saksbehandler } from "~/server/types";
 import { useState } from "react";
 import { pingBackend, testMedAuth } from "~/api/backend";
+import { useToggles } from "~/hooks/useToggles";
+import { ToggleNavn } from "~/types/toggles";
 
 export function meta(_: Route.MetaArgs) {
   return [
@@ -39,6 +41,8 @@ export default function Landingsside() {
 
   const [laster, settLaster] = useState(false);
   const [authLaster, settAuthLaster] = useState(false);
+
+  const { toggles } = useToggles();
 
   const handlePing = async () => {
     settLaster(true);
@@ -91,6 +95,12 @@ export default function Landingsside() {
       <Heading level="1" size="large" spacing>
         Gjenlevende barnetilsyn og skolepenger
       </Heading>
+
+      {toggles[ToggleNavn.TestToggle] && (
+        <Alert variant="info">
+          Hvis du ser denne er {ToggleNavn.TestToggle} togglet på.
+        </Alert>
+      )}
 
       {saksbehandler && (
         <VStack gap="4">
