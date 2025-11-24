@@ -61,10 +61,6 @@ spec:
       rules:
         - application: gjenlevende-bs-sak
 
-          # Team logs
-        - application: logging
-          namespace: nais-system
-
   env:
     - name: APP_VERSION
       value: '{{version}}'
