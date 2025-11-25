@@ -12,6 +12,7 @@ import type { Saksbehandler } from "~/server/types";
 import Header from "komponenter/header/Header";
 import "@navikt/ds-css";
 import { TogglesProvider } from "./contexts/TogglesContext";
+import { Side } from "komponenter/layout/Side";
 
 export async function loader({ context }: Route.LoaderArgs) {
   return {
@@ -35,7 +36,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="no">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,7 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Header />
-        {children}
+        <Side>{children}</Side>
         <ScrollRestoration />
         <Scripts />
       </body>
