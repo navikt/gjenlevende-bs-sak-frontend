@@ -1,37 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { Heading, Table, VStack } from "@navikt/ds-react";
-import { hentHistorikkForPerson } from "~/api/backend";
+import React from "react";
+import { Alert, Heading, Loader, Table, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/infotrygdHistorikk";
+import { useHentInfotrygdHistorikk } from "~/hooks/useHentInfotrygdHistorikk";
 
 export function meta(_: Route.MetaArgs) {
   return [
-    { title: "Historikk vedtaksperioder Infotrygd" },
+    { title: "Historikk i Infotrygd" },
     {
       name: "description",
-      content: "Oversikt over vedtaksperioder fra Infotrygd",
+      content: "Oversikt over historikk fra Infotrygd",
     },
   ];
 }
 
 export default function InfotrygdHistorikk({ params }: Route.ComponentProps) {
   const { fagsakPersonId } = params;
-  const [historikk, settHistorikk] = useState<unknown>(null);
+  const state = useHentInfotrygdHistorikk(fagsakPersonId);
+  const { data: historikk, laster, feil, melding } = state;
 
-  useEffect(() => {
-    hentHistorikkForPerson(fagsakPersonId).then((response) => {
-      console.log("Response fra backend:", response);
-      if (response.data) {
-        settHistorikk(response.data);
-      } else if (response.error) {
-        console.error("Feil fra backend:", response.error, response.melding);
-        settHistorikk({ error: response.error, melding: response.melding });
-      }
-    });
-  }, [fagsakPersonId]);
+  if (laster) {
+    return (
+      <div>
+        Laster historikk fra Infotrygd...
+        <Loader title="Laster..." />
+      </div>
+    );
+  }
+
+  if (feil) {
+    return (
+      <Alert variant="error">
+        <Heading level="2" size="small" spacing>
+          {feil}
+        </Heading>
+        {melding && <p>{melding}</p>}
+      </Alert>
+    );
+  }
 
   return (
     <VStack gap="space-4">
-      <Heading level="1" size="large" spacing>
+      <Heading level="1" size="medium" spacing>
         Historikk i infotrygd for personident: {fagsakPersonId}
       </Heading>
 
