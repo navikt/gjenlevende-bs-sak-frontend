@@ -39,7 +39,7 @@ export const Header: React.FC = () => {
           align="center"
           onSubmit={(e) => {
             e.preventDefault();
-            navigate(`/person/${søk}/vedtaksperioder`);
+            navigate(`/person/${søk}/infotrygd-historikk`);
             settSøk("");
           }}
         >

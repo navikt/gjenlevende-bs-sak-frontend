@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Heading, Table, VStack } from "@navikt/ds-react";
-import type { Route } from "./+types/vedtaksperioderInfotrygd";
 import { hentHistorikkForPerson } from "~/api/backend";
+import type { Route } from "./+types/infotrygdHistorikk";
 
 export function meta(_: Route.MetaArgs) {
   return [
@@ -13,9 +13,7 @@ export function meta(_: Route.MetaArgs) {
   ];
 }
 
-export default function VedtaksperioderInfotrygd({
-  params,
-}: Route.ComponentProps) {
+export default function InfotrygdHistorikk({ params }: Route.ComponentProps) {
   const { fagsakPersonId } = params;
   const [historikk, settHistorikk] = useState<unknown>(null);
 
