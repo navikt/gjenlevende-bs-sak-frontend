@@ -28,58 +28,56 @@ export const Header: React.FC = () => {
   const erDev = env !== "production";
 
   return (
-    <div>
-      <InternalHeader className={erDev ? styles.devHeader : undefined}>
-        <InternalHeader.Title as="a" href="/">
-          Gjenlevende BS
-        </InternalHeader.Title>
-        <Spacer />
-        <HStack
-          as="form"
-          align="center"
-          onSubmit={(e) => {
-            e.preventDefault();
-            navigate(`/person/${søk}/infotrygd-historikk`);
-            settSøk("");
+    <InternalHeader className={erDev ? styles.devHeader : undefined}>
+      <InternalHeader.Title as="a" href="/">
+        Gjenlevende BS
+      </InternalHeader.Title>
+      <Spacer />
+      <HStack
+        as="form"
+        align="center"
+        onSubmit={(e) => {
+          e.preventDefault();
+          navigate(`/person/${søk}/infotrygd-historikk`);
+          settSøk("");
+        }}
+      >
+        <Search
+          label="InternalHeader søk"
+          size="small"
+          variant="simple"
+          placeholder="Søk"
+          onChange={(e) => {
+            settSøk(e);
           }}
-        >
-          <Search
-            label="InternalHeader søk"
-            size="small"
-            variant="simple"
-            placeholder="Søk"
-            onChange={(e) => {
-              settSøk(e);
-            }}
-            value={søk}
-          />
-        </HStack>
+          value={søk}
+        />
+      </HStack>
 
-        <Dropdown>
-          <InternalHeader.UserButton
-            as={Dropdown.Toggle}
-            name={saksbehandlerNavn}
-            description={`Enhet: ${"ukjent"}`}
-          />
+      <Dropdown>
+        <InternalHeader.UserButton
+          as={Dropdown.Toggle}
+          name={saksbehandlerNavn}
+          description={`Enhet: ${"ukjent"}`}
+        />
 
-          <Dropdown.Menu>
-            <dl>
-              <BodyShort as="dt" size="small">
-                {saksbehandlerNavn}
-              </BodyShort>
-              <Detail as="dd">{saksbehandler?.navident}</Detail>
-            </dl>
-            <Dropdown.Menu.Divider />
+        <Dropdown.Menu>
+          <dl>
+            <BodyShort as="dt" size="small">
+              {saksbehandlerNavn}
+            </BodyShort>
+            <Detail as="dd">{saksbehandler?.navident}</Detail>
+          </dl>
+          <Dropdown.Menu.Divider />
 
-            <Dropdown.Menu.List>
-              <Dropdown.Menu.List.Item as="a" href="/oauth2/logout">
-                Logg ut <Spacer /> <LeaveIcon aria-hidden fontSize="1.5rem" />
-              </Dropdown.Menu.List.Item>
-            </Dropdown.Menu.List>
-          </Dropdown.Menu>
-        </Dropdown>
-      </InternalHeader>
-    </div>
+          <Dropdown.Menu.List>
+            <Dropdown.Menu.List.Item as="a" href="/oauth2/logout">
+              Logg ut <Spacer /> <LeaveIcon aria-hidden fontSize="1.5rem" />
+            </Dropdown.Menu.List.Item>
+          </Dropdown.Menu.List>
+        </Dropdown.Menu>
+      </Dropdown>
+    </InternalHeader>
   );
 };
 
