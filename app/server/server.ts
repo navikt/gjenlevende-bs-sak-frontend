@@ -19,6 +19,8 @@ import { kreverAuthMiddleware } from "./auth-middleware.js";
 import { session, lagSessionMiddleware } from "./session.js";
 import { lagViteDevServer } from "./vite-dev.js";
 
+const PORT_NUMMER = process.env.PORT;
+
 const BACKEND_URL = MILJØ.erLokal
   ? "https://gjenlevende-bs-sak.intern.dev.nav.no"
   : "http://gjenlevende-bs-sak";
@@ -55,7 +57,7 @@ if (erLokal) {
     initializeAuth({
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      redirectUri: "http://localhost:8080/oauth2/callback",
+      redirectUri: `http://localhost:${PORT_NUMMER}/oauth2/callback`,
     });
   }
 }
@@ -131,7 +133,12 @@ app.all("*splat", (req, res) => {
   });
 });
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log(`\nhttp://localhost:${port}/`);
+app.listen(PORT_NUMMER, () => {
+  if (!PORT_NUMMER) {
+    throw new Error(
+      "PORT miljøvariabel må være satt. Har du kjørt scriptet for å hente secrets?"
+    );
+  }
+
+  console.log(`\nhttp://localhost:${PORT_NUMMER}/`);
 });
