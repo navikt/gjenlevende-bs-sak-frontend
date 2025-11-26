@@ -27,9 +27,9 @@ cat << EOF > .env
 # Denne filen er generert automatisk ved å kjøre \`hent-og-lagre-miljovariabler.sh\`
 
 SESSION_SECRET='$SESSION_SECRET'
-
 CLIENT_ID='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_ID'
 CLIENT_SECRET='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_SECRET'
+PORT=8080
 
 # Lokalt
 #ENV=local
