@@ -4,28 +4,30 @@ Saksbehandlingsløsning for gjenlevende barnetilsyn og skolepenger
 
 ## Kom i gang
 
-### Installasjon
+### 1. Installasjon
 
-Install the dependencies:
+Installering av avhengigheter:
 
-```
-npm install
+```bash
+npm ci
 ```
 
 ### Hent og sett miljøvariabler
 
-Kjør shell scriptet hent-og-lagre-miljovariabler
+Scriptet henter nødvendige hemmeligheter fra Kubernetes og oppretter en lokal `.env`-fil.
 
-```
+**NB:** Du må være pålogget Naisdevice.
+
+```bash
 sh hent-og-lagre-miljovariabler.sh
 ```
 
-### Development
+### 3. Start utviklingsserver
 
-Start the development server with HMR:
+Start lokal utviklingsserver med hot module replacement:
 
-```
+```bash
 npm run dev
 ```
 
-Gå til http://localhost:8080/
+Applikasjonen er tilgjengelig på http://localhost:8080/
