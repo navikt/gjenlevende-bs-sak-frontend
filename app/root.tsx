@@ -9,10 +9,9 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import type { Saksbehandler } from "~/server/types";
-import Header from "komponenter/header/Header";
+import Header from "~/komponenter/header/Header";
 import "@navikt/ds-css";
 import { TogglesProvider } from "./contexts/TogglesContext";
-import { Side } from "komponenter/layout/Side";
 
 export async function loader({ context }: Route.LoaderArgs) {
   return {
@@ -45,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Header />
-        <Side>{children}</Side>
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
