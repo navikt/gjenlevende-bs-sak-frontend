@@ -5,6 +5,7 @@ import type { Route } from "./+types/landingsside";
 import type { Saksbehandler } from "~/server/types";
 import { useToggles } from "~/hooks/useToggles";
 import { ToggleNavn } from "~/types/toggles";
+import { Side } from "~/komponenter/layout/Side";
 
 export function meta(_: Route.MetaArgs) {
   return [
@@ -24,24 +25,26 @@ export default function Landingsside() {
   const { toggles } = useToggles();
 
   return (
-    <VStack gap="8">
-      <Heading level="1" size="large" spacing>
-        Gjenlevende barnetilsyn og skolepenger
-      </Heading>
+    <Side>
+      <VStack gap="8">
+        <Heading level="1" size="large" spacing>
+          Gjenlevende barnetilsyn og skolepenger
+        </Heading>
 
-      {toggles[ToggleNavn.TestToggle] && (
-        <Alert variant="info">
-          Hvis du ser denne er {ToggleNavn.TestToggle} togglet på.
-        </Alert>
-      )}
+        {toggles[ToggleNavn.TestToggle] && (
+          <Alert variant="info">
+            Hvis du ser denne er {ToggleNavn.TestToggle} togglet på.
+          </Alert>
+        )}
 
-      {saksbehandler && (
-        <VStack gap="4">
-          <BodyShort spacing>
-            Velkommen, {saksbehandler.navn || saksbehandler.brukernavn}!
-          </BodyShort>
-        </VStack>
-      )}
-    </VStack>
+        {saksbehandler && (
+          <VStack gap="4">
+            <BodyShort spacing>
+              Velkommen, {saksbehandler.navn || saksbehandler.brukernavn}!
+            </BodyShort>
+          </VStack>
+        )}
+      </VStack>
+    </Side>
   );
 }

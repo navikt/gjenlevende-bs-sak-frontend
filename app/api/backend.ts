@@ -4,6 +4,12 @@ export interface ApiResponse<T = unknown> {
   melding?: string;
 }
 
+export interface Navn {
+  fornavn: string;
+  mellomnavn?: string;
+  etternavn: string;
+}
+
 async function apiCall<T = unknown>(
   endpoint: string,
   options?: RequestInit
@@ -61,4 +67,16 @@ export async function hentToggles(): Promise<
   ApiResponse<Record<string, boolean>>
 > {
   return apiCall("/unleash/toggles");
+}
+
+export async function hentNavnFraPdl(
+  ident: string
+): Promise<ApiResponse<Navn>> {
+  return apiCall(`/pdl/navn`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ident }),
+  });
 }
