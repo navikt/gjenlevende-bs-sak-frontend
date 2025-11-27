@@ -12,7 +12,7 @@ Installering av avhengigheter:
 npm ci
 ```
 
-### Hent og sett miljøvariabler
+### 2. Hent og sett miljøvariabler
 
 Scriptet henter nødvendige hemmeligheter fra Kubernetes og oppretter en lokal `.env`-fil.
 
