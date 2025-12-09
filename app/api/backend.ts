@@ -10,6 +10,16 @@ export interface Navn {
   etternavn: string;
 }
 
+export interface Journalpost {
+    journalpostId: String;
+    tema?: String;
+    behandlingstema?: String;
+    tittel?: String;
+    journalforendeEnhet?: String;
+    kanal?: String;
+    eksternReferanseId?: String;
+}
+
 async function apiCall<T = unknown>(
   endpoint: string,
   options?: RequestInit
@@ -79,4 +89,16 @@ export async function hentNavnFraPdl(
     },
     body: JSON.stringify({ ident }),
   });
+}
+
+export async function hentJournalposterMedFnr(
+    fnr: string
+): Promise<ApiResponse<[Journalpost]>> {
+    return apiCall(`/saf/tittel`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fnr }),
+    });
 }

@@ -33,6 +33,14 @@ export const Navbar: React.FC = () => {
         >
           Brev
         </NavLink>
+        <NavLink
+            to="dokumentoversikt"
+            className={({ isActive }) =>
+                `${styles.link}${isActive ? ` ${styles.active}` : ""}`
+            }
+        >
+            dokumentoversikt
+        </NavLink>
       </HStack>
     </nav>
   );
