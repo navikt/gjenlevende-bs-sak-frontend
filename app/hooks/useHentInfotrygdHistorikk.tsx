@@ -8,7 +8,7 @@ interface HistorikkState {
   laster: boolean;
 }
 
-export const useHentInfotrygdHistorikk = (fagsakPersonId: string) => {
+export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
   const [state, settState] = useState<HistorikkState>({
     data: null,
     feil: null,
@@ -20,8 +20,18 @@ export const useHentInfotrygdHistorikk = (fagsakPersonId: string) => {
     let avbrutt = false;
 
     const hentHistorikk = async () => {
+      if (!personident) {
+        settState({
+          data: null,
+          feil: "Mangler personident",
+          melding: null,
+          laster: false,
+        });
+        return;
+      }
+
       try {
-        const response = await hentHistorikkForPerson(fagsakPersonId);
+        const response = await hentHistorikkForPerson(personident);
 
         if (avbrutt) return;
 
@@ -59,7 +69,7 @@ export const useHentInfotrygdHistorikk = (fagsakPersonId: string) => {
     return () => {
       avbrutt = true;
     };
-  }, [fagsakPersonId]);
+  }, [personident]);
 
   return state;
 };

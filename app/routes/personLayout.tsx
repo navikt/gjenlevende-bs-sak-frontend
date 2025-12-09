@@ -6,10 +6,29 @@ import { Side } from "~/komponenter/layout/Side";
 import Personheader from "~/komponenter/personheader/Personheader";
 import { PersonContext } from "~/contexts/PersonContext";
 import { useHentPersonNavn } from "~/hooks/useHentPersonNavn";
+import { useFagsak } from "~/hooks/useFagsak";
 
 export default function PersonLayout() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
-  const { navn, error, laster } = useHentPersonNavn(fagsakPersonId);
+  const {
+    fagsak,
+    error: fagsakError,
+    melding: fagsakMelding,
+    laster: lasterFagsak,
+  } = useFagsak(fagsakPersonId);
+
+  const personident = fagsak?.personIdent;
+  const {
+    navn,
+    error: navnError,
+    laster: lasterNavn,
+  } = useHentPersonNavn(fagsakPersonId);
+
+  const laster = lasterFagsak || lasterNavn;
+  const feil =
+    fagsakError ||
+    (!fagsakPersonId ? "Mangler fagsakPersonId" : null) ||
+    (!personident ? "Fant ikke personident for fagsaken" : null);
 
   if (laster) {
     return (
@@ -19,11 +38,12 @@ export default function PersonLayout() {
     );
   }
 
-  if (error || !navn || !fagsakPersonId) {
+  if (feil || !fagsakPersonId || !personident) {
     return (
       <VStack gap="4" style={{ padding: "2rem" }}>
         <Alert variant="error">
-          Kunne ikke hente personin: {error || "Mangler data"}
+          Kunne ikke hente personinformasjon: {feil || "Mangler data"}
+          {fagsakMelding && <p>{fagsakMelding}</p>}
         </Alert>
       </VStack>
     );
@@ -31,7 +51,13 @@ export default function PersonLayout() {
 
   return (
     <PersonContext.Provider
-      value={{ navn, fødselsnummer: fagsakPersonId, laster, error }}
+      value={{
+        navn: navn,
+        personident,
+        fagsakPersonId,
+        laster: lasterNavn,
+        error: navnError,
+      }}
     >
       <Personheader />
       <Navbar />

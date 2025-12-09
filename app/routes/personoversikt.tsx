@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, VStack, BodyShort } from "@navikt/ds-react";
+import { Heading, VStack, BodyShort, Alert } from "@navikt/ds-react";
 import type { Route } from "./+types/personoversikt";
 import { usePersonContext } from "~/contexts/PersonContext";
 import { formaterNavn } from "~/utils/utils";
@@ -9,7 +9,8 @@ export function meta(_: Route.MetaArgs) {
 }
 
 export default function PersonOversikt() {
-  const { navn, fødselsnummer } = usePersonContext();
+  const { navn, personident, error } = usePersonContext();
+  const visningsNavn = navn ? formaterNavn(navn) : "Navn ikke tilgjengelig";
 
   return (
     <VStack gap="6">
@@ -17,11 +18,13 @@ export default function PersonOversikt() {
         Personoversikt
       </Heading>
 
+      {error && <Alert variant="warning">{error}</Alert>}
+
       <VStack gap="4">
         <BodyShort size="large" weight="semibold">
-          {formaterNavn(navn)}
+          {visningsNavn}
         </BodyShort>
-        <BodyShort>Fødselsnummer: {fødselsnummer}</BodyShort>
+        <BodyShort>Personident: {personident || "Ikke tilgjengelig"}</BodyShort>
       </VStack>
     </VStack>
   );

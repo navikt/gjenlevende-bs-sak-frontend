@@ -7,7 +7,8 @@ import { formaterNavn } from "~/utils/utils";
 
 export const Personheader = () => {
   const context = usePersonContext();
-  const { navn, fødselsnummer } = context;
+  const { navn, personident } = context;
+  const visningsNavn = navn ? formaterNavn(navn) : "Navn ikke tilgjengelig";
 
   return (
     <ul className={styles.ul}>
@@ -15,12 +16,12 @@ export const Personheader = () => {
         <PersonIcon title="person" fontSize="1.5rem" />
       </li>
       <li className={styles.li}>
-        <BodyShort weight="semibold">{formaterNavn(navn)}</BodyShort>
+        <BodyShort weight="semibold">{visningsNavn}</BodyShort>
       </li>
       <li className={styles.li}>
         <HStack align="center">
-          {fødselsnummer}
-          <CopyButton copyText={fødselsnummer} size="small" />
+          {personident || "Personident ikke tilgjengelig"}
+          {personident && <CopyButton copyText={personident} size="small" />}
         </HStack>
       </li>
     </ul>
