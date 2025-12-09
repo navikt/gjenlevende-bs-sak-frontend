@@ -1,3 +1,5 @@
+import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
+
 export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
@@ -8,6 +10,28 @@ export interface Navn {
   fornavn: string;
   mellomnavn?: string;
   etternavn: string;
+}
+
+export type StønadType = "BARNETILSYN" | "SKOLEPENGER";
+
+export interface FagsakRequest {
+  personIdent: string;
+  stønadstype: StønadType;
+}
+
+export interface FagsakDto {
+  id: string;
+  fagsakPersonId: string;
+  personIdent: string;
+  stønadstype: StønadType;
+  eksternId?: number;
+}
+
+export interface FagsakApiResponse {
+  data: FagsakDto | null;
+  frontendFeilmelding?: string | null;
+  melding?: string | null;
+  status?: string;
 }
 
 export interface Journalpost {
@@ -60,16 +84,14 @@ async function apiCall<T = unknown>(
 }
 
 export const hentHistorikkForPerson = async (
-  fagsakPersonId: string
+  personident: string
 ): Promise<ApiResponse<unknown>> => {
-  // TODO: Må mappe om fagsakPersonId til personident på sikt
-
   return apiCall(`/test/infotrygd/perioder`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ personident: fagsakPersonId }),
+    body: JSON.stringify({ personident: personident }),
   });
 };
 
@@ -80,14 +102,41 @@ export async function hentToggles(): Promise<
 }
 
 export async function hentNavnFraPdl(
-  ident: string
+  fagsakPersonId: string
 ): Promise<ApiResponse<Navn>> {
   return apiCall(`/pdl/navn`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ ident }),
+    body: JSON.stringify({ fagsakPersonId }),
+  });
+}
+
+export async function hentEllerOpprettFagsak(
+  fagsakPersonId: string
+): Promise<ApiResponse<FagsakApiResponse>> {
+  // TODO: Refaktorer - kanskje dele opp i to funksjoner
+  const id = fagsakPersonId.trim();
+
+  if (!erGyldigFagsakPersonId(id) && !erGyldigPersonident(id)) {
+    return {
+      error: "Ugyldig fagsakPersonId/personIdent",
+      melding: "Feil ved validering av fagsakPersonId/personIdent",
+    };
+  }
+
+  const fagsakRequest: FagsakRequest = {
+    personIdent: id,
+    stønadstype: "BARNETILSYN",
+  };
+
+  return apiCall(`/fagsak`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(fagsakRequest),
   });
 }
 
