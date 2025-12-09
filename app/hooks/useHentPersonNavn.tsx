@@ -23,7 +23,8 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
       if (!fagsakPersonId) {
         settState((prev) => ({
           ...prev,
-          error: "Mangler fødselsnummer",
+          navn: null,
+          error: null,
           laster: false,
         }));
         return;
@@ -39,6 +40,7 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
         if (response.error) {
           settState((prev) => ({
             ...prev,
+            navn: null,
             error: response.error ?? "Ukjent feil",
             laster: false,
           }));
@@ -46,6 +48,13 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
           settState((prev) => ({
             ...prev,
             navn: response.data ?? null,
+            laster: false,
+          }));
+        } else {
+          settState((prev) => ({
+            ...prev,
+            navn: null,
+            error: response.melding ?? "Fant ikke navn i PDL",
             laster: false,
           }));
         }
