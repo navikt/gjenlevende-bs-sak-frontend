@@ -7,6 +7,16 @@ export const Navbar: React.FC = () => {
   return (
     <nav className={styles.navbar}>
       <HStack className={styles.navLinks}>
+        {/* TODO: Lage en liste med navigasjonslenker og map over */}
+        <NavLink
+          to="behandlingsoversikt"
+          className={({ isActive }) =>
+            `${styles.link}${isActive ? ` ${styles.active}` : ""}`
+          }
+        >
+          Behandlingsoversikt
+        </NavLink>
+
         <NavLink
           to="personoversikt"
           className={({ isActive }) =>

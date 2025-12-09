@@ -2,6 +2,7 @@ import React from "react";
 import { Alert, Heading, Loader, Table, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/infotrygdHistorikk";
 import { useHentInfotrygdHistorikk } from "~/hooks/useHentInfotrygdHistorikk";
+import { usePersonContext } from "~/contexts/PersonContext";
 
 export function meta(_: Route.MetaArgs) {
   return [
@@ -13,9 +14,9 @@ export function meta(_: Route.MetaArgs) {
   ];
 }
 
-export default function InfotrygdHistorikk({ params }: Route.ComponentProps) {
-  const { fagsakPersonId } = params;
-  const state = useHentInfotrygdHistorikk(fagsakPersonId);
+export default function InfotrygdHistorikk(_: Route.ComponentProps) {
+  const { personident } = usePersonContext();
+  const state = useHentInfotrygdHistorikk(personident);
   const { data: historikk, laster, feil, melding } = state;
 
   if (laster) {
@@ -41,7 +42,7 @@ export default function InfotrygdHistorikk({ params }: Route.ComponentProps) {
   return (
     <VStack gap="space-4">
       <Heading level="1" size="medium" spacing>
-        Historikk i infotrygd for personident: {fagsakPersonId}
+        Historikk i infotrygd for personident: {personident}
       </Heading>
 
       <Table>
