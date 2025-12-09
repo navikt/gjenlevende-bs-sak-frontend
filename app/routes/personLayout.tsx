@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useParams } from "react-router";
 import { Alert, Loader, VStack } from "@navikt/ds-react";
-import Navbar from "../komponenter/navbar/Navbar";
+import { Navbar } from "../komponenter/navbar/Navbar";
 import { Side } from "~/komponenter/layout/Side";
 import Personheader from "~/komponenter/personheader/Personheader";
 import { PersonContext } from "~/contexts/PersonContext";

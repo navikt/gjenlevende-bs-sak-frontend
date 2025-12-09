@@ -3,49 +3,34 @@ import { HStack } from "@navikt/ds-react";
 import { NavLink } from "react-router";
 import styles from "./Navbar.module.css";
 
-export const Navbar: React.FC = () => {
+type NavLenke = {
+  path: string;
+  tekst: string;
+};
+
+const LENKER: NavLenke[] = [
+  { path: "behandlingsoversikt", tekst: "Behandlingsoversikt" },
+  { path: "personoversikt", tekst: "Personoversikt" },
+  { path: "infotrygd-historikk", tekst: "Infotrygd historikk" },
+  { path: "brev", tekst: "Brev" },
+];
+
+export const Navbar = () => {
   return (
     <nav className={styles.navbar}>
       <HStack className={styles.navLinks}>
-        {/* TODO: Lage en liste med navigasjonslenker og map over */}
-        <NavLink
-          to="behandlingsoversikt"
-          className={({ isActive }) =>
-            `${styles.link}${isActive ? ` ${styles.active}` : ""}`
-          }
-        >
-          Behandlingsoversikt
-        </NavLink>
-
-        <NavLink
-          to="personoversikt"
-          className={({ isActive }) =>
-            `${styles.link}${isActive ? ` ${styles.active}` : ""}`
-          }
-        >
-          Personoversikt
-        </NavLink>
-
-        <NavLink
-          to="infotrygd-historikk"
-          className={({ isActive }) =>
-            `${styles.link}${isActive ? ` ${styles.active}` : ""}`
-          }
-        >
-          Infotrygd historikk
-        </NavLink>
-
-        <NavLink
-          to="brev"
-          className={({ isActive }) =>
-            `${styles.link}${isActive ? ` ${styles.active}` : ""}`
-          }
-        >
-          Brev
-        </NavLink>
+        {LENKER.map((lenke) => (
+          <NavLink
+            key={lenke.path}
+            to={lenke.path}
+            className={({ isActive }) =>
+              `${styles.link}${isActive ? ` ${styles.aktiv}` : ""}`
+            }
+          >
+            {lenke.tekst}
+          </NavLink>
+        ))}
       </HStack>
     </nav>
   );
 };
-
-export default Navbar;
