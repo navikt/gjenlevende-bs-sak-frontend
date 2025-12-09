@@ -39,7 +39,7 @@ export const Header: React.FC = () => {
   };
 
   const handleSøkOgNavigate = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLDivElement>
   ) => {
     event.preventDefault();
 
