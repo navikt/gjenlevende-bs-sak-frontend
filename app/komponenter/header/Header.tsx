@@ -1,25 +1,17 @@
-import React, { useState } from "react";
-import { LeaveIcon } from "@navikt/aksel-icons";
-import {
-  BodyShort,
-  Detail,
-  Dropdown,
-  HStack,
-  InternalHeader,
-  Search,
-  Spacer,
-  VStack,
-} from "@navikt/ds-react";
+import React from "react";
+import { InternalHeader, Spacer } from "@navikt/ds-react";
 import type { Saksbehandler } from "~/server/types";
 import { useRouteLoaderData, useNavigate } from "react-router";
 import styles from "./Header.module.css";
-import { hentEllerOpprettFagsak } from "~/api/backend";
+import { Søkefelt } from "./Søkefelt";
+import { SaksbehandlerMenu } from "./SaksbehandlerMenu";
+import { useSøk } from "~/hooks/useSøk";
+import { useOpprettFagsak } from "~/hooks/useOpprettFagsak";
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const [søk, settSøk] = useState<string>("");
-  const [søker, settSøker] = useState(false);
-  const [feilmelding, settFeilmelding] = useState<string | null>(null);
+  const { søk, søkeresultat, søker, feilmelding, settSøk, clearSøk } = useSøk();
+  const { opprettFagsak, oppretter, opprettFeilmelding } = useOpprettFagsak();
 
   const { saksbehandler, env } =
     useRouteLoaderData<{
@@ -27,108 +19,39 @@ export const Header: React.FC = () => {
       env: "local" | "development" | "production";
     }>("root") || {};
 
-  const saksbehandlerNavn =
-    saksbehandler?.navn || saksbehandler?.brukernavn || "";
-
   const erDev = env !== "production";
 
-  const navigerTilBehandlingsoversikt = (fagsakPersonId: string) => {
+  const handleNavigate = (fagsakPersonId: string) => {
     navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
-    settSøk("");
-    settFeilmelding(null);
+    clearSøk();
   };
 
-  const handleSøkOgNavigate = async (
-    event: React.FormEvent<HTMLDivElement>
-  ) => {
-    event.preventDefault();
-
-    if (!søk) {
-      settFeilmelding("Skriv inn en personident eller fagsakPersonId.");
-      return;
-    }
-
-    settSøker(true);
-    settFeilmelding(null);
-
-    try {
-      const response = await hentEllerOpprettFagsak(søk);
-      const fagsak = response.data?.data;
-
-      if (fagsak?.fagsakPersonId) {
-        navigerTilBehandlingsoversikt(fagsak.fagsakPersonId);
-        return;
-      }
-
-      settFeilmelding(
-        response.data?.frontendFeilmelding ||
-          response.error ||
-          "Fant ingen fagsak for søket."
-      );
-    } catch (error) {
-      console.error("Fagsaksøk feilet", error);
-      settFeilmelding("Kunne ikke søke etter fagsak akkurat nå.");
-    } finally {
-      settSøker(false);
-    }
-  };
-
-  const handleSøkChange = (value: string) => {
-    settSøk(value);
-
-    if (feilmelding) {
-      settFeilmelding(null);
-    }
+  const handleOpprettFagsak = async () => {
+    if (!søkeresultat) return;
+    await opprettFagsak(søkeresultat);
+    clearSøk();
   };
 
   return (
-    <InternalHeader className={erDev ? styles.devHeader : undefined}>
+    <InternalHeader className={erDev ? styles.devHeader : undefined} data-theme="light">
       <InternalHeader.Title as="a" href="/">
         Gjenlevende BS
       </InternalHeader.Title>
       <Spacer />
 
-      <HStack
-        as="form"
-        align="center"
-        onSubmit={(event) => handleSøkOgNavigate(event)}
-      >
-        <VStack gap="1">
-          <Search
-            label="Søk etter fagsak"
-            size="small"
-            variant="simple"
-            placeholder="ident eller fagsak"
-            onChange={handleSøkChange}
-            value={søk}
-            aria-busy={søker}
-          />
-        </VStack>
-      </HStack>
+      <Søkefelt
+        søk={søk}
+        onSøkChange={settSøk}
+        søker={søker || oppretter}
+        feilmelding={feilmelding}
+        søkeresultat={søkeresultat}
+        onNavigate={handleNavigate}
+        onOpprettFagsak={handleOpprettFagsak}
+        onClearSøk={clearSøk}
+        opprettFeilmelding={opprettFeilmelding}
+      />
 
-      <Dropdown>
-        <InternalHeader.UserButton
-          as={Dropdown.Toggle}
-          name={saksbehandlerNavn}
-          description={`Enhet: ${"ukjent"}`}
-        />
-
-        <Dropdown.Menu>
-          <dl>
-            <BodyShort as="dt" size="small">
-              {saksbehandlerNavn}
-            </BodyShort>
-            <Detail as="dd">{saksbehandler?.navident}</Detail>
-          </dl>
-          <Dropdown.Menu.Divider />
-
-          <Dropdown.Menu.List>
-            <Dropdown.Menu.List.Item as="a" href="/oauth2/logout">
-              Logg ut <Spacer /> <LeaveIcon aria-hidden fontSize="1.5rem" />
-            </Dropdown.Menu.List.Item>
-          </Dropdown.Menu.List>
-        </Dropdown.Menu>
-      </Dropdown>
+      <SaksbehandlerMenu saksbehandler={saksbehandler ?? null} />
     </InternalHeader>
   );
 };
