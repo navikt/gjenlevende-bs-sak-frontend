@@ -12,7 +12,7 @@ interface Props {
     fritekstfeltListe: FritekstBolk[];
 }
 
-export const FritekstFelt = ({
+export const Fritekstbolk = ({
                                  deltittel,
                                  innhold,
                                  handleOppdaterFelt,

@@ -1,10 +1,8 @@
-import {Box, Button, HGrid, Select, VStack} from '@navikt/ds-react';
+import {Box, Button, Heading, HGrid, Select, VStack} from '@navikt/ds-react';
 import React, {useState} from 'react';
-import {FritekstFelt} from '~/komponenter/brev/FritekstFelt';
+import {Fritekstbolk} from '~/komponenter/brev/Fritekstbolk';
 import {PlusIcon} from '@navikt/aksel-icons';
 import {PdfForhåndsvisning} from "~/komponenter/brev/PdfForhåndsvisning";
-
-// import { Side } from '~/komponenter/layout/Side';
 
 export interface BrevMal {
     tittel: string;
@@ -42,14 +40,14 @@ const brevMaler: BrevMal[] = [
 
 export const BrevSide = () => {
     const [brevMal, settBrevmal] = useState<BrevMal | null>(null);
-    const [fritekstFelter, settFritekstfelter] = useState<FritekstBolk[]>([]);
+    const [fritekstbolker, settFritekstbolker] = useState<FritekstBolk[]>([]);
 
-    const leggTilFritekstfelt = () => {
-        settFritekstfelter((prev) => [...prev, {deltittel: '', innhold: ''}]);
+    const leggTilFritekstbolk = () => {
+        settFritekstbolker((prev) => [...prev, {deltittel: '', innhold: ''}]);
     };
 
-    const flyttFritekstfeltOpp = (index: number) => {
-        settFritekstfelter((prev) => {
+    const flyttBolkOpp = (index: number) => {
+        settFritekstbolker((prev) => {
             if (index === 0) return prev;
             const newArr = [...prev];
             [newArr[index - 1], newArr[index]] = [newArr[index], newArr[index - 1]];
@@ -57,8 +55,8 @@ export const BrevSide = () => {
         });
     };
 
-    const flyttFritekstfeltNed = (index: number) => {
-        settFritekstfelter((prev) => {
+    const flyttBolkNed = (index: number) => {
+        settFritekstbolker((prev) => {
             if (index === prev.length - 1) return prev;
             const newArr = [...prev];
             [newArr[index + 1], newArr[index]] = [newArr[index], newArr[index + 1]];
@@ -67,14 +65,14 @@ export const BrevSide = () => {
     };
 
     const oppdaterFelt = (index: number, partial: Partial<FritekstBolk>) => {
-        settFritekstfelter((prev) => {
+        settFritekstbolker((prev) => {
             const newArr = [...prev];
             newArr[index] = {...newArr[index], ...partial};
             return newArr;
         });
     };
 
-    const handleSelect = (brevmal: string): void => {
+    const velgBrevmal = (brevmal: string): void => {
         if (brevmal === '') {
             settBrevmal(null);
         } else {
@@ -84,55 +82,58 @@ export const BrevSide = () => {
     };
 
     return (
-        // <Side>
-        <HGrid gap="32" columns={2}>
-            <Box style={{backgroundColor: "white", alignSelf: "flex-start"}} borderRadius="small" padding={"space-16"}>
-                <Select
-                    label="Velg dokument"
-                    onChange={(e) => {
-                        handleSelect(e.target.value);
-                    }}
-                    size={'small'}
-                >
-                    <option value="">Ikke valgt</option>
-                    {brevMaler.map((brevmal) => (
-                        <option key={brevmal.tittel} value={brevmal.tittel}>
-                            {brevmal.tittel}
-                        </option>
-                    ))}
-                </Select>
-                {brevMal && (
-                    <VStack gap={'2'}>
-                        <h3>Fritekstområde</h3>
-                        {fritekstFelter.map((fritekstfelt, index) => (
-                            <FritekstFelt
-                                key={index}
-                                deltittel={fritekstfelt.deltittel}
-                                innhold={fritekstfelt.innhold}
-                                handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
-                                handleFlyttOpp={() => flyttFritekstfeltOpp(index)}
-                                handleFlyttNed={() => flyttFritekstfeltNed(index)}
-                                fritekstfeltListe={fritekstFelter}
-                            />
+        <HGrid gap="32" columns={2} width={"100%"}>
+            <Box style={{backgroundColor: "white", alignSelf: "flex-start"}} borderRadius="small"
+                 padding={"space-16"}>
+                <VStack gap={"4"}>
+                    <Select
+                        label="Velg dokument"
+                        value={brevMal?.tittel ?? ''}
+                        onChange={(e) => {
+                            velgBrevmal(e.target.value);
+                        }}
+                        size={'small'}
+                    >
+                        <option value="" disabled>Ikke valgt</option>
+                        {brevMaler.map((brevmal) => (
+                            <option key={brevmal.tittel} value={brevmal.tittel}>
+                                {brevmal.tittel}
+                            </option>
                         ))}
-                        <Button
-                            variant={'secondary'}
-                            icon={<PlusIcon title={'Legg til fritekstfelt'}/>}
-                            onClick={leggTilFritekstfelt}
-                            size={'small'}
-                        >
-                            Legg til fritekstfelt
-                        </Button>
-                    </VStack>
-                )}
+                    </Select>
+                    {brevMal && (
+                        <VStack gap={'2'}>
+                            <Heading level={"3"} size={"small"} spacing>Fritekstområde</Heading>
+                            {fritekstbolker.map((fritekstfelt, index) => (
+                                <Fritekstbolk
+                                    key={index}
+                                    deltittel={fritekstfelt.deltittel}
+                                    innhold={fritekstfelt.innhold}
+                                    handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
+                                    handleFlyttOpp={() => flyttBolkOpp(index)}
+                                    handleFlyttNed={() => flyttBolkNed(index)}
+                                    fritekstfeltListe={fritekstbolker}
+                                />
+                            ))}
+                            <Button
+                                variant={'secondary'}
+                                icon={<PlusIcon title={'Legg til fritekstfelt'}/>}
+                                onClick={leggTilFritekstbolk}
+                                size={'small'}
+                            >
+                                Legg til fritekstfelt
+                            </Button>
+                        </VStack>
+                    )}
+                </VStack>
             </Box>
             <Box>
                 <VStack gap={"4"} align={"center"}>
-                    <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstFelter}/>
-                    <Button style={{width: "fit-content"}}>Send til beslutter</Button>
+                    <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker}/>
+                    <Button style={{width: "fit-content"}}>Send pdf til sak </Button>
+                    {/* //TODO Knappen over skal bli "Send til beslutter" etterhvert*/}
                 </VStack>
             </Box>
         </HGrid>
-        // </Side>
     );
 };
