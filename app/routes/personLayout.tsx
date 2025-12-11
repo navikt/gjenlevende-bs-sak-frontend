@@ -17,12 +17,8 @@ export default function PersonLayout() {
     laster: lasterFagsak,
   } = useFagsak(fagsakPersonId);
 
-  const personident = fagsak?.personIdent;
-  const {
-    navn,
-    error: navnError,
-    laster: lasterNavn,
-  } = useHentPersonNavn(fagsakPersonId);
+  const personident = fagsak?.personident;
+  const { navn, error: navnError, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
 
   const laster = lasterFagsak || lasterNavn;
   const feil =
