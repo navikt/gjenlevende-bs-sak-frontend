@@ -113,6 +113,7 @@ export const BrevSide = () => {
     } catch (error) {
       settFeilmelding(`En feil oppstod: , ${error}`);
     } finally {
+      console.log(feilmelding); //TODO logg ordentlig
       settLaster(false);
     }
   };
