@@ -17,14 +17,14 @@ export interface Navn {
 export type StønadType = "BARNETILSYN" | "SKOLEPENGER";
 
 export interface FagsakRequest {
-  personIdent: string;
+  personident: string;
   stønadstype: StønadType;
 }
 
 export interface FagsakDto {
   id: string;
   fagsakPersonId: string;
-  personIdent: string;
+  personident: string;
   stønadstype: StønadType;
   eksternId?: number;
 }
@@ -87,21 +87,42 @@ export const hentHistorikkForPerson = async (
   });
 };
 
-export async function hentToggles(): Promise<
-  ApiResponse<Record<string, boolean>>
-> {
+export async function hentToggles(): Promise<ApiResponse<Record<string, boolean>>> {
   return apiCall("/unleash/toggles");
 }
 
-export async function hentNavnFraPdl(
-  fagsakPersonId: string
-): Promise<ApiResponse<Navn>> {
+export async function hentNavnFraPdl(fagsakPersonId: string): Promise<ApiResponse<Navn>> {
   return apiCall(`/pdl/navn`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ fagsakPersonId }),
+  });
+}
+
+export interface PersonidentRequest {
+  personident: string;
+}
+
+export interface Søkeresultat {
+  navn: string;
+  personident?: string;
+  fagsakPersonId: string;
+  harTilgang: boolean;
+  harFagsak: boolean;
+}
+
+export async function søkPerson(søkestreng: string): Promise<ApiResponse<Søkeresultat>> {
+  const erFagsakPersonId = erGyldigFagsakPersonId(søkestreng);
+  const body = erFagsakPersonId ? { fagsakPersonId: søkestreng } : { personident: søkestreng };
+
+  return apiCall(`/sok/person`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
   });
 }
 
@@ -113,13 +134,13 @@ export async function hentEllerOpprettFagsak(
 
   if (!erGyldigFagsakPersonId(id) && !erGyldigPersonident(id)) {
     return {
-      error: "Ugyldig fagsakPersonId/personIdent",
-      melding: "Feil ved validering av fagsakPersonId/personIdent",
+      error: "Ugyldig fagsakPersonId/personident",
+      melding: "Feil ved validering av fagsakPersonId/personident",
     };
   }
 
   const fagsakRequest: FagsakRequest = {
-    personIdent: id,
+    personident: id,
     stønadstype: "BARNETILSYN",
   };
 
