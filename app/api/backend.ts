@@ -1,4 +1,6 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
+import type {Dokumentinfo} from "~/api/dokument";
+import {AvsenderMottakerIdType} from "~/api/journalføring";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
@@ -32,16 +34,6 @@ export interface FagsakApiResponse {
   frontendFeilmelding?: string | null;
   melding?: string | null;
   status?: string;
-}
-
-export interface Journalpost {
-    journalpostId: String;
-    tema?: String;
-    behandlingstema?: String;
-    tittel?: String;
-    journalforendeEnhet?: String;
-    kanal?: String;
-    eksternReferanseId?: String;
 }
 
 async function apiCall<T = unknown>(
@@ -140,14 +132,44 @@ export async function hentEllerOpprettFagsak(
   });
 }
 
-export async function hentJournalposterMedFnr(
-    fnr: string
-): Promise<ApiResponse<[Journalpost]>> {
-    return apiCall(`/saf/tittel`, {
+export async function hentDokumenterForPerson(
+    fagsakPersonId: string
+): Promise<ApiResponse<[Dokumentinfo]>> {
+    /*
+    return apiCall(`/saf/dokumenter`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fnr }),
+        body: JSON.stringify({ fagsakPersonId }),
     });
+     */
+    return {
+        data: [
+            {
+                dokumentinfoId: "12345",
+                filnavn: "dokument.pdf",
+                tittel: "Vedtak om ytelse",
+                journalpostId: "67890",
+                dato: "2024-06-01T12:34:56",
+                tema: "PEN",
+                journalstatus: "FERDIGSTILT",
+                journalposttype: "I",
+                harSaksbehandlerTilgang: true,
+                logiskeVedlegg: [
+                    {
+                        tittel: "Vedlegg 1",
+                        logiskVedleggId: "vedlegg-1"
+                    }
+                ],
+                avsenderMottaker: {
+                    id: "99887766554",
+                    type: AvsenderMottakerIdType.FNR,
+                    navn: "Ola Nordmann",
+                    land: "NO",
+                    erLikBruker: false
+                }
+            }
+        ]
+    };
 }

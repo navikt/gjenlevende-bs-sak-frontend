@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import {hentJournalposterMedFnr, type Journalpost} from "~/api/backend";
+import {hentDokumenterForPerson} from "~/api/backend";
+import type {Dokumentinfo} from "~/api/dokument";
 
 interface JournalposterState {
-  journalposter: [Journalpost] | null;
+  dokumenter: [Dokumentinfo] | null;
   error: string | null;
   laster: boolean;
 }
 
-export function useHentJournalposter(fnr: string | undefined) {
+export function useHentDokumenter(fagsakPersonId: string | undefined) {
   const [state, settState] = useState<JournalposterState>({
-    journalposter: null,
+    dokumenter: null,
     error: null,
     laster: true,
   });
@@ -17,10 +18,10 @@ export function useHentJournalposter(fnr: string | undefined) {
   useEffect(() => {
     let avbrutt = false;
 
-    const hentJournalposter = async () => {
+    const hentDokumenter = async () => {
       if (avbrutt) return;
 
-      if (!fnr) {
+      if (!fagsakPersonId) {
         settState((prev) => ({
           ...prev,
           error: "Mangler fødselsnummer",
@@ -32,7 +33,7 @@ export function useHentJournalposter(fnr: string | undefined) {
       settState((prev) => ({ ...prev, error: null, laster: true }));
 
       try {
-        const response = await hentJournalposterMedFnr(fnr);
+        const response = await hentDokumenterForPerson(fagsakPersonId);
 
         if (avbrutt) return;
 
@@ -62,12 +63,12 @@ export function useHentJournalposter(fnr: string | undefined) {
       }
     };
 
-    hentJournalposter();
+    hentDokumenter();
 
     return () => {
       avbrutt = true;
     };
-  }, [fnr]);
+  }, [fagsakPersonId]);
 
   return state;
 }
