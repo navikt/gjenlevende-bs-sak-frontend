@@ -10,7 +10,7 @@ import { useOpprettFagsak } from "~/hooks/useOpprettFagsak";
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const { søk, søkeresultat, søker, feilmelding, settSøk, clearSøk } = useSøk();
+  const { søk, søkeresultat, søker, feilmelding, settSøk, tilbakestillSøk } = useSøk();
   const { opprettFagsak, oppretter, opprettFeilmelding } = useOpprettFagsak();
 
   const { saksbehandler, env } =
@@ -23,13 +23,13 @@ export const Header: React.FC = () => {
 
   const handleNavigate = (fagsakPersonId: string) => {
     navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
-    clearSøk();
+    tilbakestillSøk();
   };
 
   const handleOpprettFagsak = async () => {
     if (!søkeresultat) return;
     await opprettFagsak(søkeresultat);
-    clearSøk();
+    tilbakestillSøk();
   };
 
   return (
@@ -47,7 +47,7 @@ export const Header: React.FC = () => {
         søkeresultat={søkeresultat}
         onNavigate={handleNavigate}
         onOpprettFagsak={handleOpprettFagsak}
-        onClearSøk={clearSøk}
+        onTilbakestillSøk={tilbakestillSøk}
         opprettFeilmelding={opprettFeilmelding}
       />
 

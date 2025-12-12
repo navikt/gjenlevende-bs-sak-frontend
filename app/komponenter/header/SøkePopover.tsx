@@ -10,7 +10,6 @@ import {
   VStack,
 } from "@navikt/ds-react";
 import type { Søkeresultat } from "~/api/backend";
-import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
 
 interface SøkePopoverProps {
   open: boolean;
@@ -76,9 +75,4 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
       </Popover.Content>
     </Popover>
   );
-};
-
-export const erGyldigSøkestreng = (str: string): boolean => {
-  const trimmet = str.trim();
-  return erGyldigPersonident(trimmet) || erGyldigFagsakPersonId(trimmet);
 };

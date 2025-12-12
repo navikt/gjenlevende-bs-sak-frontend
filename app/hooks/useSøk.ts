@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { søkPerson, type Søkeresultat } from "~/api/backend";
-import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
+import { erGyldigSøkestreng } from "~/utils/utils";
 
 interface UseSøkReturn {
   søk: string;
@@ -8,39 +8,34 @@ interface UseSøkReturn {
   søker: boolean;
   feilmelding: string | null;
   settSøk: (value: string) => void;
-  clearSøk: () => void;
+  tilbakestillSøk: () => void;
 }
 
 export const useSøk = (): UseSøkReturn => {
   const [søk, settSøk] = useState<string>("");
-  const [søkeresultat, setSøkeresultat] = useState<Søkeresultat | null>(null);
+  const [søkeresultat, settSøkeresultat] = useState<Søkeresultat | null>(null);
   const [søker, settSøker] = useState(false);
   const [feilmelding, settFeilmelding] = useState<string | null>(null);
-
-  const erGyldigSøkestreng = useCallback((str: string): boolean => {
-    const trimmet = str.trim();
-    return erGyldigPersonident(trimmet) || erGyldigFagsakPersonId(trimmet);
-  }, []);
 
   const utførSøk = useCallback(async (søkestreng: string) => {
     settSøker(true);
     settFeilmelding(null);
-    setSøkeresultat(null);
+    settSøkeresultat(null);
 
     const response = await søkPerson(søkestreng);
 
     if (response.error) {
       settFeilmelding(response.melding || response.error);
     } else if (response.data) {
-      setSøkeresultat(response.data);
+      settSøkeresultat(response.data);
     }
 
     settSøker(false);
   }, []);
 
-  const clearSøk = useCallback(() => {
+  const tilbakestillSøk = useCallback(() => {
     settSøk("");
-    setSøkeresultat(null);
+    settSøkeresultat(null);
     settFeilmelding(null);
   }, []);
 
@@ -50,10 +45,10 @@ export const useSøk = (): UseSøkReturn => {
     if (erGyldigSøkestreng(trimmetSøk)) {
       utførSøk(trimmetSøk);
     } else if (trimmetSøk === "") {
-      setSøkeresultat(null);
+      settSøkeresultat(null);
       settFeilmelding(null);
     }
-  }, [søk, erGyldigSøkestreng, utførSøk]);
+  }, [søk, utførSøk]);
 
   return {
     søk,
@@ -61,6 +56,6 @@ export const useSøk = (): UseSøkReturn => {
     søker,
     feilmelding,
     settSøk,
-    clearSøk,
+    tilbakestillSøk,
   };
 };
