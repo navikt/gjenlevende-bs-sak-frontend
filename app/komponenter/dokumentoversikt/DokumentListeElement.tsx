@@ -1,15 +1,26 @@
 import type {Dokumentinfo} from "~/api/dokument";
-import {BodyShort} from "@navikt/ds-react";
+import {BodyShort, Label, Tag, VStack, HStack} from "@navikt/ds-react";
 
 export interface Props {
     dokument: Dokumentinfo;
 }
 
+function formatDate(dateString?: string) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('no-NO');
+}
+
 export const DokumentListeElement: React.FC<Props> = ({ dokument }) => (
-    <>
-        <div>
-            <BodyShort size="small">{dokument.tittel}</BodyShort>
-            <BodyShort size="small">{dokument.dato}</BodyShort>
-        </div>
-    </>
-);
+        <VStack gap="1" align="start">
+            <Label as="span" size="medium">{dokument.tittel}</Label>
+            <BodyShort size="small" style={{ color: '#666' }}>{formatDate(dokument.dato)}</BodyShort>
+            <HStack gap="2">
+            </HStack>
+            {dokument.avsenderMottaker?.navn && (
+                <BodyShort size="small" style={{ color: '#888' }}>
+                    Avsender/mottaker: {dokument.avsenderMottaker.navn}
+                </BodyShort>
+            )}
+        </VStack>
+)

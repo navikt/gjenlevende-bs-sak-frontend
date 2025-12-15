@@ -156,7 +156,6 @@ export async function hentEllerOpprettFagsak(
 export async function hentDokumenterForPerson(
     fagsakPersonId: string
 ): Promise<ApiResponse<[Dokumentinfo]>> {
-    /*
     return apiCall(`/saf/dokumenter`, {
         method: "POST",
         headers: {
@@ -164,33 +163,4 @@ export async function hentDokumenterForPerson(
         },
         body: JSON.stringify({ fagsakPersonId }),
     });
-     */
-    return {
-        data: [
-            {
-                dokumentinfoId: "12345",
-                filnavn: "dokument.pdf",
-                tittel: "Vedtak om ytelse",
-                journalpostId: "67890",
-                dato: "2024-06-01T12:34:56",
-                tema: "PEN",
-                journalstatus: "FERDIGSTILT",
-                journalposttype: "I",
-                harSaksbehandlerTilgang: true,
-                logiskeVedlegg: [
-                    {
-                        tittel: "Vedlegg 1",
-                        logiskVedleggId: "vedlegg-1"
-                    }
-                ],
-                avsenderMottaker: {
-                    id: "99887766554",
-                    type: AvsenderMottakerIdType.FNR,
-                    navn: "Ola Nordmann",
-                    land: "NO",
-                    erLikBruker: false
-                }
-            }
-        ]
-    };
 }
