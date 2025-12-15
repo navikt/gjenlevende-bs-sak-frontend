@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { HStack, Search, VStack } from "@navikt/ds-react";
 import type { Søkeresultat } from "~/api/backend";
-import { SøkePopover, erGyldigSøkestreng } from "./SøkePopover";
+import { SøkePopover } from "./SøkePopover";
+import { erGyldigSøkestreng } from "~/utils/utils";
 
 interface SøkefeltProps {
   søk: string;
@@ -11,7 +12,7 @@ interface SøkefeltProps {
   søkeresultat: Søkeresultat | null;
   onNavigate: (fagsakPersonId: string) => void;
   onOpprettFagsak: () => void;
-  onClearSøk: () => void;
+  onTilbakestillSøk: () => void;
   opprettFeilmelding?: string | null;
 }
 
@@ -23,7 +24,7 @@ export const Søkefelt: React.FC<SøkefeltProps> = ({
   søkeresultat,
   onNavigate,
   onOpprettFagsak,
-  onClearSøk,
+  onTilbakestillSøk,
   opprettFeilmelding,
 }) => {
   const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
@@ -34,7 +35,7 @@ export const Søkefelt: React.FC<SøkefeltProps> = ({
     }
   };
 
-  const erPopoverÅpen =
+  const skalÅpneSøkePopover =
     erGyldigSøkestreng(søk) && (søker || !!søkeresultat || !!feilmelding || !!opprettFeilmelding);
 
   return (
@@ -52,8 +53,8 @@ export const Søkefelt: React.FC<SøkefeltProps> = ({
           ref={setAnchor}
         />
         <SøkePopover
-          open={erPopoverÅpen}
-          onClose={onClearSøk}
+          open={skalÅpneSøkePopover}
+          onClose={onTilbakestillSøk}
           anchorEl={anchor}
           søker={søker}
           feilmelding={feilmelding}
