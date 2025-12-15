@@ -1,5 +1,5 @@
 import type {Dokumentinfo} from "~/api/dokument";
-import {BodyShort, Label, Tag, VStack, HStack} from "@navikt/ds-react";
+import {BodyShort, Label, VStack, HStack} from "@navikt/ds-react";
 
 export interface Props {
     dokument: Dokumentinfo;
