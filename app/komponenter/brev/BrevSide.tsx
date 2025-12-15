@@ -1,56 +1,18 @@
-import { Box, Button, Heading, HGrid, Select, VStack } from '@navikt/ds-react';
-import React, { useState } from 'react';
-import { Fritekstbolk } from '~/komponenter/brev/Fritekstbolk';
-import { PlusIcon } from '@navikt/aksel-icons';
-import { PdfForhåndsvisning } from '~/komponenter/brev/PdfForhåndsvisning';
-
-export interface BrevMal {
-  tittel: string;
-  fastTekstInfo: FasttekstInfo;
-  fastTekstAvslutning: string;
-}
-
-export interface FasttekstInfo {
-  navn: string;
-  fnr: string;
-}
-
-export interface FritekstBolk {
-  deltittel: string;
-  innhold: string;
-}
-
-const brevMaler: BrevMal[] = [
-  {
-    tittel: 'brevmalTittel1',
-    fastTekstInfo: { navn: 'navn navnesen', fnr: '123' },
-    fastTekstAvslutning: 'Dette er en avslutning 1',
-  },
-  {
-    tittel: 'brevmalTittel2',
-    fastTekstInfo: { navn: 'navn navnesen', fnr: '123' },
-    fastTekstAvslutning: 'Dette er en avslutning 2',
-  },
-  {
-    tittel: 'brevmalTittel3',
-    fastTekstInfo: { navn: 'navn navnesen', fnr: '123' },
-    fastTekstAvslutning: 'Dette er en avslutning 3',
-  },
-];
-
-export interface SendPdfTilSakRequest {
-  brevmal: BrevMal;
-  fritekstbolker: FritekstBolk[];
-}
+import { Box, Button, Heading, HGrid, Select, VStack } from "@navikt/ds-react";
+import React, { useState } from "react";
+import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
+import { PlusIcon } from "@navikt/aksel-icons";
+import { PdfForhåndsvisning } from "~/komponenter/brev/PdfForhåndsvisning";
+import { apiCall, type ApiResponse } from "~/api/backend";
+import { brevmaler } from "~/komponenter/brev/brevmaler";
+import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
 
 export const BrevSide = () => {
-  const [brevMal, settBrevmal] = useState<BrevMal | null>(null);
-  const [fritekstbolker, settFritekstbolker] = useState<FritekstBolk[]>([]);
-  const [laster, settLaster] = useState<boolean>(false);
-  const [feilmelding, settFeilmelding] = useState<string>(); //TODO logg feilmelding riktig
+  const [brevMal, settBrevmal] = useState<Brevmal | null>(null);
+  const [fritekstbolker, settFritekstbolker] = useState<Tekstbolk[]>([]);
 
   const leggTilFritekstbolk = () => {
-    settFritekstbolker((prev) => [...prev, { deltittel: '', innhold: '' }]);
+    settFritekstbolker((prev) => [...prev, { underoverskrift: "", innhold: "" }]);
   };
 
   const flyttBolkOpp = (index: number) => {
@@ -71,7 +33,7 @@ export const BrevSide = () => {
     });
   };
 
-  const oppdaterFelt = (index: number, partial: Partial<FritekstBolk>) => {
+  const oppdaterFelt = (index: number, partial: Partial<Tekstbolk>) => {
     settFritekstbolker((prev) => {
       const newArr = [...prev];
       newArr[index] = { ...newArr[index], ...partial };
@@ -80,78 +42,64 @@ export const BrevSide = () => {
   };
 
   const velgBrevmal = (brevmal: string): void => {
-    if (brevmal === '') {
+    if (brevmal === "") {
       settBrevmal(null);
     } else {
-      const valgtBrevmal = brevMaler.find((b) => b.tittel === brevmal) ?? null;
+      const valgtBrevmal = brevmaler.find((b) => b.tittel === brevmal) ?? null;
       settBrevmal(valgtBrevmal);
     }
   };
 
-  const sendPdfTilSak = async (brevmal: BrevMal, fritekstbolker: FritekstBolk[]) => {
-    if (laster) return;
-    settLaster(true);
-    settFeilmelding(undefined);
-
-    const behandlingsID = 123; // TODO: Hent riktig behandlingsID
-
-    try {
-      const response = await fetch(`/familie-bs-sak/api/${behandlingsID}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          brevmal: brevmal,
-          fritekstbolker: fritekstbolker,
-        }),
-      });
-
-      if (!response.ok) {
-        settFeilmelding('Feil ved sending av PDF');
-      }
-    } catch (error) {
-      settFeilmelding(`En feil oppstod: , ${error}`);
-    } finally {
-      console.log(feilmelding); //TODO logg ordentlig
-      settLaster(false);
-    }
+  const sendPdfTilSak = async (
+    brevmal: Brevmal,
+    fritekstbolker: Tekstbolk[]
+  ): Promise<ApiResponse<unknown>> => {
+    return apiCall(`/brev/test`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        brevmal,
+        fritekstbolker,
+      }),
+    });
   };
 
   return (
-    <HGrid gap="32" columns={2} width={'100%'}>
+    <HGrid gap="32" columns={2} width={"100%"}>
       <Box
-        style={{ backgroundColor: 'white', alignSelf: 'flex-start' }}
+        style={{ backgroundColor: "white", alignSelf: "flex-start" }}
         borderRadius="small"
-        padding={'space-16'}
+        padding={"space-16"}
       >
-        <VStack gap={'4'}>
+        <VStack gap={"4"}>
           <Select
             label="Velg dokument"
-            value={brevMal?.tittel ?? ''}
+            value={brevMal?.tittel ?? ""}
             onChange={(e) => {
               velgBrevmal(e.target.value);
             }}
-            size={'small'}
+            size={"small"}
           >
             <option value="" disabled>
               Ikke valgt
             </option>
-            {brevMaler.map((brevmal) => (
+            {brevmaler.map((brevmal) => (
               <option key={brevmal.tittel} value={brevmal.tittel}>
                 {brevmal.tittel}
               </option>
             ))}
           </Select>
           {brevMal && (
-            <VStack gap={'2'}>
-              <Heading level={'3'} size={'small'} spacing>
+            <VStack gap={"2"}>
+              <Heading level={"3"} size={"small"} spacing>
                 Fritekstområde
               </Heading>
               {fritekstbolker.map((fritekstfelt, index) => (
                 <Fritekstbolk
                   key={index}
-                  deltittel={fritekstfelt.deltittel}
+                  deltittel={fritekstfelt.underoverskrift}
                   innhold={fritekstfelt.innhold}
                   handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
                   handleFlyttOpp={() => flyttBolkOpp(index)}
@@ -160,10 +108,10 @@ export const BrevSide = () => {
                 />
               ))}
               <Button
-                variant={'secondary'}
-                icon={<PlusIcon title={'Legg til fritekstfelt'} />}
+                variant={"secondary"}
+                icon={<PlusIcon title={"Legg til fritekstfelt"} />}
                 onClick={leggTilFritekstbolk}
-                size={'small'}
+                size={"small"}
               >
                 Legg til fritekstfelt
               </Button>
@@ -172,16 +120,17 @@ export const BrevSide = () => {
         </VStack>
       </Box>
       <Box>
-        <VStack gap={'4'} align={'center'}>
+        <VStack gap={"4"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
-          {brevMal && fritekstbolker && (
-            <Button
-              style={{ width: 'fit-content' }}
-              onClick={() => sendPdfTilSak(brevMal, fritekstbolker)}
-            >
-              Send pdf til sak{' '}
-            </Button>
-          )}
+          {brevMal &&
+            fritekstbolker && ( //TODO undersøke om det er noen maler som ikke har fritekstbolker. Isåfall kun {brevmal &&
+              <Button
+                style={{ width: "fit-content" }}
+                onClick={() => sendPdfTilSak(brevMal, fritekstbolker)}
+              >
+                Send pdf til sak{" "}
+              </Button>
+            )}
           {/* //TODO Knappen over skal bli "Send til beslutter" etterhvert*/}
         </VStack>
       </Box>

@@ -1,27 +1,27 @@
-import { Document, Image, Page, PDFViewer, StyleSheet, Text, View } from '@react-pdf/renderer';
-import React, { useEffect, useMemo, useState } from 'react';
-import type { BrevMal, FritekstBolk } from '~/komponenter/brev/BrevSide';
+import { Document, Image, Page, PDFViewer, StyleSheet, Text, View } from "@react-pdf/renderer";
+import React, { useEffect, useMemo, useState } from "react";
+import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
 
 const styles = StyleSheet.create({
   page: { padding: 30 },
-  section: { margin: 10, padding: 10 },
+  section: { margin: 10, padding: 10, fontSize: 12 },
   header: {
-    flexDirection: 'column',
+    flexDirection: "column",
     paddingBottom: 10,
   },
   logo: {
     width: 100,
     height: 50,
-    objectFit: 'contain',
+    objectFit: "contain",
   },
   underoverskrift: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
 interface Props {
-  brevmal: BrevMal | null;
-  fritekstbolker: FritekstBolk[];
+  brevmal: Brevmal | null;
+  fritekstbolker: Tekstbolk[];
 }
 
 export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
@@ -45,26 +45,34 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
             <View style={styles.header}>
               <Image src="/Nav-logo-red-228x63.png" style={styles.logo} />
               <View>
-                <Text style={{ fontSize: 9 }}>Dato: {new Date().toLocaleDateString('nb-NO')}</Text>
+                <Text style={{ fontSize: 9 }}>Dato: {new Date().toLocaleDateString("nb-NO")}</Text>
               </View>
             </View>
             <View>{debouncedBrevmal?.tittel}</View>
             <View style={styles.section}>
-              <Text>Navn: {debouncedBrevmal?.fastTekstInfo.navn}</Text>
-              <Text>Fnr: {debouncedBrevmal?.fastTekstInfo.fnr}</Text>
+              <Text>Navn: {debouncedBrevmal?.informasjonOmBruker.navn}</Text>
+              <Text>Fnr: {debouncedBrevmal?.informasjonOmBruker.fnr}</Text>
             </View>
             {debouncedFritekstbolker && (
               <View style={styles.section}>
                 {debouncedFritekstbolker.map((fritekstbolk, index) => (
                   <View key={index}>
-                    <Text style={styles.underoverskrift}>{fritekstbolk.deltittel}</Text>
+                    <Text style={styles.underoverskrift}>{fritekstbolk.underoverskrift}</Text>
                     <Text>{fritekstbolk.innhold}</Text>
                   </View>
                 ))}
               </View>
             )}
             <View style={styles.section}>
-              <Text>{debouncedBrevmal?.fastTekstAvslutning}</Text>
+              {debouncedBrevmal.fastTekstAvslutning &&
+                debouncedBrevmal.fastTekstAvslutning.map((fastTekst, index) => (
+                  <View key={index}>
+                    {fastTekst.underoverskrift && (
+                      <Text style={styles.underoverskrift}>{fastTekst.underoverskrift}</Text>
+                    )}
+                    <Text style={styles.section}>{fastTekst.innhold}</Text>
+                  </View>
+                ))}
             </View>
           </Page>
         )}
@@ -73,10 +81,10 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
     [debouncedBrevmal, debouncedFritekstbolker]
   );
 
-  if (typeof window === 'undefined') return null; //Sjekk ut
+  if (typeof window === "undefined") return null; //Sjekk ut
 
   return (
-    <PDFViewer width={'100%'} height="700px" showToolbar={false}>
+    <PDFViewer width={"100%"} height="700px" showToolbar={false}>
       {pdfInnhold}
     </PDFViewer>
   );

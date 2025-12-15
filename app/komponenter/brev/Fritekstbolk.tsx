@@ -1,15 +1,15 @@
-import { Button, HStack, Textarea, TextField, VStack } from '@navikt/ds-react';
-import React from 'react';
-import type { FritekstBolk } from '~/komponenter/brev/BrevSide';
-import { ArrowDownIcon, ArrowUpIcon } from '@navikt/aksel-icons';
+import { Button, HStack, Textarea, TextField, VStack } from "@navikt/ds-react";
+import React from "react";
+import { ArrowDownIcon, ArrowUpIcon } from "@navikt/aksel-icons";
+import type { Tekstbolk } from "~/komponenter/brev/typer";
 
 interface Props {
-  deltittel: string;
+  deltittel?: string;
   innhold: string;
   handleOppdaterFelt: (value: Partial<{ deltittel: string; innhold: string }>) => void;
   handleFlyttOpp: () => void;
   handleFlyttNed: () => void;
-  fritekstfeltListe: FritekstBolk[];
+  fritekstfeltListe: Tekstbolk[];
 }
 
 export const Fritekstbolk = ({
@@ -22,37 +22,37 @@ export const Fritekstbolk = ({
 }: Props) => {
   return (
     <VStack
-      gap={'2'}
-      padding={'4'}
+      gap={"2"}
+      padding={"4"}
       style={{
-        border: '1px solid var(--a-border-default)',
+        border: "1px solid var(--a-border-default)",
       }}
     >
       <TextField
         label="Deloverskrift"
         value={deltittel}
         onChange={(e) => handleOppdaterFelt({ deltittel: e.target.value })}
-        size={'small'}
+        size={"small"}
       />
       <Textarea
         label="Innhold"
         value={innhold}
         onChange={(e) => handleOppdaterFelt({ innhold: e.target.value })}
-        size={'small'}
+        size={"small"}
       />
       {fritekstfeltListe.length > 1 && (
-        <HStack justify={'end'}>
+        <HStack justify={"end"}>
           <Button
-            variant={'tertiary'}
+            variant={"tertiary"}
             icon={<ArrowDownIcon />}
             onClick={handleFlyttNed}
-            size={'small'}
+            size={"small"}
           />
           <Button
-            variant={'tertiary'}
+            variant={"tertiary"}
             icon={<ArrowUpIcon />}
             onClick={handleFlyttOpp}
-            size={'small'}
+            size={"small"}
           />
         </HStack>
       )}
