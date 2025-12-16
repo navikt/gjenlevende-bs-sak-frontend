@@ -4,16 +4,16 @@ import { ArrowDownIcon, ArrowUpIcon } from "@navikt/aksel-icons";
 import type { Tekstbolk } from "~/komponenter/brev/typer";
 
 interface Props {
-  deltittel?: string;
+  underoverskrift?: string;
   innhold: string;
-  handleOppdaterFelt: (value: Partial<{ deltittel: string; innhold: string }>) => void;
+  handleOppdaterFelt: (value: Partial<{ underoverskrift: string; innhold: string }>) => void;
   handleFlyttOpp: () => void;
   handleFlyttNed: () => void;
   fritekstfeltListe: Tekstbolk[];
 }
 
 export const Fritekstbolk = ({
-  deltittel,
+  underoverskrift,
   innhold,
   handleOppdaterFelt,
   handleFlyttOpp,
@@ -30,8 +30,8 @@ export const Fritekstbolk = ({
     >
       <TextField
         label="Deloverskrift"
-        value={deltittel}
-        onChange={(e) => handleOppdaterFelt({ deltittel: e.target.value })}
+        value={underoverskrift}
+        onChange={(e) => handleOppdaterFelt({ underoverskrift: e.target.value })}
         size={"small"}
       />
       <Textarea

@@ -99,7 +99,7 @@ export const BrevSide = () => {
               {fritekstbolker.map((fritekstfelt, index) => (
                 <Fritekstbolk
                   key={index}
-                  deltittel={fritekstfelt.underoverskrift}
+                  underoverskrift={fritekstfelt.underoverskrift}
                   innhold={fritekstfelt.innhold}
                   handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
                   handleFlyttOpp={() => flyttBolkOpp(index)}
