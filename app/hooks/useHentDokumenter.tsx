@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import {hentDokumenterForPerson} from "~/api/backend";
 import type {Dokumentinfo} from "~/api/dokument";
 
-interface JournalposterState {
+interface DokumenterState {
   dokumenter: [Dokumentinfo] | null;
   error: string | null;
   laster: boolean;
 }
 
 export function useHentDokumenter(fagsakPersonId: string | undefined) {
-  const [state, settState] = useState<JournalposterState>({
+  const [state, settState] = useState<DokumenterState>({
     dokumenter: null,
     error: null,
     laster: true,
@@ -24,7 +24,7 @@ export function useHentDokumenter(fagsakPersonId: string | undefined) {
       if (!fagsakPersonId) {
         settState((prev) => ({
           ...prev,
-          error: "Mangler fødselsnummer",
+          error: "Mangler fagsakId",
           laster: false,
         }));
         return;
@@ -46,7 +46,7 @@ export function useHentDokumenter(fagsakPersonId: string | undefined) {
         } else if (response.data) {
           settState((prev) => ({
             ...prev,
-            journalposter: response.data ?? null,
+            dokumenter: response.data ?? null,
             laster: false,
           }));
         }

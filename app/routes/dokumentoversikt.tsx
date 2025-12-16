@@ -7,6 +7,16 @@ import {Dokumentliste} from "~/komponenter/dokumentoversikt/Dokumentliste";
 export default function dokumentoversikt() {
     const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
     const { dokumenter, error, laster } = useHentDokumenter(fagsakPersonId);
+
+    if (laster) {
+        return (
+            <div>
+                Henter dokumenter...
+                <Loader title="Laster..." />
+            </div>
+        );
+    }
+
     if (error || !dokumenter || !fagsakPersonId) {
         return (
             <VStack gap="4" style={{ padding: "2rem" }}>
