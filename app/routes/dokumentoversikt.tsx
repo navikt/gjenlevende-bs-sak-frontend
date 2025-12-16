@@ -4,7 +4,7 @@ import React from "react";
 import {useHentDokumenter} from "~/hooks/useHentDokumenter";
 import {Dokumentliste} from "~/komponenter/dokumentoversikt/Dokumentliste";
 
-export default function dokumentoversikt() {
+export default function Dokumentoversikt() {
     const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
     const { dokumenter, error, laster } = useHentDokumenter(fagsakPersonId);
 
