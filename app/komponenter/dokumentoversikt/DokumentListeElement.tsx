@@ -1,3 +1,4 @@
+import React from "react";
 import type {Dokumentinfo} from "~/api/dokument";
 import {BodyShort, Label, VStack, HStack} from "@navikt/ds-react";
 

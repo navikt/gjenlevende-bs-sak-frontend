@@ -1,6 +1,5 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
 import type {Dokumentinfo} from "~/api/dokument";
-import {AvsenderMottakerIdType} from "~/api/journalføring";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
