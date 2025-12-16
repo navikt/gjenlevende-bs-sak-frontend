@@ -16,7 +16,8 @@ export interface Navn {
 export type StønadType = "BARNETILSYN" | "SKOLEPENGER";
 
 export interface FagsakRequest {
-  personident: string;
+  personident?: string;
+  fagsakPersonId?: string;
   stønadstype: StønadType;
 }
 
@@ -126,10 +127,10 @@ export async function søkPerson(søkestreng: string): Promise<ApiResponse<Søke
 }
 
 export async function hentEllerOpprettFagsak(
-  fagsakPersonId: string
+  søkestreng: string
 ): Promise<ApiResponse<FagsakApiResponse>> {
   // TODO: Refaktorer - kanskje dele opp i to funksjoner
-  const id = fagsakPersonId.trim();
+  const id = søkestreng.trim();
 
   if (!erGyldigFagsakPersonId(id) && !erGyldigPersonident(id)) {
     return {
@@ -138,17 +139,16 @@ export async function hentEllerOpprettFagsak(
     };
   }
 
-  const fagsakRequest: FagsakRequest = {
-    personident: id,
-    stønadstype: "BARNETILSYN",
-  };
+  const request: FagsakRequest = erGyldigFagsakPersonId(id)
+    ? { fagsakPersonId: id, stønadstype: "BARNETILSYN" }
+    : { personident: id, stønadstype: "BARNETILSYN" };
 
   return apiCall(`/fagsak`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(fagsakRequest),
+    body: JSON.stringify(request),
   });
 }
 
