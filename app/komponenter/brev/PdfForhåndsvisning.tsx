@@ -28,6 +28,8 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
   const [debouncedBrevmal, settDebouncedBrevmal] = useState(brevmal);
   const [debouncedFritekstbolker, settDebouncedFritekstbolker] = useState(fritekstbolker);
 
+  const NAV_LOGO_PATH = "/Nav-logo-red-228x63.png";
+
   useEffect(() => {
     const timer = setTimeout(() => {
       settDebouncedBrevmal(brevmal);
@@ -43,7 +45,7 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
         {debouncedBrevmal && (
           <Page size="A4" style={styles.page}>
             <View style={styles.header}>
-              <Image src="/Nav-logo-red-228x63.png" style={styles.logo} />
+              <Image src={NAV_LOGO_PATH} style={styles.logo} />
               <View>
                 <Text style={{ fontSize: 9 }}>Dato: {new Date().toLocaleDateString("nb-NO")}</Text>
               </View>

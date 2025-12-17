@@ -6,6 +6,7 @@ import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
 export const useBrev = () => {
   const [brevMal, settBrevmal] = useState<Brevmal | null>(null);
   const [fritekstbolker, settFritekstbolker] = useState<Tekstbolk[]>([]);
+  const [sender, settSender] = useState(false);
 
   const leggTilFritekstbolk = () => {
     settFritekstbolker((prev) => [...prev, { underoverskrift: "", innhold: "" }]);
@@ -50,21 +51,27 @@ export const useBrev = () => {
     brevmal: Brevmal,
     fritekstbolker: Tekstbolk[]
   ): Promise<ApiResponse<unknown>> => {
-    return apiCall(`/brev/test`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        brevmal,
-        fritekstbolker,
-      }),
-    });
+    settSender(true);
+    try {
+      return apiCall(`/brev/test`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          brevmal,
+          fritekstbolker,
+        }),
+      });
+    } finally {
+      settSender(false);
+    }
   };
 
   return {
     brevMal,
     fritekstbolker,
+    sender,
     leggTilFritekstbolk,
     flyttBolkOpp,
     flyttBolkNed,

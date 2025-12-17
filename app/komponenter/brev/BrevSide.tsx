@@ -10,6 +10,7 @@ export const BrevSide = () => {
   const {
     brevMal,
     fritekstbolker,
+    sender,
     leggTilFritekstbolk,
     flyttBolkOpp,
     flyttBolkNed,
@@ -79,6 +80,7 @@ export const BrevSide = () => {
               <Button
                 style={{ width: "fit-content" }}
                 onClick={() => sendPdfTilSak(brevMal, fritekstbolker)}
+                disabled={sender}
               >
                 Send pdf til sak{" "}
               </Button>
