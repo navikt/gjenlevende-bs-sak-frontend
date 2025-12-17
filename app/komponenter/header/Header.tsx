@@ -1,7 +1,7 @@
 import React from "react";
 import { InternalHeader, Spacer } from "@navikt/ds-react";
 import type { Saksbehandler } from "~/server/types";
-import { useRouteLoaderData, useNavigate } from "react-router";
+import { useNavigate, useRouteLoaderData } from "react-router";
 import styles from "./Header.module.css";
 import { Søkefelt } from "./Søkefelt";
 import { SaksbehandlerMenu } from "./SaksbehandlerMenu";

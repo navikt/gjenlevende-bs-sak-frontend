@@ -35,7 +35,7 @@ export interface FagsakApiResponse {
   status?: string;
 }
 
-async function apiCall<T = unknown>(
+export async function apiCall<T = unknown>(
   endpoint: string,
   options?: RequestInit
 ): Promise<ApiResponse<T>> {
