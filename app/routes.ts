@@ -7,5 +7,6 @@ export default [
     route("personoversikt", "routes/personoversikt.tsx"),
     route("infotrygd-historikk", "routes/infotrygdHistorikk.tsx"),
     route("brev", "routes/brev.tsx"),
+    route("dokumentoversikt", "routes/dokumentoversikt.tsx"),
   ]),
 ] satisfies RouteConfig;

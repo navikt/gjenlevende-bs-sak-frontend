@@ -13,6 +13,7 @@ const LENKER: NavLenke[] = [
   { path: "personoversikt", tekst: "Personoversikt" },
   { path: "infotrygd-historikk", tekst: "Infotrygd historikk" },
   { path: "brev", tekst: "Brev" },
+  { path: "dokumentoversikt", tekst: "Dokumentoversikt" },
 ];
 
 export const Navbar = () => {
