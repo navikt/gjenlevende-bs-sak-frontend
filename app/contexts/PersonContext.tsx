@@ -2,8 +2,9 @@ import { createContext, useContext } from "react";
 import type { Navn } from "~/api/backend";
 
 interface PersonContextType {
-  navn: Navn;
-  fødselsnummer: string;
+  navn: Navn | null;
+  personident: string;
+  fagsakPersonId: string;
   laster: boolean;
   error: string | null;
 }

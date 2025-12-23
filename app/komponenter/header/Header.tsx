@@ -1,82 +1,57 @@
-import React, { useState } from "react";
-import { LeaveIcon } from "@navikt/aksel-icons";
-import {
-  InternalHeader,
-  Spacer,
-  Dropdown,
-  BodyShort,
-  Detail,
-  Search,
-  HStack,
-} from "@navikt/ds-react";
+import React from "react";
+import { InternalHeader, Spacer } from "@navikt/ds-react";
 import type { Saksbehandler } from "~/server/types";
-import { useRouteLoaderData, useNavigate } from "react-router";
+import { useNavigate, useRouteLoaderData } from "react-router";
 import styles from "./Header.module.css";
+import { Søkefelt } from "./Søkefelt";
+import { SaksbehandlerMenu } from "./SaksbehandlerMenu";
+import { useSøk } from "~/hooks/useSøk";
+import { useOpprettFagsak } from "~/hooks/useOpprettFagsak";
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const [søk, settSøk] = useState<string>("");
+  const { søk, søkeresultat, søker, feilmelding, settSøk, tilbakestillSøk } = useSøk();
+  const { opprettFagsak, oppretter, opprettFeilmelding } = useOpprettFagsak();
+
   const { saksbehandler, env } =
     useRouteLoaderData<{
       saksbehandler: Saksbehandler | null;
       env: "local" | "development" | "production";
     }>("root") || {};
 
-  const saksbehandlerNavn =
-    saksbehandler?.navn || saksbehandler?.brukernavn || "";
-
   const erDev = env !== "production";
 
+  const handleNavigate = (fagsakPersonId: string) => {
+    navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
+    tilbakestillSøk();
+  };
+
+  const handleOpprettFagsak = async () => {
+    if (!søkeresultat) return;
+    await opprettFagsak(søkeresultat);
+    tilbakestillSøk();
+  };
+
   return (
-    <InternalHeader className={erDev ? styles.devHeader : undefined}>
+    <InternalHeader className={erDev ? styles.devHeader : undefined} data-theme="light">
       <InternalHeader.Title as="a" href="/">
         Gjenlevende BS
       </InternalHeader.Title>
       <Spacer />
-      <HStack
-        as="form"
-        align="center"
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate(`/person/${søk}/infotrygd-historikk`);
-          settSøk("");
-        }}
-      >
-        <Search
-          label="InternalHeader søk"
-          size="small"
-          variant="simple"
-          placeholder="Søk"
-          onChange={(e) => {
-            settSøk(e);
-          }}
-          value={søk}
-        />
-      </HStack>
 
-      <Dropdown>
-        <InternalHeader.UserButton
-          as={Dropdown.Toggle}
-          name={saksbehandlerNavn}
-          description={`Enhet: ${"ukjent"}`}
-        />
+      <Søkefelt
+        søk={søk}
+        onSøkChange={settSøk}
+        søker={søker || oppretter}
+        feilmelding={feilmelding}
+        søkeresultat={søkeresultat}
+        onNavigate={handleNavigate}
+        onOpprettFagsak={handleOpprettFagsak}
+        onTilbakestillSøk={tilbakestillSøk}
+        opprettFeilmelding={opprettFeilmelding}
+      />
 
-        <Dropdown.Menu>
-          <dl>
-            <BodyShort as="dt" size="small">
-              {saksbehandlerNavn}
-            </BodyShort>
-            <Detail as="dd">{saksbehandler?.navident}</Detail>
-          </dl>
-          <Dropdown.Menu.Divider />
-
-          <Dropdown.Menu.List>
-            <Dropdown.Menu.List.Item as="a" href="/oauth2/logout">
-              Logg ut <Spacer /> <LeaveIcon aria-hidden fontSize="1.5rem" />
-            </Dropdown.Menu.List.Item>
-          </Dropdown.Menu.List>
-        </Dropdown.Menu>
-      </Dropdown>
+      <SaksbehandlerMenu saksbehandler={saksbehandler ?? null} />
     </InternalHeader>
   );
 };

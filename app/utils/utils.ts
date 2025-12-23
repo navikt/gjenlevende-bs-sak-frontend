@@ -6,3 +6,12 @@ export const formaterNavn = (navn: Navn): string => {
     .map((del) => del.charAt(0).toUpperCase() + del.slice(1).toLowerCase());
   return deler.join(" ");
 };
+
+export const erGyldigPersonident = (verdi: string): boolean => /^\d{11}$/.test(verdi.trim());
+
+export const erGyldigFagsakPersonId = (verdi: string): boolean =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(verdi.trim());
+
+export const erGyldigSøkestreng = (søkestreng: string): boolean => {
+  return erGyldigPersonident(søkestreng) || erGyldigFagsakPersonId(søkestreng);
+};

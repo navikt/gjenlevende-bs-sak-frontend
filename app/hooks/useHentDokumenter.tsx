@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { hentNavnFraPdl, type Navn } from "~/api/backend";
+import {hentDokumenterForPerson} from "~/api/backend";
+import type {Dokumentinfo} from "~/api/dokument";
 
-interface PersonNavnState {
-  navn: Navn | null;
+interface DokumenterState {
+  dokumenter: [Dokumentinfo] | null;
   error: string | null;
   laster: boolean;
 }
 
-export function useHentPersonNavn(fagsakPersonId: string | undefined) {
-  const [state, settState] = useState<PersonNavnState>({
-    navn: null,
+export function useHentDokumenter(fagsakPersonId: string | undefined) {
+  const [state, settState] = useState<DokumenterState>({
+    dokumenter: null,
     error: null,
     laster: true,
   });
@@ -17,14 +18,13 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
   useEffect(() => {
     let avbrutt = false;
 
-    const hentNavn = async () => {
+    const hentDokumenter = async () => {
       if (avbrutt) return;
 
       if (!fagsakPersonId) {
         settState((prev) => ({
           ...prev,
-          navn: null,
-          error: null,
+          error: "Mangler fagsakId",
           laster: false,
         }));
         return;
@@ -33,45 +33,37 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
       settState((prev) => ({ ...prev, error: null, laster: true }));
 
       try {
-        const response = await hentNavnFraPdl(fagsakPersonId);
+        const response = await hentDokumenterForPerson(fagsakPersonId);
 
         if (avbrutt) return;
 
         if (response.error) {
           settState((prev) => ({
             ...prev,
-            navn: null,
             error: response.error ?? "Ukjent feil",
             laster: false,
           }));
         } else if (response.data) {
           settState((prev) => ({
             ...prev,
-            navn: response.data ?? null,
-            laster: false,
-          }));
-        } else {
-          settState((prev) => ({
-            ...prev,
-            navn: null,
-            error: response.melding ?? "Fant ikke navn i PDL",
+            dokumenter: response.data ?? null,
             laster: false,
           }));
         }
       } catch (error) {
         if (avbrutt) return;
-        console.error("Feil ved henting av navn fra PDL:", error);
+        console.error("Feil ved henting av journalposter fra SAF:", error);
 
         settState((prev) => ({
           ...prev,
           error:
-            error instanceof Error ? error.message : "Kunne ikke hente navn",
+            error instanceof Error ? error.message : "Kunne ikke hente journalposter",
           laster: false,
         }));
       }
     };
 
-    hentNavn();
+    hentDokumenter();
 
     return () => {
       avbrutt = true;
