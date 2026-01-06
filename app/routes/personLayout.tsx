@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, useParams } from "react-router";
+import { Outlet, useParams, useMatch } from "react-router";
 import { Alert, Loader, VStack } from "@navikt/ds-react";
 import { Navbar } from "../komponenter/navbar/Navbar";
 import { Side } from "~/komponenter/layout/Side";
@@ -10,6 +10,7 @@ import { useFagsak } from "~/hooks/useFagsak";
 
 export default function PersonLayout() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
+  const erPåBehandling = useMatch("/person/:fagsakPersonId/behandling/:behandlingId/*");
   const {
     fagsak,
     error: fagsakError,
@@ -56,7 +57,7 @@ export default function PersonLayout() {
       }}
     >
       <Personheader />
-      <Navbar />
+      {!erPåBehandling && <Navbar />}
       <Side>
         <Outlet />
       </Side>
