@@ -21,6 +21,10 @@ export interface FagsakRequest {
   stønadstype: StønadType;
 }
 
+export interface OpprettBehandlingRequest {
+  fagsakId: string;
+}
+
 export interface FagsakDto {
   id: string;
   fagsakPersonId: string;
@@ -144,6 +148,22 @@ export async function hentEllerOpprettFagsak(
     : { personident: id, stønadstype: "BARNETILSYN" };
 
   return apiCall(`/fagsak`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+}
+
+export async function opprettBehandlingApi(
+  fagsakId: string
+): Promise<ApiResponse<FagsakApiResponse>> {
+
+  const request: OpprettBehandlingRequest =
+     { fagsakId: fagsakId };
+
+  return apiCall(`/behandling/opprett`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
