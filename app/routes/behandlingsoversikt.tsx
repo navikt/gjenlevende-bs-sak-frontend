@@ -12,9 +12,6 @@ export function meta(_: Route.MetaArgs) {
 }
 
 export default function Behandlingsoversikt() {
-
-
-
     const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
     const {
         fagsak,
@@ -24,9 +21,6 @@ export default function Behandlingsoversikt() {
     const { behandlinger, error, laster } = useHentBehandlinger(fagsak?.id);
 
   const { opprettBehandling, opprettFeilmelding } = useOpprettBehandling();
-
-  console.log("OPPRETTET BEHANDLING: ")
-
 
   if (laster || lasterFagsak || !behandlinger || !fagsak ) {
         return (
@@ -67,7 +61,7 @@ export default function Behandlingsoversikt() {
       </VStack>
 
       <Button onClick={startOpprettBehandling}>
-        lag behandling på fagsak 6d2b3d2c-f42e-421c-a021-c3d76216fa6c
+        Lag behandling
       </Button>
 
       <VStack gap="2">

@@ -19,7 +19,9 @@ export const useOpprettBehandling = (): OpprettBehandling => {
 
       try {
         const response = await opprettBehandlingApi(fagsakId);
-        console.log(response);
+        if(response.error){
+            settOpprettFeilmelding("Kunne ikke opprette behandling")
+        }
 
       } catch (error) {
         console.error("Opprettelse av fagsak feilet", error);
