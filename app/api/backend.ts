@@ -1,5 +1,6 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
 import type {Dokumentinfo} from "~/api/dokument";
+import type {Behandling} from "~/types/behandling";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
@@ -181,5 +182,17 @@ export async function hentDokumenterForPerson(
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ fagsakPersonId }),
+    });
+}
+
+export async function hentBehandlingerForFagsak(
+    fagsakId: string
+): Promise<ApiResponse<[Behandling]>> {
+    return apiCall(`/behandling/hentBehandlinger`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fagsakId }),
     });
 }
