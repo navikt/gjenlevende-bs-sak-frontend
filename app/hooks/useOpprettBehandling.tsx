@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import {  opprettBehandlingApi } from "~/api/backend";
+import { opprettBehandlingApi } from "~/api/backend";
 
 interface OpprettBehandling {
   opprettBehandling: (fagsakId: string) => Promise<void>;
@@ -19,21 +19,17 @@ export const useOpprettBehandling = (): OpprettBehandling => {
 
       try {
         const response = await opprettBehandlingApi(fagsakId);
+        console.log(response);
 
-        console.log(response)
-
-
-        settOpprettFeilmelding(
-          "Kunne ikke opprette fagsak."
-        );
       } catch (error) {
         console.error("Opprettelse av fagsak feilet", error);
-        settOpprettFeilmelding("Kunne ikke opprette fagsak akkurat nå.");
+        settOpprettFeilmelding("Kunne ikke opprette behandling: " + error);
+
       } finally {
         settOppretter(false);
       }
     },
-    []
+    [],
   );
 
   return {

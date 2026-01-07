@@ -159,7 +159,7 @@ export async function hentEllerOpprettFagsak(
 
 export async function opprettBehandlingApi(
   fagsakId: string
-): Promise<ApiResponse<FagsakApiResponse>> {
+): Promise<ApiResponse<string>> {
 
   const request: OpprettBehandlingRequest =
      { fagsakId: fagsakId };

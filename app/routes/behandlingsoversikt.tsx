@@ -13,9 +13,7 @@ export function meta(_: Route.MetaArgs) {
 
 export default function Behandlingsoversikt() {
 
-  function startOpprettBehandling() {
-    opprettBehandling("6d2b3d2c-f42e-421c-a021-c3d76216fa6c_fungerer ikke")
-  }
+
 
     const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
     const {
@@ -27,12 +25,13 @@ export default function Behandlingsoversikt() {
 
   const { opprettBehandling, opprettFeilmelding } = useOpprettBehandling();
 
+  console.log("OPPRETTET BEHANDLING: ")
 
 
-  if (laster || lasterFagsak || !behandlinger) {
+  if (laster || lasterFagsak || !behandlinger || !fagsak ) {
         return (
             <div>
-                Henter behandlinger...
+                Henter data...
                 <Loader title="Laster..." />
             </div>
         );
@@ -48,6 +47,12 @@ export default function Behandlingsoversikt() {
         );
     }
 
+  function startOpprettBehandling() {
+    if(fagsak){
+      opprettBehandling(fagsak.id)
+    }
+  }
+
   return (
     <VStack gap="4">
       <Heading level="1" size="large">
@@ -60,9 +65,11 @@ export default function Behandlingsoversikt() {
           </li>
         ))}
       </VStack>
+
       <Button onClick={startOpprettBehandling}>
         lag behandling på fagsak 6d2b3d2c-f42e-421c-a021-c3d76216fa6c
       </Button>
+
       <VStack gap="2">
         <BodyShort>{opprettFeilmelding}</BodyShort>
       </VStack>
