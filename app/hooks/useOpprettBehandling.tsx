@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { opprettBehandlingApi } from "~/api/backend";
 
 interface OpprettBehandling {
-  opprettBehandling: (fagsakId: string) => Promise<void>;
+  opprettBehandling: (fagsakId: string) => Promise<string | undefined>;
   oppretter: boolean;
   opprettFeilmelding: string | null;
 }
@@ -12,21 +12,20 @@ export const useOpprettBehandling = (): OpprettBehandling => {
   const [opprettFeilmelding, settOpprettFeilmelding] = useState<string | null>(null);
 
   const opprettBehandling = useCallback(
-    async (fagsakId: string) => {
-
+    async (fagsakId: string): Promise<string | undefined> => {
       settOppretter(true);
       settOpprettFeilmelding(null);
-
       try {
         const response = await opprettBehandlingApi(fagsakId);
-        if(response.error){
-            settOpprettFeilmelding("Kunne ikke opprette behandling")
+        if(response.error || !response.data){
+            settOpprettFeilmelding("Kunne ikke opprette behandling");
+            return undefined;
         }
-
+        return response.data;
       } catch (error) {
         console.error("Opprettelse av fagsak feilet", error);
         settOpprettFeilmelding("Kunne ikke opprette behandling: " + error);
-
+        return undefined;
       } finally {
         settOppretter(false);
       }

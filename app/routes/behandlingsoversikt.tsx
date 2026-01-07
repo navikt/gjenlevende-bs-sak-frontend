@@ -5,6 +5,8 @@ import {useHentBehandlinger} from "~/hooks/useHentBehandlinger";
 import {useParams} from "react-router";
 import {useFagsak} from "~/hooks/useFagsak";
 import { useOpprettBehandling } from "~/hooks/useOpprettBehandling";
+import { useNavigate } from "react-router";
+import {formaterIsoDatoTidMedSekunder} from "~/utils/utils";
 
 
 export function meta(_: Route.MetaArgs) {
@@ -13,6 +15,7 @@ export function meta(_: Route.MetaArgs) {
 
 export default function Behandlingsoversikt() {
     const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
+    const navigate = useNavigate();
     const {
         fagsak,
         error: fagsakError,
@@ -41,10 +44,17 @@ export default function Behandlingsoversikt() {
         );
     }
 
-  function startOpprettBehandling() {
+  async function startOpprettBehandling() {
     if(fagsak){
-      opprettBehandling(fagsak.id)
+      const behandlingId = await opprettBehandling(fagsak.id);
+      if (behandlingId) {
+          gåTilBehandling(behandlingId);
+      }
     }
+  }
+
+  function gåTilBehandling(behandlingId: string) {
+    navigate(`/person/${fagsakPersonId}/behandling/${behandlingId}/inngangsvilkar`);
   }
 
   return (
@@ -53,9 +63,9 @@ export default function Behandlingsoversikt() {
         Behandlingsoversikt
       </Heading>
       <VStack>
-        {behandlinger.map((b) => (
-          <li key={b.id}>
-            {b.id} - {b.status} - {b.opprettetAv}
+        {behandlinger.map((behandling) => (
+          <li key={behandling.id}>
+            {formaterIsoDatoTidMedSekunder(behandling.opprettet)} - {behandling.status} - {behandling.opprettetAv} <Button size="small" onClick={() => gåTilBehandling(behandling.id)}>Gå til behandling</Button>
           </li>
         ))}
       </VStack>

@@ -1,3 +1,4 @@
+import {format, parseISO } from "date-fns";
 import type { Navn } from "~/api/backend";
 
 export const formaterNavn = (navn: Navn): string => {
@@ -14,4 +15,8 @@ export const erGyldigFagsakPersonId = (verdi: string): boolean =>
 
 export const erGyldigSøkestreng = (søkestreng: string): boolean => {
   return erGyldigPersonident(søkestreng) || erGyldigFagsakPersonId(søkestreng);
+};
+
+export const formaterIsoDatoTidMedSekunder = (dato: string): string => {
+    return format(parseISO(dato), "dd.MM.yyyy 'kl'.HH:mm:ss");
 };
