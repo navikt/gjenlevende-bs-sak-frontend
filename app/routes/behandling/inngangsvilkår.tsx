@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { Button, Heading, VStack } from "@navikt/ds-react";
-import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import { Button } from "@navikt/ds-react";
 import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import type { Route } from "./+types/inngangsvilkår";
@@ -13,13 +12,13 @@ export function meta(_: Route.MetaArgs) {
 
 // TODO: Rename til Vilkår?
 export default function Inngangsvilkår() {
-  const { behandlingId } = useBehandlingContext();
-  const [erUtfylt, settErUtfylt] = useState(false);
+  // const { behandlingId } = useBehandlingContext();
+  const [erVilkårUtfylt, settErVilkårUtfylt] = useState(false);
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
 
-  useMarkerStegFerdige("inngangsvilkår", erUtfylt);
-  const harFyltUtAlt = true; // TODO: Implementere validering
+  useMarkerStegFerdige("inngangsvilkår", erVilkårUtfylt);
+  const harFyltUtAlt = erVilkårUtfylt;
 
   const navigerTilNeste = () => {
     const nesteSteg = finnNesteSteg("inngangsvilkar");
@@ -30,24 +29,20 @@ export default function Inngangsvilkår() {
 
   const handleNesteKlikk = () => {
     if (harFyltUtAlt) {
-      settErUtfylt(true);
+      settErVilkårUtfylt(true);
       navigerTilNeste();
     }
   };
 
   return (
     <>
-      <VilkårInnhold />
-      <VStack gap="4">
-        <Heading size="large">Inngangsvilkår</Heading>
-        <p>Behandling ID: {behandlingId}</p>
+      <VilkårInnhold settErVilkårUtfylt={settErVilkårUtfylt} />
 
-        <div>
-          <Button onClick={handleNesteKlikk} disabled={!harFyltUtAlt}>
-            Neste
-          </Button>
-        </div>
-      </VStack>
+      <div>
+        <Button onClick={handleNesteKlikk} disabled={!harFyltUtAlt}>
+          Neste
+        </Button>
+      </div>
     </>
   );
 }
