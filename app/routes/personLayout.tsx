@@ -57,10 +57,16 @@ export default function PersonLayout() {
       }}
     >
       <Personheader />
-      {!erPåBehandling && <Navbar />}
-      <Side>
+      {!erPåBehandling ? (
+        <>
+          <Navbar />
+          <Side>
+            <Outlet />
+          </Side>
+        </>
+      ) : (
         <Outlet />
-      </Side>
+      )}
     </PersonContext.Provider>
   );
 }

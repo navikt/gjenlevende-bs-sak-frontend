@@ -1,11 +1,18 @@
 import React, { useContext } from "react";
+import type { BehandlingSteg, Steg } from "~/komponenter/navbar/BehandlingFaner";
 // import type { Behandling } from "~/types/behandling";
 
 export const BehandlingContext = React.createContext<{
   behandlingId: string;
+  ferdigeSteg: Steg[];
+  markerStegSomFerdig: (steg: Steg) => void;
+  stegListe?: BehandlingSteg[];
   //   behandling?: Behandling;
 }>({
   behandlingId: "",
+  ferdigeSteg: [],
+  markerStegSomFerdig: () => {},
+  stegListe: undefined,
   //   behandling: undefined,
 });
 
