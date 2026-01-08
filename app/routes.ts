@@ -6,6 +6,7 @@ export default [
     route("behandlingsoversikt", "routes/behandlingsoversikt.tsx"),
     route("behandling/:behandlingId", "routes/behandling/behandlingLayout.tsx", [
       route("inngangsvilkar", "routes/behandling/inngangsvilkår.tsx"),
+      route("vedtak-og-beregning", "routes/behandling/vedtakOgBeregning.tsx"),
     ]),
     route("personoversikt", "routes/personoversikt.tsx"),
     route("infotrygd-historikk", "routes/infotrygdHistorikk.tsx"),
