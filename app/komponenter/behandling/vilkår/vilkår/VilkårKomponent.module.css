@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+.venstreKolonne {
+  flex: 3;
+}
+
+.høyreKolonne {
+  flex: 2;
+}
