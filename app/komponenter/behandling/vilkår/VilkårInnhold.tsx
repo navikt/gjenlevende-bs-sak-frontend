@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { VStack } from "@navikt/ds-react";
 import Inngangsvilkår from "./vilkår/Inngangsvilkår";
 import Aktivitet from "./vilkår/Aktivitet";
@@ -11,7 +11,9 @@ interface VilkårState {
   begrunnelse: string;
 }
 
-export const VilkårInnhold: React.FC = () => {
+export const VilkårInnhold: React.FC<{
+  settErVilkårUtfylt: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ settErVilkårUtfylt }) => {
   const [inngangsvilkår, settInngangsvilkår] = useState<VilkårState>({
     spørsmålSvar: "",
     begrunnelse: "",
@@ -36,6 +38,28 @@ export const VilkårInnhold: React.FC = () => {
     spørsmålSvar: "",
     begrunnelse: "",
   });
+
+  const sjekkOmSpørsmålHarSvar = (val: string) => val !== "";
+
+  const alleVilkårHarSvar = useMemo(() => {
+    return (
+      sjekkOmSpørsmålHarSvar(inngangsvilkår.spørsmålSvar) &&
+      sjekkOmSpørsmålHarSvar(aktivitet.spørsmålSvar) &&
+      sjekkOmSpørsmålHarSvar(inntekt.spørsmålSvar) &&
+      sjekkOmSpørsmålHarSvar(alderPåBarn.spørsmålSvar) &&
+      sjekkOmSpørsmålHarSvar(dokumentasjonTilsynsutgifter.spørsmålSvar)
+    );
+  }, [
+    inngangsvilkår.spørsmålSvar,
+    aktivitet.spørsmålSvar,
+    inntekt.spørsmålSvar,
+    alderPåBarn.spørsmålSvar,
+    dokumentasjonTilsynsutgifter.spørsmålSvar,
+  ]);
+
+  useEffect(() => {
+    settErVilkårUtfylt(alleVilkårHarSvar);
+  }, [alleVilkårHarSvar, settErVilkårUtfylt]);
 
   return (
     <VStack gap="16">
