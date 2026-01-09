@@ -7,9 +7,7 @@ export interface ToggleContext {
   laster: boolean;
 }
 
-export const ToggleContext = createContext<ToggleContext | undefined>(
-  undefined
-);
+export const ToggleContext = createContext<ToggleContext | undefined>(undefined);
 
 export const TogglesProvider: React.FC<{
   children: React.ReactNode;
@@ -21,8 +19,8 @@ export const TogglesProvider: React.FC<{
     settLaster(true);
     const response = await hentToggles();
 
-    if (response.error) {
-      console.error("Feil ved henting av toggles:", response.error);
+    if (response.status) {
+      console.error("Feil ved henting av toggles:", response.status);
     } else {
       settToggles(response.data || {});
     }
@@ -38,7 +36,5 @@ export const TogglesProvider: React.FC<{
     laster,
   };
 
-  return (
-    <ToggleContext.Provider value={value}>{children}</ToggleContext.Provider>
-  );
+  return <ToggleContext.Provider value={value}>{children}</ToggleContext.Provider>;
 };

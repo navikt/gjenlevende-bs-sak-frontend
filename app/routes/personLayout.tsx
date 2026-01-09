@@ -11,21 +11,12 @@ import { useFagsak } from "~/hooks/useFagsak";
 export default function PersonLayout() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
   const erPåBehandling = useMatch("/person/:fagsakPersonId/behandling/:behandlingId/*");
-  const {
-    fagsak,
-    error: fagsakError,
-    melding: fagsakMelding,
-    laster: lasterFagsak,
-  } = useFagsak(fagsakPersonId);
+  const { fagsak, melding: fagsakMelding, laster: lasterFagsak } = useFagsak(fagsakPersonId);
 
   const personident = fagsak?.personident;
-  const { navn, error: navnError, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
+  const { navn, melding, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
 
   const laster = lasterFagsak || lasterNavn;
-  const feil =
-    fagsakError ||
-    (!fagsakPersonId ? "Mangler fagsakPersonId" : null) ||
-    (!personident ? "Fant ikke personident for fagsaken" : null);
 
   if (laster) {
     return (
@@ -35,11 +26,11 @@ export default function PersonLayout() {
     );
   }
 
-  if (feil || !fagsakPersonId || !personident) {
+  if (!fagsakPersonId || !personident) {
     return (
       <VStack gap="4" style={{ padding: "2rem" }}>
         <Alert variant="error">
-          Kunne ikke hente personinformasjon: {feil || "Mangler data"}
+          Kunne ikke hente personinformasjon: {melding || "Mangler data"}
           {fagsakMelding && <p>{fagsakMelding}</p>}
         </Alert>
       </VStack>
@@ -53,7 +44,6 @@ export default function PersonLayout() {
         personident,
         fagsakPersonId,
         laster: lasterNavn,
-        error: navnError,
       }}
     >
       <Personheader />

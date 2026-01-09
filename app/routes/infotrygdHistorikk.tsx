@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Heading, Loader, Table, VStack } from "@navikt/ds-react";
+import { Heading, Loader, Table, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/infotrygdHistorikk";
 import { useHentInfotrygdHistorikk } from "~/hooks/useHentInfotrygdHistorikk";
 import { usePersonContext } from "~/contexts/PersonContext";
@@ -17,7 +17,7 @@ export function meta(_: Route.MetaArgs) {
 export default function InfotrygdHistorikk(_: Route.ComponentProps) {
   const { personident } = usePersonContext();
   const state = useHentInfotrygdHistorikk(personident);
-  const { data: historikk, laster, feil, melding } = state;
+  const { data: historikk, laster } = state;
 
   if (laster) {
     return (
@@ -25,17 +25,6 @@ export default function InfotrygdHistorikk(_: Route.ComponentProps) {
         Laster historikk fra Infotrygd...
         <Loader title="Laster..." />
       </div>
-    );
-  }
-
-  if (feil) {
-    return (
-      <Alert variant="error">
-        <Heading level="2" size="small" spacing>
-          {feil}
-        </Heading>
-        {melding && <p>{melding}</p>}
-      </Alert>
     );
   }
 
