@@ -1,10 +1,11 @@
 import { Box, Button, Heading, HGrid, Select, VStack } from "@navikt/ds-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
 import { PlusIcon } from "@navikt/aksel-icons";
 import { PdfForhåndsvisning } from "~/komponenter/brev/PdfForhåndsvisning";
 import { brevmaler } from "~/komponenter/brev/brevmaler";
 import { useBrev } from "~/komponenter/brev/useBrev";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 export const BrevSide = () => {
   const {
@@ -17,7 +18,19 @@ export const BrevSide = () => {
     oppdaterFelt,
     velgBrevmal,
     sendPdfTilSak,
+    mellomlagreBrev,
   } = useBrev();
+
+  const { behandlingId } = useBehandlingContext();
+
+  useEffect(() => {
+    if (!brevMal) return;
+    const timer = setTimeout(() => {
+      mellomlagreBrev(behandlingId, brevMal, fritekstbolker);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [behandlingId, brevMal, fritekstbolker, mellomlagreBrev]);
 
   return (
     <HGrid gap="32" columns={2} width={"100%"}>
@@ -79,7 +92,7 @@ export const BrevSide = () => {
             fritekstbolker && ( //TODO undersøke om det er noen maler som ikke har fritekstbolker. Isåfall kun {brevmal &&
               <Button
                 style={{ width: "fit-content" }}
-                onClick={() => sendPdfTilSak(brevMal, fritekstbolker)}
+                onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
                 disabled={sender}
               >
                 Send pdf til sak{" "}
