@@ -1,65 +1,56 @@
 import { useEffect, useState } from "react";
-import {hentBehandlingerForFagsak} from "~/api/backend";
-import type {Behandling} from "~/types/behandling";
+import { hentBehandlingerForFagsak } from "~/api/backend";
+import type { Behandling } from "~/types/behandling";
 
 interface BehandlingerState {
-    behandlinger: [Behandling] | null;
-    error: string | null;
-    laster: boolean;
+  behandlinger: [Behandling] | null;
+  melding: string | null;
+  laster: boolean;
 }
 
 export function useHentBehandlinger(fagsakId: string | undefined) {
-    const [state, settState] = useState<BehandlingerState>({
-        behandlinger: null,
-        error: null,
-        laster: true,
-    });
+  const [state, settState] = useState<BehandlingerState>({
+    behandlinger: null,
+    melding: null,
+    laster: true,
+  });
 
-    useEffect(() => {
+  useEffect(() => {
+    const hentBehandlinger = async () => {
+      if (!fagsakId) {
+        settState((prev) => ({
+          ...prev,
+          melding: "Mangler fagsakId",
+          laster: false,
+        }));
+        return;
+      }
 
-        const hentBehandlinger = async () => {
+      settState((prev) => ({ ...prev, melding: null, laster: true }));
 
-            if (!fagsakId) {
-                settState((prev) => ({
-                    ...prev,
-                    error: "Mangler fagsakId",
-                    laster: false,
-                }));
-                return;
-            }
+      try {
+        const response = await hentBehandlingerForFagsak(fagsakId);
 
-            settState((prev) => ({ ...prev, error: null, laster: true }));
+        if (response.data) {
+          settState((prev) => ({
+            ...prev,
+            behandlinger: response.data ?? null,
+            laster: false,
+          }));
+        }
+      } catch (error) {
+        console.error("Feil ved henting av behandlinger", error);
 
-            try {
-                const response = await hentBehandlingerForFagsak(fagsakId);
+        settState((prev) => ({
+          ...prev,
+          error: error instanceof Error ? error.message : "Kunne ikke hente behandlinger",
+          laster: false,
+        }));
+      }
+    };
 
-                if (response.error) {
-                    settState((prev) => ({
-                        ...prev,
-                        error: response.error ?? "Ukjent feil",
-                        laster: false,
-                    }));
-                } else if (response.data) {
-                    settState((prev) => ({
-                        ...prev,
-                        behandlinger: response.data ?? null,
-                        laster: false,
-                    }));
-                }
-            } catch (error) {
-                console.error("Feil ved henting av behandlinger", error);
+    hentBehandlinger();
+  }, [fagsakId]);
 
-                settState((prev) => ({
-                    ...prev,
-                    error:
-                        error instanceof Error ? error.message : "Kunne ikke hente behandlinger",
-                    laster: false,
-                }));
-            }
-        };
-
-        hentBehandlinger();
-    }, [fagsakId]);
-
-    return state;
+  return state;
 }

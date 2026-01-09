@@ -3,7 +3,6 @@ import { hentHistorikkForPerson } from "~/api/backend";
 
 interface HistorikkState {
   data: unknown | null;
-  feil: string | null;
   melding: string | null;
   laster: boolean;
 }
@@ -11,7 +10,6 @@ interface HistorikkState {
 export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
   const [state, settState] = useState<HistorikkState>({
     data: null,
-    feil: null,
     melding: null,
     laster: true,
   });
@@ -23,7 +21,6 @@ export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
       if (!personident) {
         settState({
           data: null,
-          feil: "Mangler personident",
           melding: null,
           laster: false,
         });
@@ -38,16 +35,13 @@ export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
         if (response.data) {
           settState({
             data: response.data,
-            feil: null,
             melding: null,
             laster: false,
           });
-        } else if (response.error) {
-          console.error("Feil fra backend:", response.error, response.melding);
+        } else {
           settState({
             data: null,
-            feil: response.error,
-            melding: response.melding ?? null,
+            melding: response.melding || null,
             laster: false,
           });
         }
@@ -57,7 +51,6 @@ export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
         console.error("Feil ved henting av historikk:", error);
         settState({
           data: null,
-          feil: "Ukjent feil",
           melding: error instanceof Error ? error.message : null,
           laster: false,
         });

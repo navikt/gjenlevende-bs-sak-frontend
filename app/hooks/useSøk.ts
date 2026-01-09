@@ -24,8 +24,8 @@ export const useSøk = (): UseSøkReturn => {
 
     const response = await søkPerson(søkestreng);
 
-    if (response.error) {
-      settFeilmelding(response.melding || response.error);
+    if (response.status) {
+      settFeilmelding(response.status);
     } else if (response.data) {
       settSøkeresultat(response.data);
     }
