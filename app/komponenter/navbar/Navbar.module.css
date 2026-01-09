@@ -18,3 +18,8 @@
 .link.aktiv {
   border-bottom: 1px solid var(--a-border-action-selected);
 }
+
+.disabled {
+  color: lightgray; /* TODO: Finne korrekt farge fra Aksel*/
+  pointer-events: none;
+}

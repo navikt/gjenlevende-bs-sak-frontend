@@ -1,8 +1,48 @@
-import React from "react";
-import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
+import { Button } from "@navikt/ds-react";
+import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
+import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
+import type { Route } from "./+types/inngangsvilkår";
+import { VilkårInnhold } from "~/komponenter/behandling/vilkår/VilkårInnhold";
 
+export function meta(_: Route.MetaArgs) {
+  return [{ title: "Inngangsvilkår" }];
+}
+
+// TODO: Rename til Vilkår?
 export default function Inngangsvilkår() {
-  const { behandlingId } = useBehandlingContext();
+  // const { behandlingId } = useBehandlingContext();
+  const [erVilkårUtfylt, settErVilkårUtfylt] = useState(false);
+  const navigate = useNavigate();
+  const { finnNesteSteg } = useBehandlingSteg();
 
-  return <div>Inngangsvilkår side for behandling {behandlingId}</div>;
+  useMarkerStegFerdige("inngangsvilkår", erVilkårUtfylt);
+  const harFyltUtAlt = erVilkårUtfylt;
+
+  const navigerTilNeste = () => {
+    const nesteSteg = finnNesteSteg("inngangsvilkar");
+    if (nesteSteg) {
+      navigate(`../${nesteSteg.path}`, { relative: "path" });
+    }
+  };
+
+  const handleNesteKlikk = () => {
+    if (harFyltUtAlt) {
+      settErVilkårUtfylt(true);
+      navigerTilNeste();
+    }
+  };
+
+  return (
+    <>
+      <VilkårInnhold settErVilkårUtfylt={settErVilkårUtfylt} />
+
+      <div>
+        <Button onClick={handleNesteKlikk} disabled={!harFyltUtAlt}>
+          Neste
+        </Button>
+      </div>
+    </>
+  );
 }
