@@ -6,7 +6,6 @@ interface PersonContextType {
   personident: string;
   fagsakPersonId: string;
   laster: boolean;
-  error: string | null;
 }
 
 const PersonContext = createContext<PersonContextType | null>(null);

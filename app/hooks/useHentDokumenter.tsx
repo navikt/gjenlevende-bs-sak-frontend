@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import {hentDokumenterForPerson} from "~/api/backend";
-import type {Dokumentinfo} from "~/api/dokument";
+import { hentDokumenterForPerson } from "~/api/backend";
+import type { Dokumentinfo } from "~/api/dokument";
 
 interface DokumenterState {
   dokumenter: [Dokumentinfo] | null;
-  error: string | null;
+  melding: string | null;
   laster: boolean;
 }
 
 export function useHentDokumenter(fagsakPersonId: string | undefined) {
   const [state, settState] = useState<DokumenterState>({
     dokumenter: null,
-    error: null,
+    melding: null,
     laster: true,
   });
 
@@ -24,26 +24,20 @@ export function useHentDokumenter(fagsakPersonId: string | undefined) {
       if (!fagsakPersonId) {
         settState((prev) => ({
           ...prev,
-          error: "Mangler fagsakId",
+          melding: "Mangler fagsakId",
           laster: false,
         }));
         return;
       }
 
-      settState((prev) => ({ ...prev, error: null, laster: true }));
+      settState((prev) => ({ ...prev, melding: null, laster: true }));
 
       try {
         const response = await hentDokumenterForPerson(fagsakPersonId);
 
         if (avbrutt) return;
 
-        if (response.error) {
-          settState((prev) => ({
-            ...prev,
-            error: response.error ?? "Ukjent feil",
-            laster: false,
-          }));
-        } else if (response.data) {
+        if (response.data) {
           settState((prev) => ({
             ...prev,
             dokumenter: response.data ?? null,
@@ -56,8 +50,7 @@ export function useHentDokumenter(fagsakPersonId: string | undefined) {
 
         settState((prev) => ({
           ...prev,
-          error:
-            error instanceof Error ? error.message : "Kunne ikke hente journalposter",
+          error: error instanceof Error ? error.message : "Kunne ikke hente journalposter",
           laster: false,
         }));
       }

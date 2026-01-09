@@ -22,16 +22,14 @@ export const useOpprettFagsak = (): OpprettFagsak => {
 
       try {
         const response = await hentEllerOpprettFagsak(søkeresultat.personident);
-        const fagsak = response.data?.data;
+        const fagsak = response.data;
 
         if (fagsak?.fagsakPersonId) {
           navigate(`/person/${fagsak.fagsakPersonId}/behandlingsoversikt`);
           return;
         }
 
-        settOpprettFeilmelding(
-          response.data?.frontendFeilmelding || response.error || "Kunne ikke opprette fagsak."
-        );
+        settOpprettFeilmelding(response.melding || "Kunne ikke opprette fagsak.");
       } catch (error) {
         console.error("Opprettelse av fagsak feilet", error);
         settOpprettFeilmelding("Kunne ikke opprette fagsak akkurat nå.");

@@ -3,14 +3,14 @@ import { hentNavnFraPdl, type Navn } from "~/api/backend";
 
 interface PersonNavnState {
   navn: Navn | null;
-  error: string | null;
+  melding: string | null;
   laster: boolean;
 }
 
 export function useHentPersonNavn(fagsakPersonId: string | undefined) {
   const [state, settState] = useState<PersonNavnState>({
     navn: null,
-    error: null,
+    melding: null,
     laster: true,
   });
 
@@ -24,27 +24,20 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
         settState((prev) => ({
           ...prev,
           navn: null,
-          error: null,
+          melding: null,
           laster: false,
         }));
         return;
       }
 
-      settState((prev) => ({ ...prev, error: null, laster: true }));
+      settState((prev) => ({ ...prev, melding: null, laster: true }));
 
       try {
         const response = await hentNavnFraPdl(fagsakPersonId);
 
         if (avbrutt) return;
 
-        if (response.error) {
-          settState((prev) => ({
-            ...prev,
-            navn: null,
-            error: response.error ?? "Ukjent feil",
-            laster: false,
-          }));
-        } else if (response.data) {
+        if (response.data) {
           settState((prev) => ({
             ...prev,
             navn: response.data ?? null,
@@ -54,7 +47,7 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
           settState((prev) => ({
             ...prev,
             navn: null,
-            error: response.melding ?? "Fant ikke navn i PDL",
+            melding: response.melding ?? "Fant ikke navn i PDL",
             laster: false,
           }));
         }
@@ -64,8 +57,7 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
 
         settState((prev) => ({
           ...prev,
-          error:
-            error instanceof Error ? error.message : "Kunne ikke hente navn",
+          melding: error instanceof Error ? error.message : "Kunne ikke hente navn",
           laster: false,
         }));
       }

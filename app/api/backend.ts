@@ -1,10 +1,10 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
-import type {Dokumentinfo} from "~/api/dokument";
-import type {Behandling} from "~/types/behandling";
+import type { Dokumentinfo } from "~/api/dokument";
+import type { Behandling } from "~/types/behandling";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
-  error?: string;
+  status?: string;
   melding?: string;
 }
 
@@ -22,19 +22,16 @@ export interface FagsakRequest {
   stønadstype: StønadType;
 }
 
+export interface OpprettBehandlingRequest {
+  fagsakId: string;
+}
+
 export interface FagsakDto {
   id: string;
   fagsakPersonId: string;
   personident: string;
   stønadstype: StønadType;
   eksternId?: number;
-}
-
-export interface FagsakApiResponse {
-  data: FagsakDto | null;
-  frontendFeilmelding?: string | null;
-  melding?: string | null;
-  status?: string;
 }
 
 export async function apiCall<T = unknown>(
@@ -61,8 +58,8 @@ export async function apiCall<T = unknown>(
 
     if (!response.ok) {
       return {
-        error: data?.error || `HTTP ${response.status}`,
-        melding: data?.melding || data,
+        status: data?.status,
+        melding: data?.melding,
       };
     }
 
@@ -70,7 +67,6 @@ export async function apiCall<T = unknown>(
   } catch (error) {
     console.error("API call error:", error);
     return {
-      error: "Nettverksfeil",
       melding: error instanceof Error ? error.message : "Ukjent feil",
     };
   }
@@ -127,15 +123,12 @@ export async function søkPerson(søkestreng: string): Promise<ApiResponse<Søke
   });
 }
 
-export async function hentEllerOpprettFagsak(
-  søkestreng: string
-): Promise<ApiResponse<FagsakApiResponse>> {
+export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiResponse<FagsakDto>> {
   // TODO: Refaktorer - kanskje dele opp i to funksjoner
   const id = søkestreng.trim();
 
   if (!erGyldigFagsakPersonId(id) && !erGyldigPersonident(id)) {
     return {
-      error: "Ugyldig fagsakPersonId/personident",
       melding: "Feil ved validering av fagsakPersonId/personident",
     };
   }
@@ -153,26 +146,42 @@ export async function hentEllerOpprettFagsak(
   });
 }
 
+export async function opprettBehandlingApi(
+  fagsakId: string
+): Promise<ApiResponse<string>> {
+
+  const request: OpprettBehandlingRequest =
+     { fagsakId: fagsakId };
+
+  return apiCall(`/behandling/opprett`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+}
+
 export async function hentDokumenterForPerson(
-    fagsakPersonId: string
+  fagsakPersonId: string
 ): Promise<ApiResponse<[Dokumentinfo]>> {
-    return apiCall(`/saf/dokumenter`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ fagsakPersonId }),
-    });
+  return apiCall(`/saf/dokumenter`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fagsakPersonId }),
+  });
 }
 
 export async function hentBehandlingerForFagsak(
-    fagsakId: string
+  fagsakId: string
 ): Promise<ApiResponse<[Behandling]>> {
-    return apiCall(`/behandling/hentBehandlinger`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ fagsakId }),
-    });
+  return apiCall(`/behandling/hentBehandlinger`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fagsakId }),
+  });
 }
