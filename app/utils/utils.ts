@@ -1,3 +1,4 @@
+import {format, parseISO } from "date-fns";
 import type { Navn } from "~/api/backend";
 
 export const formaterNavn = (navn: Navn): string => {
@@ -15,3 +16,15 @@ export const erGyldigFagsakPersonId = (verdi: string): boolean =>
 export const erGyldigSøkestreng = (søkestreng: string): boolean => {
   return erGyldigPersonident(søkestreng) || erGyldigFagsakPersonId(søkestreng);
 };
+
+export const formaterIsoDatoTid = (dato: string): string => {
+    return format(parseISO(dato), "dd.MM.yyyy 'kl'.HH:mm");
+};
+
+const replaceUnderscoreWithSpace = (str: string): string => str.split('_').join(' ');
+
+export const toTitleCase = (str: string): string =>
+    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase());
+
+export const formatterEnumVerdi = (str: string): string =>
+    replaceUnderscoreWithSpace(toTitleCase(str));
