@@ -48,12 +48,13 @@ export const useBrev = () => {
   };
 
   const sendPdfTilSak = async (
+    behandlingId: string,
     brevmal: Brevmal,
     fritekstbolker: Tekstbolk[]
   ): Promise<ApiResponse<unknown>> => {
     settSender(true);
     try {
-      return apiCall(`/brev/test`, {
+      return apiCall(`/brev/lag-task/${behandlingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,6 +69,27 @@ export const useBrev = () => {
     }
   };
 
+  const mellomlagreBrev = async (
+    behandlingId: string,
+    brevmal: Brevmal,
+    fritekstbolker: Tekstbolk[]
+  ): Promise<ApiResponse<unknown>> => {
+    try {
+      return apiCall(`/${behandlingId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          brevmal,
+          fritekstbolker,
+        }),
+      });
+    } catch (error) {
+      throw new Error("Feil ved mellomlagring av brev: " + error);
+    }
+  };
+
   return {
     brevMal,
     fritekstbolker,
@@ -78,5 +100,6 @@ export const useBrev = () => {
     oppdaterFelt,
     velgBrevmal,
     sendPdfTilSak,
+    mellomlagreBrev,
   };
 };
