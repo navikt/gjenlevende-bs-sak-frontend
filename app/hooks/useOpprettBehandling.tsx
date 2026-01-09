@@ -23,7 +23,6 @@ export const useOpprettBehandling = (): OpprettBehandling => {
         }
         return response.data;
       } catch (error) {
-        console.error("Opprettelse av fagsak feilet", error);
         settOpprettFeilmelding("Kunne ikke opprette behandling: " + error);
         return undefined;
       } finally {
