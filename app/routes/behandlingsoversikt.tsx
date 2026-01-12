@@ -11,7 +11,7 @@ import {
 import type { Route } from "./+types/behandlingsoversikt";
 import { useHentBehandlinger } from "~/hooks/useHentBehandlinger";
 import { useParams } from "react-router";
-import { useFagsak } from "~/hooks/useFagsak";
+import { usePersonContext } from "~/contexts/PersonContext";
 import { useOpprettBehandling } from "~/hooks/useOpprettBehandling";
 import { useNavigate } from "react-router";
 import { formaterIsoDatoTid, formatterEnumVerdi } from "~/utils/utils";
@@ -28,12 +28,12 @@ TableDataCellSmall.displayName = "TableDataCellSmall";
 export default function Behandlingsoversikt() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
   const navigate = useNavigate();
-  const { fagsak, laster: lasterFagsak } = useFagsak(fagsakPersonId);
-  const { behandlinger, laster } = useHentBehandlinger(fagsak?.id);
+  const { fagsak, fagsakId } = usePersonContext();
+  const { behandlinger, laster } = useHentBehandlinger(fagsakId);
 
   const { opprettBehandling, opprettFeilmelding } = useOpprettBehandling();
 
-  if (laster || lasterFagsak || !behandlinger || !fagsak) {
+  if (laster || !behandlinger || !fagsak) {
     return (
       <div>
         Henter data...
