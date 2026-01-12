@@ -43,6 +43,8 @@ export default function PersonLayout() {
         navn: navn,
         personident,
         fagsakPersonId,
+        fagsak,
+        fagsakId: fagsak?.id,
         laster: lasterNavn,
       }}
     >
