@@ -47,14 +47,7 @@ export async function apiCall<T = unknown>(
       },
     });
 
-    const contentType = response.headers.get("content-type");
-    let data;
-
-    if (contentType?.includes("application/json")) {
-      data = await response.json();
-    } else {
-      data = await response.text();
-    }
+    const data = await response.json();
 
     if (!response.ok) {
       return {
@@ -77,9 +70,6 @@ export const hentHistorikkForPerson = async (
 ): Promise<ApiResponse<unknown>> => {
   return apiCall(`/test/infotrygd/perioder`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ personident: personident }),
   });
 };
@@ -91,9 +81,6 @@ export async function hentToggles(): Promise<ApiResponse<Record<string, boolean>
 export async function hentNavnFraPdl(fagsakPersonId: string): Promise<ApiResponse<Navn>> {
   return apiCall(`/pdl/navn`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ fagsakPersonId }),
   });
 }
@@ -116,9 +103,6 @@ export async function søkPerson(søkestreng: string): Promise<ApiResponse<Søke
 
   return apiCall(`/sok/person`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(body),
   });
 }
@@ -139,25 +123,15 @@ export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiRe
 
   return apiCall(`/fagsak`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(request),
   });
 }
 
-export async function opprettBehandlingApi(
-  fagsakId: string
-): Promise<ApiResponse<string>> {
-
-  const request: OpprettBehandlingRequest =
-     { fagsakId: fagsakId };
+export async function opprettBehandlingApi(fagsakId: string): Promise<ApiResponse<string>> {
+  const request: OpprettBehandlingRequest = { fagsakId: fagsakId };
 
   return apiCall(`/behandling/opprett`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(request),
   });
 }
@@ -167,9 +141,6 @@ export async function hentDokumenterForPerson(
 ): Promise<ApiResponse<[Dokumentinfo]>> {
   return apiCall(`/saf/dokumenter`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ fagsakPersonId }),
   });
 }
@@ -179,9 +150,6 @@ export async function hentBehandlingerForFagsak(
 ): Promise<ApiResponse<[Behandling]>> {
   return apiCall(`/behandling/hentBehandlinger`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ fagsakId }),
   });
 }
