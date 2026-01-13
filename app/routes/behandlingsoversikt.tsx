@@ -11,7 +11,7 @@ import {
 import type { Route } from "./+types/behandlingsoversikt";
 import { useHentBehandlinger } from "~/hooks/useHentBehandlinger";
 import { useParams } from "react-router";
-import { useFagsak } from "~/hooks/useFagsak";
+import { usePersonContext } from "~/contexts/PersonContext";
 import { useOpprettBehandling } from "~/hooks/useOpprettBehandling";
 import { useNavigate } from "react-router";
 import { formaterIsoDatoTid, formatterEnumVerdi } from "~/utils/utils";
@@ -28,12 +28,12 @@ TableDataCellSmall.displayName = "TableDataCellSmall";
 export default function Behandlingsoversikt() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
   const navigate = useNavigate();
-  const { fagsak, laster: lasterFagsak } = useFagsak(fagsakPersonId);
-  const { behandlinger, laster } = useHentBehandlinger(fagsak?.id);
+  const { fagsak, fagsakId } = usePersonContext();
+  const { behandlinger, laster } = useHentBehandlinger(fagsakId);
 
   const { opprettBehandling, opprettFeilmelding } = useOpprettBehandling();
 
-  if (laster || lasterFagsak || !behandlinger || !fagsak) {
+  if (laster || !behandlinger || !fagsak) {
     return (
       <div>
         Henter data...
@@ -52,7 +52,7 @@ export default function Behandlingsoversikt() {
   }
 
   function gåTilBehandling(behandlingId: string) {
-    navigate(`/person/${fagsakPersonId}/behandling/${behandlingId}/inngangsvilkar`);
+    navigate(`/person/${fagsakPersonId}/behandling/${behandlingId}/vilkar`);
   }
 
   return (
@@ -67,6 +67,7 @@ export default function Behandlingsoversikt() {
               <Table.HeaderCell>Behandling opprettetdato</Table.HeaderCell>
               <Table.HeaderCell>Opprettet av</Table.HeaderCell>
               <Table.HeaderCell>Status</Table.HeaderCell>
+              <Table.HeaderCell>Resultat</Table.HeaderCell>
               <Table.HeaderCell></Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -76,6 +77,7 @@ export default function Behandlingsoversikt() {
                 <TableDataCellSmall>{formaterIsoDatoTid(behandling.opprettet)}</TableDataCellSmall>
                 <TableDataCellSmall>{behandling.opprettetAv}</TableDataCellSmall>
                 <TableDataCellSmall>{formatterEnumVerdi(behandling.status)}</TableDataCellSmall>
+                <TableDataCellSmall>{formatterEnumVerdi(behandling.resultat)}</TableDataCellSmall>
                 <TableDataCellSmall>
                   <Button size={"small"} onClick={() => gåTilBehandling(behandling.id)}>
                     Gå til behandling

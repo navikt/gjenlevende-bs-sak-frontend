@@ -4,10 +4,11 @@ import { NavLink } from "react-router";
 import { PadlockLockedIcon } from "@navikt/aksel-icons";
 import styles from "./Navbar.module.css";
 
-export type Steg = "inngangsvilkår" | "vedtak og beregning";
+export type Steg = "vilkår" | "vedtak og beregning";
+export type StegPath = "vilkar" | "vedtak-og-beregning";
 
 export type BehandlingSteg = {
-  path: string;
+  path: StegPath;
   navn: Steg;
   kanStarte?: (ferdigeSteg: Steg[]) => boolean;
 };

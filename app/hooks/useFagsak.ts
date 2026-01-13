@@ -33,27 +33,17 @@ export const useFagsak = (fagsakPersonId: string | undefined) => {
         laster: true,
       }));
 
-      try {
-        const response = await hentEllerOpprettFagsak(fagsakPersonId);
-        if (avbrutt) return;
+      const response = await hentEllerOpprettFagsak(fagsakPersonId);
+      if (avbrutt) return;
 
-        const fagsak = response.data ?? null;
+      const fagsak = response.data ?? null;
 
-        if (fagsak) {
-          settState({ fagsak, melding: null, laster: false });
-        } else {
-          settState({
-            fagsak: null,
-            melding: response.melding || "Fagsak ikke funnet",
-            laster: false,
-          });
-        }
-      } catch (error) {
-        if (avbrutt) return;
-
+      if (fagsak) {
+        settState({ fagsak, melding: null, laster: false });
+      } else {
         settState({
           fagsak: null,
-          melding: error instanceof Error ? error.message : null,
+          melding: response.melding || "Fagsak ikke funnet",
           laster: false,
         });
       }
