@@ -5,7 +5,7 @@ export default [
   route("/person/:fagsakPersonId", "routes/personLayout.tsx", [
     route("behandlingsoversikt", "routes/behandlingsoversikt.tsx"),
     route("behandling/:behandlingId", "routes/behandling/behandlingLayout.tsx", [
-      route("inngangsvilkar", "routes/behandling/inngangsvilkår.tsx"),
+      route("vilkar", "routes/behandling/vilkår.tsx"),
       route("vedtak-og-beregning", "routes/behandling/vedtakOgBeregning.tsx"),
     ]),
     route("personoversikt", "routes/personoversikt.tsx"),
