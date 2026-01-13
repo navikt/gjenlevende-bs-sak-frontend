@@ -27,31 +27,20 @@ export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
         return;
       }
 
-      try {
-        const response = await hentHistorikkForPerson(personident);
+      const response = await hentHistorikkForPerson(personident);
 
-        if (avbrutt) return;
+      if (avbrutt) return;
 
-        if (response.data) {
-          settState({
-            data: response.data,
-            melding: null,
-            laster: false,
-          });
-        } else {
-          settState({
-            data: null,
-            melding: response.melding || null,
-            laster: false,
-          });
-        }
-      } catch (error) {
-        if (avbrutt) return;
-
-        console.error("Feil ved henting av historikk:", error);
+      if (response.data) {
+        settState({
+          data: response.data,
+          melding: null,
+          laster: false,
+        });
+      } else {
         settState({
           data: null,
-          melding: error instanceof Error ? error.message : null,
+          melding: response.melding || null,
           laster: false,
         });
       }

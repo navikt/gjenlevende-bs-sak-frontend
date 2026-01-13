@@ -32,25 +32,14 @@ export function useHentDokumenter(fagsakPersonId: string | undefined) {
 
       settState((prev) => ({ ...prev, melding: null, laster: true }));
 
-      try {
-        const response = await hentDokumenterForPerson(fagsakPersonId);
+      const response = await hentDokumenterForPerson(fagsakPersonId);
 
-        if (avbrutt) return;
+      if (avbrutt) return;
 
-        if (response.data) {
-          settState((prev) => ({
-            ...prev,
-            dokumenter: response.data ?? null,
-            laster: false,
-          }));
-        }
-      } catch (error) {
-        if (avbrutt) return;
-        console.error("Feil ved henting av journalposter fra SAF:", error);
-
+      if (response.data) {
         settState((prev) => ({
           ...prev,
-          error: error instanceof Error ? error.message : "Kunne ikke hente journalposter",
+          dokumenter: response.data ?? null,
           laster: false,
         }));
       }
