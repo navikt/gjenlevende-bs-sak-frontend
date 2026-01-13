@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import { brevmaler } from "~/komponenter/brev/brevmaler";
-import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
+import type { Brevmal, MellomlagretBrev, Tekstbolk } from "~/komponenter/brev/typer";
 
-export const useBrev = () => {
+export const useBrev = (behandlingId?: string) => {
   const [brevMal, settBrevmal] = useState<Brevmal | null>(null);
   const [fritekstbolker, settFritekstbolker] = useState<Tekstbolk[]>([]);
   const [sender, settSender] = useState(false);
@@ -75,7 +75,7 @@ export const useBrev = () => {
     fritekstbolker: Tekstbolk[]
   ): Promise<ApiResponse<unknown>> => {
     try {
-      return apiCall(`/${behandlingId}`, {
+      return apiCall(`/brev/mellomlagre/${behandlingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,6 +89,23 @@ export const useBrev = () => {
       throw new Error("Feil ved mellomlagring av brev: " + error);
     }
   };
+
+  const hentMellomlagretBrev = useCallback(() => {
+    if (!behandlingId) return;
+
+    return apiCall<MellomlagretBrev>(`/brev/hentMellomlagretBrev/${behandlingId}`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    }).then((res) => {
+      if (!res.data) return;
+      settBrevmal(res.data.brevmal ?? null);
+      settFritekstbolker(res.data.fritekstbolker ?? []);
+    });
+  }, [behandlingId]);
+
+  useEffect(() => {
+    hentMellomlagretBrev();
+  }, [hentMellomlagretBrev]);
 
   return {
     brevMal,

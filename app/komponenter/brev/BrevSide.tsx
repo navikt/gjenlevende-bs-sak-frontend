@@ -8,6 +8,7 @@ import { useBrev } from "~/komponenter/brev/useBrev";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 export const BrevSide = () => {
+  const { behandlingId } = useBehandlingContext();
   const {
     brevMal,
     fritekstbolker,
@@ -19,9 +20,7 @@ export const BrevSide = () => {
     velgBrevmal,
     sendPdfTilSak,
     mellomlagreBrev,
-  } = useBrev();
-
-  const { behandlingId } = useBehandlingContext();
+  } = useBrev(behandlingId);
 
   useEffect(() => {
     if (!brevMal) return;
