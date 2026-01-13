@@ -9,53 +9,50 @@ import DokumentasjonTilsynsutgifter from "./vilkår/DokumentasjonTilsynsutgifter
 interface VilkårState {
   spørsmålSvar: string;
   begrunnelse: string;
+  låst: boolean;
 }
+
+const initialVilkårState: VilkårState = {
+  spørsmålSvar: "",
+  begrunnelse: "",
+  låst: false,
+};
 
 export const VilkårInnhold: React.FC<{
   settErVilkårUtfylt: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ settErVilkårUtfylt }) => {
-  const [inngangsvilkår, settInngangsvilkår] = useState<VilkårState>({
-    spørsmålSvar: "",
-    begrunnelse: "",
-  });
+  const [inngangsvilkår, settInngangsvilkår] = useState<VilkårState>(initialVilkårState);
 
-  const [aktivitet, settAktivitet] = useState<VilkårState>({
-    spørsmålSvar: "",
-    begrunnelse: "",
-  });
+  const [aktivitet, settAktivitet] = useState<VilkårState>(initialVilkårState);
 
-  const [inntekt, settInntekt] = useState<VilkårState>({
-    spørsmålSvar: "",
-    begrunnelse: "",
-  });
+  const [inntekt, settInntekt] = useState<VilkårState>(initialVilkårState);
 
-  const [alderPåBarn, settAlderPåBarn] = useState<VilkårState>({
-    spørsmålSvar: "",
-    begrunnelse: "",
-  });
+  const [alderPåBarn, settAlderPåBarn] = useState<VilkårState>(initialVilkårState);
 
-  const [dokumentasjonTilsynsutgifter, settDokumentasjonTilsynsutgifter] = useState<VilkårState>({
-    spørsmålSvar: "",
-    begrunnelse: "",
-  });
-
-  const sjekkOmSpørsmålHarSvar = (val: string) => val !== "";
+  const [dokumentasjonTilsynsutgifter, settDokumentasjonTilsynsutgifter] =
+    useState<VilkårState>(initialVilkårState);
 
   const alleVilkårHarSvar = useMemo(() => {
+    const sjekkOmVilkårHarSvarOgBegrunnelse = (vilkår: VilkårState) => {
+      return vilkår.spørsmålSvar !== "" && vilkår.begrunnelse.trim() !== "";
+    };
+
+    const sjekkOmVilkårErLåst = (vilkår: VilkårState) => {
+      return vilkår.låst;
+    };
+
+    const sjekkOmVilkårErFerdigUtfylt = (vilkår: VilkårState) => {
+      return sjekkOmVilkårHarSvarOgBegrunnelse(vilkår) && sjekkOmVilkårErLåst(vilkår);
+    };
+
     return (
-      sjekkOmSpørsmålHarSvar(inngangsvilkår.spørsmålSvar) &&
-      sjekkOmSpørsmålHarSvar(aktivitet.spørsmålSvar) &&
-      sjekkOmSpørsmålHarSvar(inntekt.spørsmålSvar) &&
-      sjekkOmSpørsmålHarSvar(alderPåBarn.spørsmålSvar) &&
-      sjekkOmSpørsmålHarSvar(dokumentasjonTilsynsutgifter.spørsmålSvar)
+      sjekkOmVilkårErFerdigUtfylt(inngangsvilkår) &&
+      sjekkOmVilkårErFerdigUtfylt(aktivitet) &&
+      sjekkOmVilkårErFerdigUtfylt(inntekt) &&
+      sjekkOmVilkårErFerdigUtfylt(alderPåBarn) &&
+      sjekkOmVilkårErFerdigUtfylt(dokumentasjonTilsynsutgifter)
     );
-  }, [
-    inngangsvilkår.spørsmålSvar,
-    aktivitet.spørsmålSvar,
-    inntekt.spørsmålSvar,
-    alderPåBarn.spørsmålSvar,
-    dokumentasjonTilsynsutgifter.spørsmålSvar,
-  ]);
+  }, [inngangsvilkår, aktivitet, inntekt, alderPåBarn, dokumentasjonTilsynsutgifter]);
 
   useEffect(() => {
     settErVilkårUtfylt(alleVilkårHarSvar);
@@ -68,6 +65,8 @@ export const VilkårInnhold: React.FC<{
         settSpørsmålSvar={(val) => settInngangsvilkår((prev) => ({ ...prev, spørsmålSvar: val }))}
         begrunnelse={inngangsvilkår.begrunnelse}
         settBegrunnelse={(val) => settInngangsvilkår((prev) => ({ ...prev, begrunnelse: val }))}
+        låst={inngangsvilkår.låst}
+        settLåst={(val) => settInngangsvilkår((prev) => ({ ...prev, låst: val }))}
       />
 
       <Aktivitet
@@ -75,6 +74,8 @@ export const VilkårInnhold: React.FC<{
         settSpørsmålSvar={(val) => settAktivitet((prev) => ({ ...prev, spørsmålSvar: val }))}
         begrunnelse={aktivitet.begrunnelse}
         settBegrunnelse={(val) => settAktivitet((prev) => ({ ...prev, begrunnelse: val }))}
+        låst={aktivitet.låst}
+        settLåst={(val) => settAktivitet((prev) => ({ ...prev, låst: val }))}
       />
 
       <Inntekt
@@ -82,6 +83,8 @@ export const VilkårInnhold: React.FC<{
         settSpørsmålSvar={(val) => settInntekt((prev) => ({ ...prev, spørsmålSvar: val }))}
         begrunnelse={inntekt.begrunnelse}
         settBegrunnelse={(val) => settInntekt((prev) => ({ ...prev, begrunnelse: val }))}
+        låst={inntekt.låst}
+        settLåst={(val) => settInntekt((prev) => ({ ...prev, låst: val }))}
       />
 
       <AlderPåBarn
@@ -89,6 +92,8 @@ export const VilkårInnhold: React.FC<{
         settSpørsmålSvar={(val) => settAlderPåBarn((prev) => ({ ...prev, spørsmålSvar: val }))}
         begrunnelse={alderPåBarn.begrunnelse}
         settBegrunnelse={(val) => settAlderPåBarn((prev) => ({ ...prev, begrunnelse: val }))}
+        låst={alderPåBarn.låst}
+        settLåst={(val) => settAlderPåBarn((prev) => ({ ...prev, låst: val }))}
       />
 
       <DokumentasjonTilsynsutgifter
@@ -100,6 +105,8 @@ export const VilkårInnhold: React.FC<{
         settBegrunnelse={(val) =>
           settDokumentasjonTilsynsutgifter((prev) => ({ ...prev, begrunnelse: val }))
         }
+        låst={dokumentasjonTilsynsutgifter.låst}
+        settLåst={(val) => settDokumentasjonTilsynsutgifter((prev) => ({ ...prev, låst: val }))}
       />
     </VStack>
   );

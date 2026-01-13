@@ -14,7 +14,9 @@ export const AlderPåBarn: React.FC<{
   settSpørsmålSvar: (val: string) => void;
   begrunnelse: string;
   settBegrunnelse: (val: string) => void;
-}> = ({ begrunnelse, settBegrunnelse, spørsmålSvar, settSpørsmålSvar }) => {
+  låst: boolean;
+  settLåst: (val: boolean) => void;
+}> = ({ begrunnelse, settBegrunnelse, spørsmålSvar, settSpørsmålSvar, låst, settLåst }) => {
   return (
     <VilkårKomponent
       navn={ALDER_PÅ_BARN_INNHOLD.navn}
@@ -24,6 +26,8 @@ export const AlderPåBarn: React.FC<{
       onChangeSpørsmål={settSpørsmålSvar}
       begrunnelse={begrunnelse}
       onChangeBegrunnelse={settBegrunnelse}
+      låst={låst}
+      settLåst={settLåst}
     />
   );
 };
