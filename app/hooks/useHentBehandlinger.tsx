@@ -28,22 +28,12 @@ export function useHentBehandlinger(fagsakId: string | undefined) {
 
       settState((prev) => ({ ...prev, melding: null, laster: true }));
 
-      try {
-        const response = await hentBehandlingerForFagsak(fagsakId);
+      const response = await hentBehandlingerForFagsak(fagsakId);
 
-        if (response.data) {
-          settState((prev) => ({
-            ...prev,
-            behandlinger: response.data ?? null,
-            laster: false,
-          }));
-        }
-      } catch (error) {
-        console.error("Feil ved henting av behandlinger", error);
-
+      if (response.data) {
         settState((prev) => ({
           ...prev,
-          error: error instanceof Error ? error.message : "Kunne ikke hente behandlinger",
+          behandlinger: response.data ?? null,
           laster: false,
         }));
       }

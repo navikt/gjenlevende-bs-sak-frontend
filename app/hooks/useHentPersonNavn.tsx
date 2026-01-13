@@ -32,32 +32,21 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
 
       settState((prev) => ({ ...prev, melding: null, laster: true }));
 
-      try {
-        const response = await hentNavnFraPdl(fagsakPersonId);
+      const response = await hentNavnFraPdl(fagsakPersonId);
 
-        if (avbrutt) return;
+      if (avbrutt) return;
 
-        if (response.data) {
-          settState((prev) => ({
-            ...prev,
-            navn: response.data ?? null,
-            laster: false,
-          }));
-        } else {
-          settState((prev) => ({
-            ...prev,
-            navn: null,
-            melding: response.melding ?? "Fant ikke navn i PDL",
-            laster: false,
-          }));
-        }
-      } catch (error) {
-        if (avbrutt) return;
-        console.error("Feil ved henting av navn fra PDL:", error);
-
+      if (response.data) {
         settState((prev) => ({
           ...prev,
-          melding: error instanceof Error ? error.message : "Kunne ikke hente navn",
+          navn: response.data ?? null,
+          laster: false,
+        }));
+      } else {
+        settState((prev) => ({
+          ...prev,
+          navn: null,
+          melding: response.melding ?? "Fant ikke navn i PDL",
           laster: false,
         }));
       }
