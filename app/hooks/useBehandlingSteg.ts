@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { BehandlingContext } from "~/contexts/BehandlingContext";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 
 export function useBehandlingSteg() {
   const { stegListe, ferdigeSteg } = useContext(BehandlingContext);
@@ -8,7 +9,7 @@ export function useBehandlingSteg() {
     throw new Error("useBehandlingSteg må brukes innenfor BehandlingContext med behandlingSteg");
   }
 
-  const finnNesteSteg = (nåværendeStegPath: string) => {
+  const finnNesteSteg = (nåværendeStegPath: StegPath) => {
     const nåværendeIndex = stegListe.findIndex((steg) => steg.path === nåværendeStegPath);
 
     if (nåværendeIndex === -1 || nåværendeIndex === stegListe.length - 1) {

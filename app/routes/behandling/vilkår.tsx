@@ -10,7 +10,6 @@ export function meta(_: Route.MetaArgs) {
   return [{ title: "Vilkår" }];
 }
 
-// TODO: Rename til Vilkår?
 export default function Vilkår() {
   // const { behandlingId } = useBehandlingContext();
   const [erVilkårUtfylt, settErVilkårUtfylt] = useState(false);
@@ -21,7 +20,7 @@ export default function Vilkår() {
   const harFyltUtAlt = erVilkårUtfylt;
 
   const navigerTilNeste = () => {
-    const nesteSteg = finnNesteSteg("vilkår");
+    const nesteSteg = finnNesteSteg("vilkar");
     if (nesteSteg) {
       navigate(`../${nesteSteg.path}`, { relative: "path" });
     }
