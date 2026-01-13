@@ -52,7 +52,7 @@ export default function Behandlingsoversikt() {
   }
 
   function gåTilBehandling(behandlingId: string) {
-    navigate(`/person/${fagsakPersonId}/behandling/${behandlingId}/inngangsvilkar`);
+    navigate(`/person/${fagsakPersonId}/behandling/${behandlingId}/vilkar`);
   }
 
   return (
