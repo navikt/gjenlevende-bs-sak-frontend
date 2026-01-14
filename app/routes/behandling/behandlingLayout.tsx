@@ -19,6 +19,11 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
     navn: "vedtak og beregning",
     kanStarte: (ferdigeSteg) => ferdigeSteg.includes("vilkår"),
   },
+  {
+    path: "brev",
+    navn: "Brev",
+    kanStarte: (ferdigeSteg) => ferdigeSteg.includes("vilkår"),
+  },
 ];
 
 export default function BehandlingLayout() {
