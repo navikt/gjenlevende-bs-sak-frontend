@@ -10,8 +10,8 @@ spec:
   # Applikasjon konfigurasjon
   port: 8080
   replicas:
-    max: 1
-    min: 1
+    max: 2
+    min: 2
   resources:
     limits:
       cpu: 500m
@@ -51,9 +51,9 @@ spec:
       autoLogin: true
   resources:
     limits:
-      memory: 96Mi
+      memory: 256Mi
     requests:
-      memory: 96Mi
+      memory: 256Mi
       cpu: 22m
 
   accessPolicy:

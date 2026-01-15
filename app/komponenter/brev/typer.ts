@@ -13,3 +13,8 @@ export interface Tekstbolk {
   underoverskrift?: string;
   innhold: string;
 }
+
+export type MellomlagretBrev = {
+  brevmal: Brevmal | null;
+  fritekstbolker: Tekstbolk[];
+};

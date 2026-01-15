@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import { brevmaler } from "~/komponenter/brev/brevmaler";
-import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
+import type { Brevmal, MellomlagretBrev, Tekstbolk } from "~/komponenter/brev/typer";
 
-export const useBrev = () => {
+export const useBrev = (behandlingId?: string) => {
   const [brevMal, settBrevmal] = useState<Brevmal | null>(null);
   const [fritekstbolker, settFritekstbolker] = useState<Tekstbolk[]>([]);
   const [sender, settSender] = useState(false);
@@ -48,12 +48,13 @@ export const useBrev = () => {
   };
 
   const sendPdfTilSak = async (
+    behandlingId: string,
     brevmal: Brevmal,
     fritekstbolker: Tekstbolk[]
   ): Promise<ApiResponse<unknown>> => {
     settSender(true);
     try {
-      return apiCall(`/brev/test`, {
+      return apiCall(`/brev/lag-task/${behandlingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,6 +69,44 @@ export const useBrev = () => {
     }
   };
 
+  const mellomlagreBrev = async (
+    behandlingId: string,
+    brevmal: Brevmal,
+    fritekstbolker: Tekstbolk[]
+  ): Promise<ApiResponse<unknown>> => {
+    try {
+      return apiCall(`/brev/mellomlagre/${behandlingId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          brevmal,
+          fritekstbolker,
+        }),
+      });
+    } catch (error) {
+      throw new Error("Feil ved mellomlagring av brev: " + error);
+    }
+  };
+
+  const hentMellomlagretBrev = useCallback(() => {
+    if (!behandlingId) return;
+
+    return apiCall<MellomlagretBrev>(`/brev/hentMellomlagretBrev/${behandlingId}`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    }).then((res) => {
+      if (!res.data) return;
+      settBrevmal(res.data.brevmal ?? null);
+      settFritekstbolker(res.data.fritekstbolker ?? []);
+    });
+  }, [behandlingId]);
+
+  useEffect(() => {
+    hentMellomlagretBrev();
+  }, [hentMellomlagretBrev]);
+
   return {
     brevMal,
     fritekstbolker,
@@ -78,5 +117,6 @@ export const useBrev = () => {
     oppdaterFelt,
     velgBrevmal,
     sendPdfTilSak,
+    mellomlagreBrev,
   };
 };

@@ -12,7 +12,6 @@ const LENKER: NavLenke[] = [
   { path: "behandlingsoversikt", tekst: "Behandlingsoversikt" },
   { path: "personoversikt", tekst: "Personoversikt" },
   { path: "infotrygd-historikk", tekst: "Infotrygd historikk" },
-  { path: "brev", tekst: "Brev" },
   { path: "dokumentoversikt", tekst: "Dokumentoversikt" },
 ];
 
@@ -24,9 +23,7 @@ export const Navbar = () => {
           <NavLink
             key={lenke.path}
             to={lenke.path}
-            className={({ isActive }) =>
-              `${styles.link}${isActive ? ` ${styles.aktiv}` : ""}`
-            }
+            className={({ isActive }) => `${styles.link}${isActive ? ` ${styles.aktiv}` : ""}`}
           >
             {lenke.tekst}
           </NavLink>
