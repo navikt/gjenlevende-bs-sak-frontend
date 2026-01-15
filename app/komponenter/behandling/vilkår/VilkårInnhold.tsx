@@ -59,7 +59,7 @@ export const VilkårInnhold: React.FC<{
   }, [alleVilkårHarSvar, settErVilkårUtfylt]);
 
   return (
-    <VStack gap="16">
+    <VStack gap="12">
       <Inngangsvilkår
         spørsmålSvar={inngangsvilkår.spørsmålSvar}
         settSpørsmålSvar={(val) => settInngangsvilkår((prev) => ({ ...prev, spørsmålSvar: val }))}
