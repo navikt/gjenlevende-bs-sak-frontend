@@ -7,6 +7,7 @@ import {
   Textarea,
   Button,
   HStack,
+  Box,
 } from "@navikt/ds-react";
 import React from "react";
 import styles from "./VilkårKomponent.module.css";
@@ -71,7 +72,13 @@ export const VilkårKomponent: React.FC<{
     );
 
   return (
-    <div className={styles.container}>
+    <Box
+      className={styles.container}
+      shadow="small"
+      background="surface-subtle"
+      padding="space-16"
+      borderRadius="large"
+    >
       <div className={styles.venstreKolonne}>
         <Heading size="small">{navn}</Heading>
         {beskrivelse.map((tekst, index) => (
@@ -130,7 +137,7 @@ export const VilkårKomponent: React.FC<{
 
           <div
             style={{
-              height: "0.5rem",
+              height: "3rem",
             }}
           >
             {harSvaralternativOgBegrunnelse && !låst && (
@@ -139,7 +146,7 @@ export const VilkårKomponent: React.FC<{
           </div>
         </VStack>
       </div>
-    </div>
+    </Box>
   );
 };
 
