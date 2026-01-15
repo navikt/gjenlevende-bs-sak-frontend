@@ -12,7 +12,6 @@ const LENKER: NavLenke[] = [
   { path: "behandlingsoversikt", tekst: "Behandlingsoversikt" },
   { path: "personoversikt", tekst: "Personoversikt" },
   { path: "infotrygd-historikk", tekst: "Infotrygd historikk" },
-  // { path: "brev", tekst: "Brev" },
   { path: "dokumentoversikt", tekst: "Dokumentoversikt" },
 ];
 
