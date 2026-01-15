@@ -22,7 +22,6 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
     path: "brev",
     navn: "Brev",
-    kanStarte: (ferdigeSteg) => ferdigeSteg.includes("vilkår"),
   },
 ];
 

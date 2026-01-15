@@ -87,16 +87,15 @@ export const BrevSide = () => {
       <Box>
         <VStack gap={"4"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
-          {brevMal &&
-            fritekstbolker && ( //TODO undersøke om det er noen maler som ikke har fritekstbolker. Isåfall kun {brevmal &&
-              <Button
-                style={{ width: "fit-content" }}
-                onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-                disabled={sender}
-              >
-                Send pdf til sak{" "}
-              </Button>
-            )}
+          {brevMal && fritekstbolker && (
+            <Button
+              style={{ width: "fit-content" }}
+              onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
+              disabled={sender}
+            >
+              Send pdf til sak{" "}
+            </Button>
+          )}
           {/* //TODO Knappen over skal bli "Send til beslutter" etterhvert*/}
         </VStack>
       </Box>
