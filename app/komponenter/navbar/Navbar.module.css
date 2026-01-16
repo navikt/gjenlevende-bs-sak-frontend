@@ -1,5 +1,14 @@
+:root {
+  --personheader-høyde: 49px;
+}
+
 .navbar {
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid var(--a-border-default);
+  position: sticky;
+  top: var(--personheader-høyde);
+  background-color: var(--a-bg-default);
+  box-shadow: var(--a-shadow-small);
+  z-index: 1;
 }
 
 .link {
@@ -20,6 +29,6 @@
 }
 
 .disabled {
-  color: lightgray; /* TODO: Finne korrekt farge fra Aksel*/
+  color: var(--a-gray-400);
   pointer-events: none;
 }
