@@ -50,6 +50,7 @@ export default function ArsakBehandling() {
     }
   };
 
+  //   TODO: Legge til lås/lesevisning når lagring og backend er på plass
   return (
     <VStack
       gap="6"
