@@ -10,14 +10,19 @@ import { Side } from "~/komponenter/layout/Side";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
-    path: "vilkar",
-    navn: "vilkår",
+    path: "arsak-behandling",
+    navn: "Årsak behandling",
     kanStarte: () => true,
   },
   {
+    path: "vilkar",
+    navn: "Vilkår",
+    kanStarte: (ferdigeSteg) => ferdigeSteg.includes("Årsak behandling"),
+  },
+  {
     path: "vedtak-og-beregning",
-    navn: "vedtak og beregning",
-    kanStarte: (ferdigeSteg) => ferdigeSteg.includes("vilkår"),
+    navn: "Vedtak og beregning",
+    kanStarte: (ferdigeSteg) => ferdigeSteg.includes("Vilkår"),
   },
   {
     path: "brev",

@@ -16,7 +16,7 @@ export default function Vilkår() {
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
 
-  useMarkerStegFerdige("vilkår", erVilkårUtfylt);
+  useMarkerStegFerdige("Vilkår", erVilkårUtfylt);
   const harFyltUtAlt = erVilkårUtfylt;
 
   const navigerTilNeste = () => {

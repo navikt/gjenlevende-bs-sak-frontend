@@ -4,8 +4,8 @@ import { NavLink } from "react-router";
 import { PadlockLockedIcon } from "@navikt/aksel-icons";
 import styles from "./Navbar.module.css";
 
-export type Steg = "vilkår" | "vedtak og beregning" | "Brev";
-export type StegPath = "vilkar" | "vedtak-og-beregning" | "brev";
+export type Steg = "Årsak behandling" | "Vilkår" | "Vedtak og beregning" | "Brev";
+export type StegPath = "arsak-behandling" | "vilkar" | "vedtak-og-beregning" | "brev";
 
 export type BehandlingSteg = {
   path: StegPath;
