@@ -12,6 +12,10 @@ export const useBrev = (behandlingId?: string) => {
     settFritekstbolker((prev) => [...prev, { underoverskrift: "", innhold: "" }]);
   };
 
+  const slettFritekstbolk = (index: number) => {
+    settFritekstbolker((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const flyttBolkOpp = (index: number) => {
     settFritekstbolker((prev) => {
       if (index === 0) return prev;
@@ -118,5 +122,6 @@ export const useBrev = (behandlingId?: string) => {
     velgBrevmal,
     sendPdfTilSak,
     mellomlagreBrev,
+    slettFritekstbolk,
   };
 };

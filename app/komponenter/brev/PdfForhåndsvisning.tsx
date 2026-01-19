@@ -50,20 +50,23 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
                 <Text style={{ fontSize: 9 }}>Dato: {new Date().toLocaleDateString("nb-NO")}</Text>
               </View>
             </View>
-            <View>{debouncedBrevmal?.tittel}</View>
+            <Text>{debouncedBrevmal?.tittel}</Text>
             <View style={styles.section}>
               <Text>Navn: {debouncedBrevmal?.informasjonOmBruker.navn}</Text>
               <Text>Fnr: {debouncedBrevmal?.informasjonOmBruker.fnr}</Text>
             </View>
             {debouncedFritekstbolker && (
-              <View style={styles.section}>
-                {debouncedFritekstbolker.map((fritekstbolk, index) => (
-                  <View key={index}>
-                    <Text style={styles.underoverskrift}>{fritekstbolk.underoverskrift}</Text>
-                    <Text>{fritekstbolk.innhold}</Text>
-                  </View>
-                ))}
-              </View>
+              <View
+                style={styles.section}
+                render={() =>
+                  debouncedFritekstbolker.map((fritekstbolk, index) => (
+                    <View key={index}>
+                      <Text style={styles.underoverskrift}>{fritekstbolk.underoverskrift}</Text>
+                      <Text>{fritekstbolk.innhold}</Text>
+                    </View>
+                  ))
+                }
+              ></View>
             )}
             <View style={styles.section}>
               {debouncedBrevmal.fastTekstAvslutning &&
