@@ -20,6 +20,7 @@ export const BrevSide = () => {
     velgBrevmal,
     sendPdfTilSak,
     mellomlagreBrev,
+    slettFritekstbolk,
   } = useBrev(behandlingId);
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export const BrevSide = () => {
                   handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
                   handleFlyttOpp={() => flyttBolkOpp(index)}
                   handleFlyttNed={() => flyttBolkNed(index)}
+                  handleSlett={() => slettFritekstbolk(index)}
                   fritekstfeltListe={fritekstbolker}
                 />
               ))}

@@ -1,6 +1,6 @@
 import { Button, HStack, Textarea, TextField, VStack } from "@navikt/ds-react";
 import React from "react";
-import { ArrowDownIcon, ArrowUpIcon } from "@navikt/aksel-icons";
+import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from "@navikt/aksel-icons";
 import type { Tekstbolk } from "~/komponenter/brev/typer";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   handleOppdaterFelt: (value: Partial<{ underoverskrift: string; innhold: string }>) => void;
   handleFlyttOpp: () => void;
   handleFlyttNed: () => void;
+  handleSlett: () => void;
   fritekstfeltListe: Tekstbolk[];
 }
 
@@ -18,6 +19,7 @@ export const Fritekstbolk = ({
   handleOppdaterFelt,
   handleFlyttOpp,
   handleFlyttNed,
+  handleSlett,
   fritekstfeltListe,
 }: Props) => {
   return (
@@ -42,6 +44,7 @@ export const Fritekstbolk = ({
       />
       {fritekstfeltListe.length > 1 && (
         <HStack justify={"end"}>
+          <Button variant={"tertiary"} icon={<TrashIcon />} onClick={handleSlett} size={"small"} />
           <Button
             variant={"tertiary"}
             icon={<ArrowDownIcon />}
