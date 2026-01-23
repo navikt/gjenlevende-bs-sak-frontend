@@ -3,9 +3,7 @@ import type { Saksbehandler } from "../types.js";
 
 export function parseJwtToken(token: string): Saksbehandler | null {
   try {
-    const payload = JSON.parse(
-      Buffer.from(token.split(".")[1], "base64").toString()
-    );
+    const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
 
     return {
       navn: payload.name || "",
@@ -20,9 +18,7 @@ export function parseJwtToken(token: string): Saksbehandler | null {
   }
 }
 
-export function hentSaksbehandlerFraHeaders(
-  req: Request
-): Saksbehandler | null {
+export function hentSaksbehandlerFraHeaders(req: Request): Saksbehandler | null {
   const token = req.headers["authorization"]?.split(" ")[1];
 
   if (!token) {
@@ -32,18 +28,12 @@ export function hentSaksbehandlerFraHeaders(
   return parseJwtToken(token);
 }
 
-export function hentAccessToken(
-  req: Request,
-  erLokal: boolean
-): string | undefined {
-  if (erLokal) {
+export function hentAccessToken(req: Request, erLokalt: boolean): string | undefined {
+  if (erLokalt) {
     return req.session.user?.accessToken;
   } else {
     const authHeader = req.headers["authorization"];
-    console.log(
-      "Sjekker token i dev. Authorization header finnes:",
-      !!authHeader
-    );
+    console.log("Sjekker token i dev. Authorization header finnes:", !!authHeader);
 
     if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.substring(7);
