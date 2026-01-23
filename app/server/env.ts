@@ -35,7 +35,7 @@ export function hentEnvConfig(): EnvConfig {
 
   return {
     env,
-    erLokalt: env === "lokalt" || env === "lokalt-mot-preprod",
+    erLokalt: env === "lokalt",
     erLokaltMotPreprod: env === "lokalt-mot-preprod",
     erDev: env === "development",
     erProduksjon: env === "production",
