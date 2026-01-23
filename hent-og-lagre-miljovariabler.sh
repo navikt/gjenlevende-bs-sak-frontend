@@ -35,7 +35,6 @@ else
   echo "Token hentet fra mock OAuth-server"
 fi
 
-# Write the variables into the .env file
 cat << EOF > .env
 # Denne filen er generert automatisk ved å kjøre \`hent-og-lagre-miljovariabler.sh\`
 
@@ -45,12 +44,12 @@ CLIENT_SECRET='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_SECRET'
 PORT=8080
 
 # Lokalt mot lokal-backend
-ENV=lokalt
-ACCESS_TOKEN_LOKALT=$ACCESS_TOKEN_LOKALT
+# ENV=lokalt
+# ACCESS_TOKEN_LOKALT=$ACCESS_TOKEN_LOKALT
 
 # Lokalt mot preprod
-#ENV=lokalt-mot-preprod
-#GJENLEVENDE_BS_SAK_SCOPE=api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default
+ENV=lokalt-mot-preprod
+GJENLEVENDE_BS_SAK_SCOPE=api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default
 
 APP_VERSION=0.0.1
 EOF
