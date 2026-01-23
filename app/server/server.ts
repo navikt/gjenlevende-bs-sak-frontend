@@ -114,7 +114,7 @@ const getBuild = async (): Promise<ServerBuild> => {
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return import("../../build/server/index.js");
+  return import("../build/server/index.js");
 };
 
 const requestListener = createRequestListener({
