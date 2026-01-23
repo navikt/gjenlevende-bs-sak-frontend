@@ -5,12 +5,7 @@ import type { ViteDevServer } from "vite";
 import cookieParser from "cookie-parser";
 import { AsyncLocalStorage } from "node:async_hooks";
 import "dotenv/config";
-import {
-  initializeAuth,
-  handleLogin,
-  handleCallback,
-  handleLogout,
-} from "./auth.js";
+import { initializeAuth, handleLogin, handleCallback, handleLogout } from "./auth.js";
 import type { Saksbehandler } from "./types.js";
 import { MILJØ } from "./env.js";
 import { hentSaksbehandlerFraHeaders } from "./utils/token.js";
@@ -21,15 +16,23 @@ import { lagViteDevServer } from "./vite-dev.js";
 
 const PORT_NUMMER = process.env.PORT;
 
-const BACKEND_URL = MILJØ.erLokal
-  ? "https://gjenlevende-bs-sak.intern.dev.nav.no"
-  : "http://gjenlevende-bs-sak";
+const hentBackendUrl = (): string => {
+  if (MILJØ.env === "lokalt") {
+    return "http://localhost:8082";
+  }
+  if (MILJØ.erLokaltMotPreprod) {
+    return "https://gjenlevende-bs-sak.intern.dev.nav.no";
+  }
+  return "http://gjenlevende-bs-sak";
+};
+
+const BACKEND_URL = hentBackendUrl();
 
 if (!BACKEND_URL) {
   throw new Error("BACKEND_URL miljøvariabel må være satt");
 }
 
-console.log(`Backend URL: ${BACKEND_URL} (erLokal: ${MILJØ.erLokal})`);
+console.log(`Backend URL: ${BACKEND_URL} (ENV: ${MILJØ.env})`);
 
 declare module "express-session" {
   interface SessionData {
@@ -40,20 +43,18 @@ declare module "express-session" {
   }
 }
 
-const erLokal = MILJØ.erLokal;
+const erLokalt = MILJØ.erLokalt;
 
-const viteDevServer: ViteDevServer | undefined = erLokal
-  ? await lagViteDevServer()
-  : undefined;
+const viteDevServer: ViteDevServer | undefined = erLokalt ? await lagViteDevServer() : undefined;
 
 const app = express();
 const saksbehandlerStorage = new AsyncLocalStorage<Saksbehandler | null>();
 
-if (erLokal) {
+if (erLokalt) {
   app.use(cookieParser());
   app.use(session(lagSessionMiddleware()));
 
-  if (process.env.CLIENT_ID && process.env.CLIENT_SECRET) {
+  if (MILJØ.erLokaltMotPreprod && process.env.CLIENT_ID && process.env.CLIENT_SECRET) {
     initializeAuth({
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
@@ -76,9 +77,9 @@ app.get("/isReady", (_req: Request, res: Response) => {
 
 app.use(express.json());
 
-app.use("/api", lagApiProxy(BACKEND_URL, erLokal));
+app.use("/api", lagApiProxy(BACKEND_URL, erLokalt));
 
-if (erLokal) {
+if (erLokalt) {
   app.get("/oauth2/login", handleLogin);
   app.get("/oauth2/callback", handleCallback);
   app.get("/oauth2/logout", handleLogout);
@@ -106,9 +107,7 @@ app.use(express.static("build/client", { maxAge: "1h" }));
 
 const getBuild = async (): Promise<ServerBuild> => {
   if (viteDevServer) {
-    return viteDevServer.ssrLoadModule(
-      "virtual:react-router/server-build"
-    ) as Promise<ServerBuild>;
+    return viteDevServer.ssrLoadModule("virtual:react-router/server-build") as Promise<ServerBuild>;
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -124,9 +123,7 @@ const requestListener = createRequestListener({
 });
 
 app.all("*splat", (req, res) => {
-  const saksbehandler = erLokal
-    ? req.session?.user || null
-    : hentSaksbehandlerInfoFraHeaders(req);
+  const saksbehandler = erLokalt ? req.session?.user || null : hentSaksbehandlerInfoFraHeaders(req);
 
   saksbehandlerStorage.run(saksbehandler, () => {
     requestListener(req, res);
@@ -135,9 +132,7 @@ app.all("*splat", (req, res) => {
 
 app.listen(PORT_NUMMER, () => {
   if (!PORT_NUMMER) {
-    throw new Error(
-      "PORT miljøvariabel må være satt. Har du kjørt scriptet for å hente secrets?"
-    );
+    throw new Error("PORT miljøvariabel må være satt. Har du kjørt scriptet for å hente secrets?");
   }
 
   console.log(`\nhttp://localhost:${PORT_NUMMER}/`);

@@ -2,25 +2,24 @@ import type { Request, Response } from "express";
 import { hentAccessToken } from "./utils/token.js";
 import { exchangeTokenForBackend } from "./obo-token-exchange.js";
 
-export function lagApiProxy(backendUrl: string, erLokal: boolean) {
+export function lagApiProxy(backendUrl: string, erLokalt: boolean) {
   return async (req: Request, res: Response) => {
     try {
-      let token = hentAccessToken(req, erLokal);
+      let token = hentAccessToken(req, erLokalt);
 
       if (!token) {
-        console.error("Ingen token funnet. erLokal:", erLokal);
-        if (!erLokal) {
+        console.error("Ingen token funnet. erLokalt:", erLokalt);
+        if (!erLokalt) {
           console.error("Headers:", JSON.stringify(req.headers, null, 2));
         }
         res.status(401).json({ error: "Ikke autentisert" });
         return;
       }
 
-      if (!erLokal) {
+      if (!erLokalt) {
         const clientId = process.env.AZURE_APP_CLIENT_ID;
         const clientSecret = process.env.AZURE_APP_CLIENT_SECRET;
-        const backendScope =
-          "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
+        const backendScope = "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
 
         if (!clientId || !clientSecret) {
           console.error("Mangler Azure AD konfigurasjon");
@@ -29,21 +28,12 @@ export function lagApiProxy(backendUrl: string, erLokal: boolean) {
         }
 
         try {
-          token = await exchangeTokenForBackend(
-            token,
-            clientId,
-            clientSecret,
-            backendScope
-          );
+          token = await exchangeTokenForBackend(token, clientId, clientSecret, backendScope);
 
           // Logg NAVident fra OBO-tokenet for debugging
           try {
-            const payload = JSON.parse(
-              Buffer.from(token.split(".")[1], "base64").toString()
-            );
-            console.log(
-              `OBO token inneholder NAVident: ${payload.NAVident || "ikke funnet"}`
-            );
+            const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
+            console.log(`OBO token inneholder NAVident: ${payload.NAVident || "ikke funnet"}`);
           } catch (e) {
             console.log("Kunne ikke parse OBO token", e);
           }
@@ -59,12 +49,10 @@ export function lagApiProxy(backendUrl: string, erLokal: boolean) {
 
       const fullBackendUrl = `${backendUrl}/api${req.path}`;
       const queryString = req.url.split("?")[1];
-      const urlWithQuery = queryString
-        ? `${fullBackendUrl}?${queryString}`
-        : fullBackendUrl;
+      const urlWithQuery = queryString ? `${fullBackendUrl}?${queryString}` : fullBackendUrl;
 
       console.log("Proxying request til:", urlWithQuery);
-      console.log("Med token fra:", erLokal ? "session" : "OBO exchange");
+      console.log("Med token fra:", erLokalt ? "session" : "OBO exchange");
 
       const backendResponse = await fetch(urlWithQuery, {
         method: req.method,
@@ -72,10 +60,7 @@ export function lagApiProxy(backendUrl: string, erLokal: boolean) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body:
-          req.method !== "GET" && req.method !== "HEAD"
-            ? JSON.stringify(req.body)
-            : undefined,
+        body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
       });
 
       console.log("Backend response status:", backendResponse.status);
