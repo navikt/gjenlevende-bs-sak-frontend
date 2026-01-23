@@ -17,26 +17,10 @@ export function lagApiProxy(backendUrl: string, erLokalt: boolean) {
       }
 
       if (!erLokalt) {
-        const clientId = process.env.AZURE_APP_CLIENT_ID;
-        const clientSecret = process.env.AZURE_APP_CLIENT_SECRET;
-        const backendScope = "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
-
-        if (!clientId || !clientSecret) {
-          console.error("Mangler Azure AD konfigurasjon");
-          res.status(500).json({ error: "Server konfigurasjonsfeil" });
-          return;
-        }
+        const audience = "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
 
         try {
-          token = await exchangeTokenForBackend(token, clientId, clientSecret, backendScope);
-
-          // Logg NAVident fra OBO-tokenet for debugging
-          try {
-            const payload = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
-            console.log(`OBO token inneholder NAVident: ${payload.NAVident || "ikke funnet"}`);
-          } catch (e) {
-            console.log("Kunne ikke parse OBO token", e);
-          }
+          token = await exchangeTokenForBackend(token, audience);
         } catch (error) {
           console.error("OBO token exchange feilet:", error);
           res.status(500).json({

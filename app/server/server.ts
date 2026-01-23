@@ -43,14 +43,17 @@ declare module "express-session" {
   }
 }
 
-const erLokalt = MILJØ.erLokalt;
+const erLokaltMiljø = MILJØ.erLokalt || MILJØ.erLokaltMotPreprod;
+const skalBrukeViteDevServer = MILJØ.erLokalt || MILJØ.erLokaltMotPreprod;
 
-const viteDevServer: ViteDevServer | undefined = erLokalt ? await lagViteDevServer() : undefined;
+const viteDevServer: ViteDevServer | undefined = skalBrukeViteDevServer
+  ? await lagViteDevServer()
+  : undefined;
 
 const app = express();
 const saksbehandlerStorage = new AsyncLocalStorage<Saksbehandler | null>();
 
-if (erLokalt) {
+if (erLokaltMiljø) {
   app.use(cookieParser());
   app.use(session(lagSessionMiddleware()));
 
@@ -77,9 +80,9 @@ app.get("/isReady", (_req: Request, res: Response) => {
 
 app.use(express.json());
 
-app.use("/api", lagApiProxy(BACKEND_URL, erLokalt));
+app.use("/api", lagApiProxy(BACKEND_URL, erLokaltMiljø));
 
-if (erLokalt) {
+if (erLokaltMiljø) {
   app.get("/oauth2/login", handleLogin);
   app.get("/oauth2/callback", handleCallback);
   app.get("/oauth2/logout", handleLogout);
@@ -111,7 +114,7 @@ const getBuild = async (): Promise<ServerBuild> => {
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return import("/app/build/server/index.js");
+  return import("../../build/server/index.js");
 };
 
 const requestListener = createRequestListener({
@@ -123,7 +126,9 @@ const requestListener = createRequestListener({
 });
 
 app.all("*splat", (req, res) => {
-  const saksbehandler = erLokalt ? req.session?.user || null : hentSaksbehandlerInfoFraHeaders(req);
+  const saksbehandler = erLokaltMiljø
+    ? req.session?.user || null
+    : hentSaksbehandlerInfoFraHeaders(req);
 
   saksbehandlerStorage.run(saksbehandler, () => {
     requestListener(req, res);
