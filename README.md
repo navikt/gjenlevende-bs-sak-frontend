@@ -40,9 +40,16 @@ Scriptet henter nødvendige hemmeligheter fra Kubernetes og oppretter en lokal `
 sh hent-og-lagre-miljovariabler.sh
 ```
 
-### 3. Start utviklingsserver
+Scriptet setter opp frontend til å gå mot preprod som default.
 
-Start lokal utviklingsserver med hot module replacement:
+For å kjøre frontend mot lokal backend fjern `#` fra følgende variabler i `.env`:
+
+```bash
+ENV=lokalt
+ACCESS_TOKEN_LOKALT=$ACCESS_TOKEN_LOKALT
+```
+
+### 3. Start utviklingsserver
 
 ```bash
 npm run dev
