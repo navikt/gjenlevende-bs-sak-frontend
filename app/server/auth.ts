@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { AuthConfig, Saksbehandler } from "./types.js";
+import { MILJØ } from "./env.js";
+import { mockSaksbehandler } from "./auth-middleware.js";
 
 const TENANT = "trygdeetaten.no";
 const AUTHORIZATION_ENDPOINT = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/authorize`;
@@ -12,8 +14,7 @@ export function initializeAuth(config: AuthConfig): void {
 }
 
 function generateRandomString(length: number = 32): string {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -37,6 +38,12 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
 }
 
 export async function handleLogin(req: Request, res: Response): Promise<void> {
+  if (MILJØ.env === "lokalt") {
+    req.session.user = mockSaksbehandler;
+    res.redirect("/");
+    return;
+  }
+
   if (!authConfig) {
     res.status(500).send("Auth not configured");
     return;
@@ -73,10 +80,7 @@ export async function handleLogin(req: Request, res: Response): Promise<void> {
   res.redirect(authUrl);
 }
 
-export async function handleCallback(
-  req: Request,
-  res: Response
-): Promise<void> {
+export async function handleCallback(req: Request, res: Response): Promise<void> {
   if (!authConfig) {
     res.status(500).send("Auth not configured");
     return;
@@ -148,6 +152,12 @@ export async function handleCallback(
 }
 
 export function handleLogout(req: Request, res: Response): void {
+  if (MILJØ.env === "lokalt") {
+    req.session.user = undefined;
+    res.redirect("/");
+    return;
+  }
+
   req.session.destroy((err) => {
     if (err) {
       console.error("Logout error:", err);
@@ -156,11 +166,7 @@ export function handleLogout(req: Request, res: Response): void {
   });
 }
 
-export function requireAuth(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   if (!req.session.user) {
     res.redirect("/oauth2/login");
     return;

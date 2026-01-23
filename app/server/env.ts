@@ -1,8 +1,9 @@
-export type AppEnv = "local" | "development" | "production";
+export type AppEnv = "lokalt" | "lokalt-mot-preprod" | "development" | "production";
 
 export interface EnvConfig {
   env: AppEnv;
-  erLokal: boolean;
+  erLokalt: boolean;
+  erLokaltMotPreprod: boolean;
   erDev: boolean;
   erProduksjon: boolean;
 }
@@ -10,8 +11,12 @@ export interface EnvConfig {
 function parseAppEnv(): AppEnv {
   const envVar = process.env.ENV?.toLowerCase();
 
-  if (envVar === "local" || envVar === "lokalt-mot-preprod") {
-    return "local";
+  if (envVar === "lokalt") {
+    return "lokalt";
+  }
+
+  if (envVar === "lokalt-mot-preprod") {
+    return "lokalt-mot-preprod";
   }
 
   if (envVar === "development" || envVar === "dev") {
@@ -30,7 +35,8 @@ export function hentEnvConfig(): EnvConfig {
 
   return {
     env,
-    erLokal: env === "local",
+    erLokalt: env === "lokalt" || env === "lokalt-mot-preprod",
+    erLokaltMotPreprod: env === "lokalt-mot-preprod",
     erDev: env === "development",
     erProduksjon: env === "production",
   };

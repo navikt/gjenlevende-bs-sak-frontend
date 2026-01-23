@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
   const { saksbehandler, env } =
     useRouteLoaderData<{
       saksbehandler: Saksbehandler | null;
-      env: "local" | "development" | "production";
+      env: "lokalt" | "development" | "production";
     }>("root") || {};
 
   const erDev = env !== "production";
