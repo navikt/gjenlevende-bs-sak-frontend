@@ -43,14 +43,14 @@ declare module "express-session" {
   }
 }
 
-const erLokal = MILJØ.erLokalt;
+const erLokalt = MILJØ.erLokalt;
 
-const viteDevServer: ViteDevServer | undefined = erLokal ? await lagViteDevServer() : undefined;
+const viteDevServer: ViteDevServer | undefined = erLokalt ? await lagViteDevServer() : undefined;
 
 const app = express();
 const saksbehandlerStorage = new AsyncLocalStorage<Saksbehandler | null>();
 
-if (erLokal) {
+if (erLokalt) {
   app.use(cookieParser());
   app.use(session(lagSessionMiddleware()));
 
@@ -77,9 +77,9 @@ app.get("/isReady", (_req: Request, res: Response) => {
 
 app.use(express.json());
 
-app.use("/api", lagApiProxy(BACKEND_URL, erLokal));
+app.use("/api", lagApiProxy(BACKEND_URL, erLokalt));
 
-if (erLokal) {
+if (erLokalt) {
   app.get("/oauth2/login", handleLogin);
   app.get("/oauth2/callback", handleCallback);
   app.get("/oauth2/logout", handleLogout);
@@ -123,7 +123,7 @@ const requestListener = createRequestListener({
 });
 
 app.all("*splat", (req, res) => {
-  const saksbehandler = erLokal ? req.session?.user || null : hentSaksbehandlerInfoFraHeaders(req);
+  const saksbehandler = erLokalt ? req.session?.user || null : hentSaksbehandlerInfoFraHeaders(req);
 
   saksbehandlerStorage.run(saksbehandler, () => {
     requestListener(req, res);
