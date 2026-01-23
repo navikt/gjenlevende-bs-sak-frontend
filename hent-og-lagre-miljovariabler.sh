@@ -23,7 +23,7 @@ then
 fi
 
 # Hent token fra mock OAuth-server for lokalt miljø
-echo "Henter fresh token fra mock OAuth-server (localhost:8089)..."
+echo "Henter token fra mock OAuth-server (localhost:8089)"
 ACCESS_TOKEN_LOKALT=$(curl -s -X POST http://localhost:8089/default/token \
   -d 'grant_type=client_credentials&client_id=test&client_secret=test' \
   | jq -r '.access_token' 2>/dev/null)
@@ -44,7 +44,7 @@ CLIENT_ID='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_ID'
 CLIENT_SECRET='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_SECRET'
 PORT=8080
 
-# Lokalt mot mock backend
+# Lokalt mot lokal-backend
 ENV=lokalt
 ACCESS_TOKEN_LOKALT=$ACCESS_TOKEN_LOKALT
 
