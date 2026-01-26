@@ -1,9 +1,7 @@
 export interface Saksbehandler {
   navn: string;
   epost: string;
-  oid: string;
-  navident: string;
-  brukernavn: string;
+  navIdent: string;
   accessToken?: string;
 }
 

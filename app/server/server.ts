@@ -51,7 +51,7 @@ const viteDevServer: ViteDevServer | undefined = skalBrukeViteDevServer
   : undefined;
 
 const app = express();
-const saksbehandlerStorage = new AsyncLocalStorage<Saksbehandler | null>();
+const saksbehandlerStorage = new AsyncLocalStorage<Saksbehandler | undefined>();
 
 if (erLokaltMiljø) {
   app.use(cookieParser());
@@ -66,7 +66,7 @@ if (erLokaltMiljø) {
   }
 }
 
-function hentSaksbehandlerInfoFraHeaders(req: Request): Saksbehandler | null {
+function hentSaksbehandlerInfoFraHeaders(req: Request): Saksbehandler | undefined {
   return hentSaksbehandlerFraHeaders(req);
 }
 
@@ -127,7 +127,7 @@ const requestListener = createRequestListener({
 
 app.all("*splat", (req, res) => {
   const saksbehandler = erLokaltMiljø
-    ? req.session?.user || null
+    ? req.session?.user || undefined
     : hentSaksbehandlerInfoFraHeaders(req);
 
   saksbehandlerStorage.run(saksbehandler, () => {
