@@ -135,14 +135,10 @@ export const VilkårKomponent: React.FC<{
             readOnly={låst}
           />
 
-          <div
-            style={{
-              height: "3rem",
-            }}
-          >
-            {harSvaralternativOgBegrunnelse && !låst && (
-              <Button onClick={handleLagreOgLås}>Lagre</Button>
-            )}
+          <div>
+            <Button onClick={handleLagreOgLås} disabled={!harSvaralternativOgBegrunnelse || låst}>
+              Lagre
+            </Button>
           </div>
         </VStack>
       </div>

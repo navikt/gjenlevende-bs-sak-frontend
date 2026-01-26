@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { MILJØ } from "./env.js";
+import type { Saksbehandler } from "./types.js";
 
 const PUBLIC_PATHS = [
   "/oauth2/login",
@@ -25,11 +26,9 @@ export const kreverAuthMiddleware = (req: Request, res: Response, next: NextFunc
   next();
 };
 
-export const mockSaksbehandler = {
+export const mockSaksbehandler: Saksbehandler = {
   navn: "Saksbehandler Saksbehandleresen",
   epost: "saksbehandler.test@nav.no",
-  oid: "mock-oid-123",
-  navident: "Z123456",
-  brukernavn: "saksbehandler",
+  navIdent: "Z123456",
   accessToken: process.env.ACCESS_TOKEN_LOKALT,
 };
