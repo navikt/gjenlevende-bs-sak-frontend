@@ -30,6 +30,5 @@ export const mockSaksbehandler: Saksbehandler = {
   navn: "Saksbehandler Saksbehandleresen",
   epost: "saksbehandler.test@nav.no",
   navIdent: "Z123456",
-  brukernavn: "saksbehandler",
   accessToken: process.env.ACCESS_TOKEN_LOKALT,
 };

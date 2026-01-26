@@ -136,7 +136,6 @@ export async function handleCallback(req: Request, res: Response): Promise<void>
       epost: idTokenPayload.email || idTokenPayload.upn,
       oid: idTokenPayload.oid,
       navIdent: idTokenPayload.NAVident,
-      brukernavn: idTokenPayload.preferred_username,
       accessToken: tokens.access_token,
     } as Saksbehandler;
 

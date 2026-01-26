@@ -14,7 +14,6 @@ export function parseToken(token: string): Saksbehandler | undefined {
     navn: parsed.name || "",
     epost: parsed.preferred_username || "",
     navIdent: parsed.NAVident || "",
-    brukernavn: parsed.preferred_username || "",
   };
 }
 
