@@ -58,20 +58,11 @@ export function lagApiProxy(backendUrl: string, erLokalt: boolean) {
       const backendResponse = await kallBackend(url, req, token);
       console.log("Backend response status:", backendResponse.status);
 
-      const contentType = backendResponse.headers.get("content-type");
-      const data = contentType?.includes("application/json")
-        ? await backendResponse.json()
-        : await backendResponse.text();
+      const data = await backendResponse.json();
 
       res.status(backendResponse.status).send(data);
     } catch (error) {
       const errorMelding = error instanceof Error ? error.message : "Ukjent feil";
-
-      if (error instanceof Error && error.message.includes("OBO")) {
-        console.error("Token exchange feilet:", error);
-        res.status(500).json({ error: "Token exchange feilet", melding: errorMelding });
-        return;
-      }
 
       console.error("API proxy error:", error);
       res.status(500).json({ error: "Feil ved kall til backend", melding: errorMelding });
