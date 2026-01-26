@@ -8,15 +8,15 @@ const byggBackendUrl = (backendUrl: string, req: Request): string => {
   return `${backendUrl}/api${req.url}`;
 };
 
-const hentTokenForBackend = async (req: Request, erLokalt: boolean): Promise<string | null> => {
+const hentTokenForBackend = async (
+  req: Request,
+  erLokalt: boolean
+): Promise<string | undefined> => {
   const token = hentAccessToken(req, erLokalt);
 
   if (!token) {
     console.error("Ingen token funnet. erLokalt:", erLokalt);
-    if (!erLokalt) {
-      console.error("Headers:", JSON.stringify(req.headers, null, 2));
-    }
-    return null;
+    return;
   }
 
   if (erLokalt) {

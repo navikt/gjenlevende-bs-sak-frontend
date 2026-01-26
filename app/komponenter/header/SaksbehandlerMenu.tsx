@@ -8,7 +8,7 @@ interface SaksbehandlerMenuProps {
 }
 
 export const SaksbehandlerMenu: React.FC<SaksbehandlerMenuProps> = ({ saksbehandler }) => {
-  const saksbehandlerNavn = saksbehandler?.navn || saksbehandler?.brukernavn || "";
+  const saksbehandlerNavn = saksbehandler?.navn || "";
 
   return (
     <Dropdown>
