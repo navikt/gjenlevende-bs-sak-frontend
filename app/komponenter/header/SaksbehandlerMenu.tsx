@@ -23,7 +23,7 @@ export const SaksbehandlerMenu: React.FC<SaksbehandlerMenuProps> = ({ saksbehand
           <BodyShort as="dt" size="small">
             {saksbehandlerNavn}
           </BodyShort>
-          <Detail as="dd">{saksbehandler?.navident}</Detail>
+          <Detail as="dd">{saksbehandler?.navIdent}</Detail>
         </dl>
         <Dropdown.Menu.Divider />
 

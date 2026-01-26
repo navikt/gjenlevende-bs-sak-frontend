@@ -2,27 +2,27 @@ import type { Request } from "express";
 import { getToken, parseAzureUserToken } from "@navikt/oasis";
 import type { Saksbehandler } from "../types.js";
 
-export function parseToken(token: string): Saksbehandler | null {
+export function parseToken(token: string): Saksbehandler | undefined {
   const parsed = parseAzureUserToken(token);
 
   if (!parsed.ok) {
     console.error("Feil ved parsing av token med Oasis");
-    return null;
+    return;
   }
 
   return {
     navn: parsed.name || "",
     epost: parsed.preferred_username || "",
-    navident: parsed.NAVident || "",
+    navIdent: parsed.NAVident || "",
     brukernavn: parsed.preferred_username || "",
   };
 }
 
-export function hentSaksbehandlerFraHeaders(req: Request): Saksbehandler | null {
+export function hentSaksbehandlerFraHeaders(req: Request): Saksbehandler | undefined {
   const token = getToken(req);
 
   if (!token) {
-    return null;
+    return;
   }
 
   return parseToken(token);
