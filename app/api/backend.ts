@@ -2,7 +2,6 @@ import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
 import type { Dokumentinfo } from "~/api/dokument";
 import type { Behandling } from "~/types/behandling";
 import type { ÅrsakType } from "~/types/årsak";
-import type { VilkårType, Vurdering } from "~/types/vilkår";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
@@ -182,35 +181,4 @@ export async function hentÅrsakBehandling(
   behandlingId: string
 ): Promise<ApiResponse<ÅrsakBehandlingResponse>> {
   return apiCall(`/arsak/${behandlingId}`);
-}
-
-export interface VilkårVurderingResponse {
-  id: string | null;
-  behandlingId: string;
-  vilkårType: VilkårType;
-  vurdering: Vurdering;
-  begrunnelse: string;
-  erVilkårOppfylt: boolean;
-}
-
-export interface VilkårVurderingRequest {
-  vilkårType: VilkårType;
-  vurdering: Vurdering;
-  begrunnelse: string;
-}
-
-export async function hentVilkårVurderinger(
-  behandlingId: string
-): Promise<ApiResponse<VilkårVurderingResponse[]>> {
-  return apiCall(`/vilkar/${behandlingId}`);
-}
-
-export async function lagreVilkårVurdering(
-  behandlingId: string,
-  request: VilkårVurderingRequest
-): Promise<ApiResponse<VilkårVurderingResponse>> {
-  return apiCall(`/vilkar/${behandlingId}`, {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
 }

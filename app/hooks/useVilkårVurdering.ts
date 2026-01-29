@@ -1,10 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  hentVilkårVurderinger,
-  lagreVilkårVurdering,
-  type VilkårVurderingResponse,
-} from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
 import type { Vurdering, VilkårType } from "~/types/vilkår";
+
+export interface VilkårVurderingResponse {
+  id: string | null;
+  behandlingId: string;
+  vilkårType: VilkårType;
+  vurdering: Vurdering;
+  begrunnelse: string;
+  erVilkårOppfylt: boolean;
+}
+
+export interface VilkårVurderingRequest {
+  vilkårType: VilkårType;
+  vurdering: Vurdering;
+  begrunnelse: string;
+}
 
 export interface VilkårState {
   spørsmålSvar: Vurdering | "";
@@ -53,6 +64,22 @@ export const useVilkårVurdering = (behandlingId: string): UseVilkårVurdering =
   const [vilkårState, settVilkårState] = useState<Record<VilkårType, VilkårState>>(lagInitialState);
   const [laster, settLaster] = useState(false);
   const [feilmelding, settFeilmelding] = useState("");
+
+  const hentVilkårVurderinger = async (
+    behandlingId: string
+  ): Promise<ApiResponse<VilkårVurderingResponse[]>> => {
+    return apiCall(`/vilkar/${behandlingId}`);
+  };
+
+  const lagreVilkårVurdering = async (
+    behandlingId: string,
+    request: VilkårVurderingRequest
+  ): Promise<ApiResponse<VilkårVurderingResponse>> => {
+    return apiCall(`/vilkar/${behandlingId}`, {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+  };
 
   useEffect(() => {
     if (!behandlingId) return;
