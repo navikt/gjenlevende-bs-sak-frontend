@@ -5,7 +5,7 @@ import type { ÅrsakType } from "~/types/årsak";
 
 export interface ÅrsakState {
   kravdato: Date;
-  årsak: ÅrsakType | "";
+  årsak: ÅrsakType;
   beskrivelse: string;
 }
 

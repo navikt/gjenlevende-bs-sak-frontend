@@ -11,12 +11,12 @@ interface UseÅrsakBehandling {
   feilmelding: string;
   erLagret: boolean;
   oppdaterKravdato: (dato: Date | undefined) => void;
-  oppdaterÅrsak: (årsak: ÅrsakType | "") => void;
+  oppdaterÅrsak: (årsak: ÅrsakType) => void;
   oppdaterBeskrivelse: (beskrivelse: string) => void;
   lagreOgNavigerVidere: () => Promise<boolean>;
 }
 
-const tilIsoDateString = (date: Date): string => {
+const tilLocalDateString = (date: Date): string => {
   return date.toISOString().split("T")[0];
 };
 
@@ -55,7 +55,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
   );
 
   const oppdaterÅrsak = useCallback(
-    (årsak: ÅrsakType | "") => {
+    (årsak: ÅrsakType) => {
       oppdaterÅrsakState({ årsak });
     },
     [oppdaterÅrsakState]
@@ -78,7 +78,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
     try {
       const response = await lagreÅrsakBehandling(behandlingId, {
-        kravdato: tilIsoDateString(årsakState.kravdato),
+        kravdato: tilLocalDateString(årsakState.kravdato),
         årsak: årsakState.årsak,
         beskrivelse: årsakState.beskrivelse,
       });
