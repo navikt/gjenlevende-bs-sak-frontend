@@ -16,7 +16,20 @@ export const Aktivitet: React.FC<{
   settBegrunnelse: (val: string) => void;
   låst: boolean;
   settLåst: (val: boolean) => void;
-}> = ({ begrunnelse, settBegrunnelse, spørsmålSvar, settSpørsmålSvar, låst, settLåst }) => {
+  lagrer: boolean;
+  onLagre: () => Promise<boolean>;
+  onSlett: () => void;
+}> = ({
+  begrunnelse,
+  settBegrunnelse,
+  spørsmålSvar,
+  settSpørsmålSvar,
+  låst,
+  settLåst,
+  lagrer,
+  onLagre,
+  onSlett,
+}) => {
   return (
     <VilkårKomponent
       navn={AKTIVITET_INNHOLD.navn}
@@ -28,6 +41,9 @@ export const Aktivitet: React.FC<{
       onChangeBegrunnelse={settBegrunnelse}
       låst={låst}
       settLåst={settLåst}
+      lagrer={lagrer}
+      onLagre={onLagre}
+      onSlett={onSlett}
     />
   );
 };
