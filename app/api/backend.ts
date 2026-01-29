@@ -1,7 +1,4 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
-import type { Dokumentinfo } from "~/api/dokument";
-import type { Behandling } from "~/types/behandling";
-import type { ÅrsakType } from "~/types/årsak";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
@@ -21,10 +18,6 @@ export interface FagsakRequest {
   personident?: string;
   fagsakPersonId?: string;
   stønadstype: StønadType;
-}
-
-export interface OpprettBehandlingRequest {
-  fagsakId: string;
 }
 
 export interface FagsakDto {
@@ -66,48 +59,6 @@ export async function apiCall<T = unknown>(
   }
 }
 
-export const hentHistorikkForPerson = async (
-  personident: string
-): Promise<ApiResponse<unknown>> => {
-  return apiCall(`/test/infotrygd/perioder`, {
-    method: "POST",
-    body: JSON.stringify({ personident: personident }),
-  });
-};
-
-export async function hentToggles(): Promise<ApiResponse<Record<string, boolean>>> {
-  return apiCall("/unleash/toggles");
-}
-
-export async function hentNavnFraPdl(fagsakPersonId: string): Promise<ApiResponse<Navn>> {
-  return apiCall(`/pdl/navn`, {
-    method: "POST",
-    body: JSON.stringify({ fagsakPersonId }),
-  });
-}
-
-export interface PersonidentRequest {
-  personident: string;
-}
-
-export interface Søkeresultat {
-  navn: string;
-  personident?: string;
-  fagsakPersonId: string;
-  harTilgang: boolean;
-  harFagsak: boolean;
-}
-
-export async function søkPerson(søkestreng: string): Promise<ApiResponse<Søkeresultat>> {
-  const erFagsakPersonId = erGyldigFagsakPersonId(søkestreng);
-  const body = erFagsakPersonId ? { fagsakPersonId: søkestreng } : { personident: søkestreng };
-
-  return apiCall(`/sok/person`, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-}
-
 export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiResponse<FagsakDto>> {
   // TODO: Refaktorer - kanskje dele opp i to funksjoner
   const id = søkestreng.trim();
@@ -126,59 +77,4 @@ export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiRe
     method: "POST",
     body: JSON.stringify(request),
   });
-}
-
-export async function opprettBehandlingApi(fagsakId: string): Promise<ApiResponse<string>> {
-  const request: OpprettBehandlingRequest = { fagsakId: fagsakId };
-
-  return apiCall(`/behandling/opprett`, {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-}
-
-export async function hentDokumenterForPerson(
-  fagsakPersonId: string
-): Promise<ApiResponse<[Dokumentinfo]>> {
-  return apiCall(`/saf/dokumenter`, {
-    method: "POST",
-    body: JSON.stringify({ fagsakPersonId }),
-  });
-}
-
-export async function hentBehandlingerForFagsak(
-  fagsakId: string
-): Promise<ApiResponse<[Behandling]>> {
-  return apiCall(`/behandling/hentBehandlinger`, {
-    method: "POST",
-    body: JSON.stringify({ fagsakId }),
-  });
-}
-
-export interface ÅrsakBehandlingRequest {
-  kravdato: string;
-  årsak: ÅrsakType;
-  beskrivelse: string;
-}
-
-export interface ÅrsakBehandlingResponse {
-  kravdato: string;
-  årsak: ÅrsakType;
-  beskrivelse: string;
-}
-
-export async function lagreÅrsakBehandling(
-  behandlingId: string,
-  request: ÅrsakBehandlingRequest
-): Promise<ApiResponse<ÅrsakBehandlingResponse>> {
-  return apiCall(`/arsak/${behandlingId}`, {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-}
-
-export async function hentÅrsakBehandling(
-  behandlingId: string
-): Promise<ApiResponse<ÅrsakBehandlingResponse>> {
-  return apiCall(`/arsak/${behandlingId}`);
 }
