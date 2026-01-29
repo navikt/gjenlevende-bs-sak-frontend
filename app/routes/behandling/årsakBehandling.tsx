@@ -82,7 +82,7 @@ export default function ArsakBehandling() {
 
       <Select
         label="Årsak til behandling"
-        onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType | "")}
+        onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
         value={årsak}
       >
         <option value="" disabled>
