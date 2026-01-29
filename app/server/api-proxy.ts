@@ -58,8 +58,12 @@ export function lagApiProxy(backendUrl: string, erLokalt: boolean) {
       const backendResponse = await kallBackend(url, req, token);
       console.log("Backend response status:", backendResponse.status);
 
-      const data = await backendResponse.json();
+      if (backendResponse.status === 204) {
+        res.status(204).end();
+        return;
+      }
 
+      const data = await backendResponse.json();
       res.status(backendResponse.status).send(data);
     } catch (error) {
       const errorMelding = error instanceof Error ? error.message : "Ukjent feil";
