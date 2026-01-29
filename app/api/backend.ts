@@ -1,6 +1,7 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
 import type { Dokumentinfo } from "~/api/dokument";
 import type { Behandling } from "~/types/behandling";
+import type { ÅrsakType } from "~/types/årsak";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
@@ -152,4 +153,32 @@ export async function hentBehandlingerForFagsak(
     method: "POST",
     body: JSON.stringify({ fagsakId }),
   });
+}
+
+export interface ÅrsakBehandlingRequest {
+  kravdato: string;
+  årsak: ÅrsakType;
+  beskrivelse: string;
+}
+
+export interface ÅrsakBehandlingResponse {
+  kravdato: string;
+  årsak: ÅrsakType;
+  beskrivelse: string;
+}
+
+export async function lagreÅrsakBehandling(
+  behandlingId: string,
+  request: ÅrsakBehandlingRequest
+): Promise<ApiResponse<ÅrsakBehandlingResponse>> {
+  return apiCall(`/arsak/${behandlingId}`, {
+    method: "POST",
+    body: JSON.stringify(request),
+  });
+}
+
+export async function hentÅrsakBehandling(
+  behandlingId: string
+): Promise<ApiResponse<ÅrsakBehandlingResponse>> {
+  return apiCall(`/arsak/${behandlingId}`);
 }
