@@ -71,6 +71,7 @@ export default function ArsakBehandling() {
 
   useEffect(() => {
     setSelected(kravdato);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kravdato]);
 
   return (
