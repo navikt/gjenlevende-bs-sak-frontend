@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hentBehandlingerForFagsak } from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
 import type { Behandling } from "~/types/behandling";
 
 interface BehandlingerState {
@@ -16,6 +16,15 @@ export function useHentBehandlinger(fagsakId: string | undefined) {
   });
 
   useEffect(() => {
+    const hentBehandlingerForFagsak = async (
+      fagsakId: string
+    ): Promise<ApiResponse<[Behandling]>> => {
+      return apiCall(`/behandling/hentBehandlinger`, {
+        method: "POST",
+        body: JSON.stringify({ fagsakId }),
+      });
+    };
+
     const hentBehandlinger = async () => {
       if (!fagsakId) {
         settState((prev) => ({

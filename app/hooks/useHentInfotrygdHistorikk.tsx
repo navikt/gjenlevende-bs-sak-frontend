@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hentHistorikkForPerson } from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
 
 interface HistorikkState {
   data: unknown | null;
@@ -15,6 +15,13 @@ export const useHentInfotrygdHistorikk = (personident: string | undefined) => {
   });
 
   useEffect(() => {
+    const hentHistorikkForPerson = async (personident: string): Promise<ApiResponse<unknown>> => {
+      return apiCall(`/test/infotrygd/perioder`, {
+        method: "POST",
+        body: JSON.stringify({ personident: personident }),
+      });
+    };
+
     let avbrutt = false;
 
     const hentHistorikk = async () => {

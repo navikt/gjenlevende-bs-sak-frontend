@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { hentToggles } from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
 import { type Toggles } from "~/types/toggles";
 
 export interface ToggleContext {
@@ -16,6 +16,10 @@ export const TogglesProvider: React.FC<{
   const [laster, settLaster] = useState(true);
 
   const fetchToggles = async () => {
+    const hentToggles = async (): Promise<ApiResponse<Record<string, boolean>>> => {
+      return apiCall("/unleash/toggles");
+    };
+
     settLaster(true);
     const response = await hentToggles();
 

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { hentEllerOpprettFagsak, type Søkeresultat } from "~/api/backend";
+import { hentEllerOpprettFagsak } from "~/api/backend";
+import type { Søkeresultat } from "./useSøk";
 
 interface OpprettFagsak {
   opprettFagsak: (søkeresultat: Søkeresultat) => Promise<void>;

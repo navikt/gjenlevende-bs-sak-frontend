@@ -9,7 +9,7 @@ import {
   Popover,
   VStack,
 } from "@navikt/ds-react";
-import type { Søkeresultat } from "~/api/backend";
+import type { Søkeresultat } from "~/hooks/useSøk";
 
 interface SøkePopoverProps {
   open: boolean;

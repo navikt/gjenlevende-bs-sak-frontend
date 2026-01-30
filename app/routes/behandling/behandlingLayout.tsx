@@ -7,7 +7,8 @@ import {
   type Steg,
 } from "~/komponenter/navbar/BehandlingFaner";
 import { Side } from "~/komponenter/layout/Side";
-import { hentÅrsakBehandling } from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
+import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -47,6 +48,12 @@ export default function BehandlingLayout() {
   }, []);
 
   const hentÅrsakData = useCallback(async () => {
+    const hentÅrsakBehandling = async (
+      behandlingId: string
+    ): Promise<ApiResponse<ÅrsakBehandlingResponse>> => {
+      return apiCall(`/arsak/${behandlingId}`);
+    };
+
     if (årsakDataHentet || !behandlingId) return;
 
     try {

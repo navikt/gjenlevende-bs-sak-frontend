@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hentNavnFraPdl, type Navn } from "~/api/backend";
+import { apiCall, type ApiResponse, type Navn } from "~/api/backend";
 
 interface PersonNavnState {
   navn: Navn | null;
@@ -15,6 +15,13 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
   });
 
   useEffect(() => {
+    const hentNavnFraPdl = async (fagsakPersonId: string): Promise<ApiResponse<Navn>> => {
+      return apiCall(`/pdl/navn`, {
+        method: "POST",
+        body: JSON.stringify({ fagsakPersonId }),
+      });
+    };
+
     let avbrutt = false;
 
     const hentNavn = async () => {

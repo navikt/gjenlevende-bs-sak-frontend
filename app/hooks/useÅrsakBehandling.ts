@@ -1,7 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
-import { lagreÅrsakBehandling } from "~/api/backend";
 import type { ÅrsakType } from "~/types/årsak";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import { apiCall, type ApiResponse } from "~/api/backend";
+
+export interface ÅrsakBehandlingRequest {
+  kravdato: string;
+  årsak: ÅrsakType;
+  beskrivelse: string;
+}
+
+export interface ÅrsakBehandlingResponse {
+  kravdato: string;
+  årsak: ÅrsakType;
+  beskrivelse: string;
+}
 
 interface UseÅrsakBehandling {
   kravdato: Date | undefined;
@@ -69,6 +81,16 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
   );
 
   const lagreOgNavigerVidere = useCallback(async (): Promise<boolean> => {
+    const lagreÅrsakBehandling = (
+      behandlingId: string,
+      request: ÅrsakBehandlingRequest
+    ): Promise<ApiResponse<ÅrsakBehandlingResponse>> => {
+      return apiCall(`/arsak/${behandlingId}`, {
+        method: "POST",
+        body: JSON.stringify(request),
+      });
+    };
+
     if (!behandlingId || !årsakState?.kravdato || !årsakState?.årsak) {
       return false;
     }
