@@ -14,7 +14,7 @@
   "dependencies": {
     "@navikt/aksel-icons": "7.36.0",
     "@navikt/ds-css": "7.36.0",
-    "@navikt/ds-react": "7.36.0",
+    "@navikt/ds-react": "8.1.0",
     "@navikt/oasis": "4.1.1",
     "@react-pdf/renderer": "4.3.2",
     "@react-router/node": "7.12.0",
