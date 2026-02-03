@@ -1,6 +1,7 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
 import type { Dokumentinfo } from "~/api/dokument";
 import type { Behandling } from "~/types/behandling";
+import type {IVedtak} from "~/komponenter/behandling/vedtak/vedtak";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
@@ -152,4 +153,22 @@ export async function hentBehandlingerForFagsak(
     method: "POST",
     body: JSON.stringify({ fagsakId }),
   });
+}
+
+export async function hentVedtakForBehandling(
+    behandlingId: string
+): Promise<ApiResponse<IVedtak>> {
+    return apiCall(`/vedtak/${behandlingId}/hent-vedtak`, {
+        method: "GET",
+    });
+}
+
+export async function lagreVedtakForBehandling(
+    behandlingId: string,
+    vedtak: IVedtak
+): Promise<ApiResponse<string>> {
+    return apiCall(`/vedtak/${behandlingId}/lagre-vedtak`, {
+        method: "POST",
+        body: JSON.stringify(vedtak)
+    });
 }

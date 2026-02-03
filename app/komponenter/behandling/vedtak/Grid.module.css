@@ -1,0 +1,23 @@
+.grid {
+    display: grid;
+    grid-template-columns: 9rem 9rem 11rem 11rem 20rem 6rem 4rem 2rem;
+    grid-gap: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    align-items: start;
+}
+
+.gridLiten{
+    display: grid;
+    grid-template-columns: 12rem 8rem 8rem 12rem;
+    grid-gap: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    align-items: start;
+}
+
+.lesevisning {
+    grid-template-columns: repeat(8, max-content);
+}
+
+.ny-rad {
+    grid-column: 1;
+}
