@@ -23,10 +23,6 @@ export interface FagsakRequest {
   stønadstype: StønadType;
 }
 
-export interface OpprettBehandlingRequest {
-  fagsakId: string;
-}
-
 export interface FagsakDto {
   id: string;
   fagsakPersonId: string;
@@ -64,48 +60,6 @@ export async function apiCall<T = unknown>(
       melding: error instanceof Error ? error.message : "Ukjent feil",
     };
   }
-}
-
-export const hentHistorikkForPerson = async (
-  personident: string
-): Promise<ApiResponse<unknown>> => {
-  return apiCall(`/test/infotrygd/perioder`, {
-    method: "POST",
-    body: JSON.stringify({ personident: personident }),
-  });
-};
-
-export async function hentToggles(): Promise<ApiResponse<Record<string, boolean>>> {
-  return apiCall("/unleash/toggles");
-}
-
-export async function hentNavnFraPdl(fagsakPersonId: string): Promise<ApiResponse<Navn>> {
-  return apiCall(`/pdl/navn`, {
-    method: "POST",
-    body: JSON.stringify({ fagsakPersonId }),
-  });
-}
-
-export interface PersonidentRequest {
-  personident: string;
-}
-
-export interface Søkeresultat {
-  navn: string;
-  personident?: string;
-  fagsakPersonId: string;
-  harTilgang: boolean;
-  harFagsak: boolean;
-}
-
-export async function søkPerson(søkestreng: string): Promise<ApiResponse<Søkeresultat>> {
-  const erFagsakPersonId = erGyldigFagsakPersonId(søkestreng);
-  const body = erFagsakPersonId ? { fagsakPersonId: søkestreng } : { personident: søkestreng };
-
-  return apiCall(`/sok/person`, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
 }
 
 export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiResponse<FagsakDto>> {

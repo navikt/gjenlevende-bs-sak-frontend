@@ -12,8 +12,7 @@ export function meta(_: Route.MetaArgs) {
     { title: "Landingsside" },
     {
       name: "description",
-      content:
-        "Landingsside for saksbehandling av gjenlevende barnetilsyn og skolepenger",
+      content: "Landingsside for saksbehandling av gjenlevende barnetilsyn og skolepenger",
     },
   ];
 }
@@ -32,16 +31,12 @@ export default function Landingsside() {
         </Heading>
 
         {toggles[ToggleNavn.TestToggle] && (
-          <Alert variant="info">
-            Hvis du ser denne er {ToggleNavn.TestToggle} togglet på.
-          </Alert>
+          <Alert variant="info">Hvis du ser denne er {ToggleNavn.TestToggle} togglet på.</Alert>
         )}
 
         {saksbehandler && (
           <VStack gap="4">
-            <BodyShort spacing>
-              Velkommen, {saksbehandler.navn || saksbehandler.brukernavn}!
-            </BodyShort>
+            <BodyShort spacing>Velkommen, {saksbehandler.navn}!</BodyShort>
           </VStack>
         )}
       </VStack>

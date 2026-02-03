@@ -17,6 +17,7 @@ import {
   TrashIcon,
   XMarkOctagonFillIcon,
 } from "@navikt/aksel-icons";
+import { Vurdering } from "~/types/vilkår";
 
 export const VilkårKomponent: React.FC<{
   navn: string;
@@ -28,6 +29,9 @@ export const VilkårKomponent: React.FC<{
   onChangeBegrunnelse: (val: string) => void;
   låst: boolean;
   settLåst: (val: boolean) => void;
+  lagrer: boolean;
+  onLagre: () => Promise<boolean>;
+  onSlett: () => void;
 }> = ({
   navn,
   beskrivelse,
@@ -38,12 +42,18 @@ export const VilkårKomponent: React.FC<{
   onChangeBegrunnelse,
   låst,
   settLåst,
+  lagrer = false,
+  onLagre,
+  onSlett,
 }) => {
   const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
 
-  const handleLagreOgLås = () => {
-    // TODO: Implementer lagring
-    settLåst(true);
+  const handleLagreOgLås = async () => {
+    if (onLagre) {
+      await onLagre();
+    } else {
+      settLåst(true);
+    }
   };
 
   const handleKanRedigere = () => {
@@ -51,13 +61,11 @@ export const VilkårKomponent: React.FC<{
   };
 
   const handleTilbakestillVilkår = () => {
-    onChangeSpørsmål("");
-    onChangeBegrunnelse("");
-    settLåst(false);
+    onSlett();
   };
 
   const vilkårStatusIkon =
-    spørsmålSvar === "ja" ? (
+    spørsmålSvar === Vurdering.JA ? (
       <CheckmarkCircleFillIcon
         title="vilkår oppfylt"
         fontSize="1.5rem"
@@ -124,8 +132,8 @@ export const VilkårKomponent: React.FC<{
             value={spørsmålSvar}
             readOnly={låst}
           >
-            <Radio value="ja">Ja</Radio>
-            <Radio value="nei">Nei</Radio>
+            <Radio value="JA">Ja</Radio>
+            <Radio value="NEI">Nei</Radio>
           </RadioGroup>
 
           <Textarea
@@ -135,14 +143,14 @@ export const VilkårKomponent: React.FC<{
             readOnly={låst}
           />
 
-          <div
-            style={{
-              height: "3rem",
-            }}
-          >
-            {harSvaralternativOgBegrunnelse && !låst && (
-              <Button onClick={handleLagreOgLås}>Lagre</Button>
-            )}
+          <div>
+            <Button
+              onClick={handleLagreOgLås}
+              disabled={!harSvaralternativOgBegrunnelse || låst}
+              loading={lagrer}
+            >
+              Lagre
+            </Button>
           </div>
         </VStack>
       </div>

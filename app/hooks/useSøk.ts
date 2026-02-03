@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { søkPerson, type Søkeresultat } from "~/api/backend";
-import { erGyldigSøkestreng } from "~/utils/utils";
+import { apiCall, type ApiResponse } from "~/api/backend";
+import { erGyldigFagsakPersonId, erGyldigSøkestreng } from "~/utils/utils";
 
 interface UseSøkReturn {
   søk: string;
@@ -11,6 +11,14 @@ interface UseSøkReturn {
   tilbakestillSøk: () => void;
 }
 
+export interface Søkeresultat {
+  navn: string;
+  personident?: string;
+  fagsakPersonId: string;
+  harTilgang: boolean;
+  harFagsak: boolean;
+}
+
 export const useSøk = (): UseSøkReturn => {
   const [søk, settSøk] = useState<string>("");
   const [søkeresultat, settSøkeresultat] = useState<Søkeresultat | null>(null);
@@ -18,6 +26,16 @@ export const useSøk = (): UseSøkReturn => {
   const [feilmelding, settFeilmelding] = useState<string | null>(null);
 
   const utførSøk = useCallback(async (søkestreng: string) => {
+    const søkPerson = (søkestreng: string): Promise<ApiResponse<Søkeresultat>> => {
+      const erFagsakPersonId = erGyldigFagsakPersonId(søkestreng);
+      const body = erFagsakPersonId ? { fagsakPersonId: søkestreng } : { personident: søkestreng };
+
+      return apiCall(`/sok/person`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+    };
+
     settSøker(true);
     settFeilmelding(null);
     settSøkeresultat(null);

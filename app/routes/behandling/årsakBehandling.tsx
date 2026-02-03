@@ -1,97 +1,117 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import type { Route } from "./+types/årsakBehandling";
-import { Button, DatePicker, Select, Textarea, useDatepicker, VStack } from "@navikt/ds-react";
+import {
+  Alert,
+  Button,
+  DatePicker,
+  Select,
+  Textarea,
+  useDatepicker,
+  VStack,
+} from "@navikt/ds-react";
 import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
 import { useNavigate } from "react-router";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import { useArsakBehandling } from "~/hooks/useÅrsakBehandling";
+import type { ÅrsakType } from "~/types/årsak";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Årsak behandling" }];
 }
 
-interface ÅrsakBehandlingState {
-  kravdato: string;
-  årsak: string;
-  begrunnelse: string;
-}
+const STEG_NAVN = "Årsak behandling";
+const STEG_PATH: StegPath = "arsak-behandling";
+const MAKS_BREDDE = "40rem";
+
+const ÅRSAK_ALTERNATIVER = [
+  { verdi: "SØKNAD", label: "Søknad" },
+  { verdi: "NYE_OPPLYSNINGER", label: "Nye opplysninger" },
+  { verdi: "ANNET", label: "Annet" },
+] as const;
 
 export default function ArsakBehandling() {
-  const [state, settState] = useState<ÅrsakBehandlingState>({
-    kravdato: "",
-    årsak: "",
-    begrunnelse: "",
+  const { behandlingId } = useBehandlingContext();
+  const navigate = useNavigate();
+  const { finnNesteSteg } = useBehandlingSteg();
+
+  const {
+    kravdato,
+    årsak,
+    beskrivelse,
+    laster,
+    feilmelding,
+    erLagret,
+    oppdaterKravdato,
+    oppdaterÅrsak,
+    oppdaterBeskrivelse,
+    lagreOgNavigerVidere,
+  } = useArsakBehandling(behandlingId);
+
+  const { datepickerProps, inputProps, setSelected } = useDatepicker({
+    defaultSelected: kravdato,
+    onDateChange: oppdaterKravdato,
   });
 
-  const [lagret, settLagret] = useState(false);
-  const { datepickerProps, inputProps, selectedDay } = useDatepicker();
-  const { finnNesteSteg } = useBehandlingSteg();
-  const navigate = useNavigate();
+  useMarkerStegFerdige(STEG_NAVN, erLagret);
 
-  const harValgtDato = selectedDay !== undefined;
-  const harValgtÅrsak = state.årsak !== "";
+  const kanLagre = kravdato !== undefined && årsak !== "";
 
-  const kanLagre = harValgtDato && harValgtÅrsak;
+  const håndterLagring = async () => {
+    const suksess = await lagreOgNavigerVidere();
 
-  useMarkerStegFerdige("Årsak behandling", lagret);
-
-  //   TODO: Kan refaktorer til å ta inn argument for nåværende steg
-  const navigerTilNeste = () => {
-    const nesteSteg = finnNesteSteg("arsak-behandling");
-    if (nesteSteg) {
-      navigate(`../${nesteSteg.path}`, { relative: "path" });
+    if (suksess) {
+      const nesteSteg = finnNesteSteg(STEG_PATH);
+      if (nesteSteg) {
+        navigate(`../${nesteSteg.path}`, { relative: "path" });
+      }
     }
   };
 
-  const handleNesteKlikk = () => {
-    // TODO: Skal også lagre data til backend
-    if (kanLagre) {
-      settLagret(true);
-      navigerTilNeste();
-    }
-  };
+  useEffect(() => {
+    setSelected(kravdato);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kravdato]);
 
-  //   TODO: Legge til lås/lesevisning når lagring og backend er på plass
   return (
-    <VStack
-      gap="6"
-      style={{
-        maxWidth: "40rem",
-      }}
-    >
+    <VStack gap="6" style={{ maxWidth: MAKS_BREDDE }}>
       <DatePicker {...datepickerProps}>
         <DatePicker.Input {...inputProps} label="Kravdato" />
       </DatePicker>
 
       <Select
         label="Årsak til behandling"
-        onChange={(e) => settState({ ...state, årsak: e.target.value })}
-        value={state.årsak}
+        onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
+        value={årsak}
       >
         <option value="" disabled>
           Velg årsak
         </option>
-        <option value="søknad">Søknad</option>
-        <option value="nyeOpplysninger">Nye opplysninger</option>
-        <option value="annet">Annet</option>
+        {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
+          <option key={verdi} value={verdi}>
+            {label}
+          </option>
+        ))}
       </Select>
 
       <Textarea
         label="Beskrivelse av årsak (fylles ut ved behov)"
-        onChange={(e) => settState({ ...state, begrunnelse: e.target.value })}
-        value={state.begrunnelse}
+        onChange={(e) => oppdaterBeskrivelse(e.target.value)}
+        value={beskrivelse}
       />
 
       <div>
-        <Button
-          onClick={() => {
-            console.log(`VALGT: ${selectedDay} ${state.årsak} ${state.begrunnelse}`); //TODO: Fjerne når backend er på plass
-            handleNesteKlikk();
-          }}
-          disabled={!kanLagre}
-        >
+        <Button onClick={håndterLagring} disabled={!kanLagre} loading={laster}>
           Lagre
         </Button>
       </div>
+
+      {feilmelding && (
+        <Alert variant="error" size="small">
+          {feilmelding}
+        </Alert>
+      )}
     </VStack>
   );
 }

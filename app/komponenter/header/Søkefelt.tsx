@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { HStack, Search, VStack } from "@navikt/ds-react";
-import type { Søkeresultat } from "~/api/backend";
 import { SøkePopover } from "./SøkePopover";
 import { erGyldigSøkestreng } from "~/utils/utils";
+import type { Søkeresultat } from "~/hooks/useSøk";
 
 interface SøkefeltProps {
   søk: string;

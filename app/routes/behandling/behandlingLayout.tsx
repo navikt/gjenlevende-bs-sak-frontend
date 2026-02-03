@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Outlet, useParams } from "react-router";
-import { BehandlingContext } from "~/contexts/BehandlingContext";
+import { BehandlingContext, type ÅrsakState } from "~/contexts/BehandlingContext";
 import {
   BehandlingFaner,
   type BehandlingSteg,
   type Steg,
 } from "~/komponenter/navbar/BehandlingFaner";
 import { Side } from "~/komponenter/layout/Side";
+import { apiCall, type ApiResponse } from "~/api/backend";
+import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -33,15 +35,45 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
 export default function BehandlingLayout() {
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const [ferdigeSteg, settFerdigeSteg] = useState<Steg[]>([]);
+  const [årsakState, settÅrsakState] = useState<ÅrsakState | undefined>(undefined);
+  const [årsakDataHentet, settÅrsakDataHentet] = useState(false);
   //   const { behandling } = useHentBehandling(behandlingId);
-
-  if (!behandlingId) {
-    return <div>Mangler behandling id</div>;
-  }
 
   const markerStegSomFerdig = (steg: Steg) => {
     settFerdigeSteg((prev) => (prev.includes(steg) ? prev : [...prev, steg]));
   };
+
+  const oppdaterÅrsakState = useCallback((data: Partial<ÅrsakState>) => {
+    settÅrsakState((prev) => ({ ...prev, ...data }) as ÅrsakState);
+  }, []);
+
+  const hentÅrsakData = useCallback(async () => {
+    const hentÅrsakBehandling = async (
+      behandlingId: string
+    ): Promise<ApiResponse<ÅrsakBehandlingResponse>> => {
+      return apiCall(`/arsak/${behandlingId}`);
+    };
+
+    if (årsakDataHentet || !behandlingId) return;
+
+    try {
+      const response = await hentÅrsakBehandling(behandlingId);
+      if (response.data) {
+        settÅrsakState({
+          kravdato: new Date(response.data.kravdato),
+          årsak: response.data.årsak || "",
+          beskrivelse: response.data.beskrivelse,
+        });
+        settÅrsakDataHentet(true);
+      }
+    } catch (error) {
+      console.error("Kunne ikke hente årsak data:", error);
+    }
+  }, [behandlingId, årsakDataHentet]);
+
+  if (!behandlingId) {
+    return <div>Mangler behandling id</div>;
+  }
 
   return (
     <BehandlingContext.Provider
@@ -50,6 +82,10 @@ export default function BehandlingLayout() {
         ferdigeSteg,
         markerStegSomFerdig,
         stegListe: BEHANDLING_STEG_LISTE,
+        årsakState,
+        oppdaterÅrsakState,
+        hentÅrsakData,
+        årsakDataHentet,
       }}
     >
       <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />

@@ -22,7 +22,19 @@ then
       return 1
 fi
 
-# Write the variables into the .env file
+# Hent token fra mock OAuth-server for lokalt miljø
+echo "Henter token fra mock OAuth-server (localhost:8089)"
+ACCESS_TOKEN_LOKALT=$(curl -s -X POST http://localhost:8089/default/token \
+  -d 'grant_type=client_credentials&client_id=test&client_secret=test' \
+  | jq -r '.access_token' 2>/dev/null)
+
+if [ -z "$ACCESS_TOKEN_LOKALT" ] || [ "$ACCESS_TOKEN_LOKALT" = "null" ]; then
+  echo "Kunne ikke hente token fra mock OAuth-server. Sørg for at backend kjører på localhost:8089."
+  ACCESS_TOKEN_LOKALT=""
+else
+  echo "Token hentet fra mock OAuth-server"
+fi
+
 cat << EOF > .env
 # Denne filen er generert automatisk ved å kjøre \`hent-og-lagre-miljovariabler.sh\`
 
@@ -31,9 +43,9 @@ CLIENT_ID='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_ID'
 CLIENT_SECRET='$GJENLEVENDE_BS_SAK_FRONTEND_CLIENT_SECRET'
 PORT=8080
 
-# Lokalt
-#ENV=local
-#GJENLEVENDE_BS_SAK_SCOPE=api://dev-gcp.etterlatte.gjenlevende-bs-sak-lokal/.default
+# Lokalt mot lokal-backend
+# ENV=lokalt
+# ACCESS_TOKEN_LOKALT=$ACCESS_TOKEN_LOKALT
 
 # Lokalt mot preprod
 ENV=lokalt-mot-preprod

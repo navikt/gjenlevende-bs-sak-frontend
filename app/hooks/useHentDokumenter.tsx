@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hentDokumenterForPerson } from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
 import type { Dokumentinfo } from "~/api/dokument";
 
 interface DokumenterState {
@@ -16,6 +16,15 @@ export function useHentDokumenter(fagsakPersonId: string | undefined) {
   });
 
   useEffect(() => {
+    const hentDokumenterForPerson = async (
+      fagsakPersonId: string
+    ): Promise<ApiResponse<[Dokumentinfo]>> => {
+      return apiCall(`/saf/dokumenter`, {
+        method: "POST",
+        body: JSON.stringify({ fagsakPersonId }),
+      });
+    };
+
     let avbrutt = false;
 
     const hentDokumenter = async () => {

@@ -1,6 +1,13 @@
 import React, { useContext } from "react";
 import type { BehandlingSteg, Steg } from "~/komponenter/navbar/BehandlingFaner";
+import type { ÅrsakType } from "~/types/årsak";
 // import type { Behandling } from "~/types/behandling";
+
+export interface ÅrsakState {
+  kravdato: Date;
+  årsak: ÅrsakType;
+  beskrivelse: string;
+}
 
 export const BehandlingContext = React.createContext<{
   behandlingId: string;
@@ -8,12 +15,20 @@ export const BehandlingContext = React.createContext<{
   markerStegSomFerdig: (steg: Steg) => void;
   stegListe?: BehandlingSteg[];
   //   behandling?: Behandling;
+  årsakState?: ÅrsakState;
+  oppdaterÅrsakState: (data: Partial<ÅrsakState>) => void;
+  hentÅrsakData: () => Promise<void>;
+  årsakDataHentet: boolean;
 }>({
   behandlingId: "",
   ferdigeSteg: [],
   markerStegSomFerdig: () => {},
   stegListe: undefined,
   //   behandling: undefined,
+  årsakState: undefined,
+  oppdaterÅrsakState: () => {},
+  hentÅrsakData: async () => {},
+  årsakDataHentet: false,
 });
 
 export function useBehandlingContext() {
