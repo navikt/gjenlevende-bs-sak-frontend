@@ -1,6 +1,4 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
-import type { Dokumentinfo } from "~/api/dokument";
-import type { Behandling } from "~/types/behandling";
 import type {IVedtak} from "~/komponenter/behandling/vedtak/vedtak";
 
 export interface ApiResponse<T = unknown> {
@@ -79,33 +77,6 @@ export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiRe
   return apiCall(`/fagsak`, {
     method: "POST",
     body: JSON.stringify(request),
-  });
-}
-
-export async function opprettBehandlingApi(fagsakId: string): Promise<ApiResponse<string>> {
-  const request: OpprettBehandlingRequest = { fagsakId: fagsakId };
-
-  return apiCall(`/behandling/opprett`, {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-}
-
-export async function hentDokumenterForPerson(
-  fagsakPersonId: string
-): Promise<ApiResponse<[Dokumentinfo]>> {
-  return apiCall(`/saf/dokumenter`, {
-    method: "POST",
-    body: JSON.stringify({ fagsakPersonId }),
-  });
-}
-
-export async function hentBehandlingerForFagsak(
-  fagsakId: string
-): Promise<ApiResponse<[Behandling]>> {
-  return apiCall(`/behandling/hentBehandlinger`, {
-    method: "POST",
-    body: JSON.stringify({ fagsakId }),
   });
 }
 
