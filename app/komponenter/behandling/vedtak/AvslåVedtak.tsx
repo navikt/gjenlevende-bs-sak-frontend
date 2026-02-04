@@ -12,21 +12,23 @@ export const AvslåVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretVe
     const [begrunnelse, setBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ? String(lagretVedtak.begrunnelse) : "");
 
     return (
-        <VStack gap="10">
-            <Textarea size="medium" label={'Begrunnelse'} value={begrunnelse} onChange={e => setBegrunnelse(e.target.value)}></Textarea>
-            <Button
-                onClick={() => {
-                    if (!behandlingId) return;
-                    const mockVedtak = {
-                        resultatType: EResultatType.AVSLÅTT,
-                        begrunnelse: begrunnelse,
-                        barnetilsynperioder: [],
-                    };
-                    lagreVedtak(behandlingId, mockVedtak);
-                }}
-            >
-                Lagre vedtak
-            </Button>
-        </VStack>
+        <>
+            <Textarea label={'Begrunnelse'} value={begrunnelse} onChange={e => setBegrunnelse(e.target.value)}></Textarea>
+            <HStack>
+                <Button size="medium"
+                    onClick={() => {
+                        if (!behandlingId) return;
+                        const mockVedtak = {
+                            resultatType: EResultatType.AVSLÅTT,
+                            begrunnelse: begrunnelse,
+                            barnetilsynperioder: [],
+                        };
+                        lagreVedtak(behandlingId, mockVedtak);
+                    }}
+                >
+                    Lagre vedtak
+                </Button>
+            </HStack>
+        </>
     )
 };
