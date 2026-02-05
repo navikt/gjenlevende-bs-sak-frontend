@@ -12,7 +12,7 @@ export function meta(_: Route.MetaArgs) {
 
 export default function Vilkår() {
   // const { behandlingId } = useBehandlingContext();
-  const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean | undefined>(undefined);
+  const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean>(false);
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
 
