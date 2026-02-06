@@ -23,7 +23,6 @@ export const useBrevmottaker = () => {
   const [mottakere, settMottakere] = useState<Brevmottaker[]>([
     { mottakerType: "PERSON", personRolle: BrevmottakerRolle.BRUKER, personident: personident },
   ]);
-  const [modalÅpen, settModalÅpen] = useState(false);
 
   const leggTilMottaker = (mottaker: Brevmottaker) => {
     settMottakere((prev) => [...prev, mottaker]);
@@ -59,7 +58,5 @@ export const useBrevmottaker = () => {
     leggTilMottaker,
     fjernMottaker,
     utledBrevmottakere,
-    modalÅpen,
-    settModalÅpen,
   };
 };

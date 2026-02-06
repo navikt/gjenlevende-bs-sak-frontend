@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Heading, Modal, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
@@ -16,8 +16,8 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export default function Brev() {
-  const { mottakere, settMottakere, utledBrevmottakere, modalÅpen, settModalÅpen } =
-    useBrevmottaker();
+  const [modalÅpen, settModalÅpen] = useState(false);
+  const { mottakere, settMottakere, utledBrevmottakere } = useBrevmottaker();
 
   return (
     <VStack gap="space-4">
