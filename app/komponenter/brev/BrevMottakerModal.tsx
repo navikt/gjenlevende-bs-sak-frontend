@@ -23,7 +23,7 @@ export default function BrevmottakerModalInnhold({
         <VStack gap={"4"} minWidth={"47%"}>
           <ManueltSøk leggTilMottaker={leggTilMottaker} />
           <Skillelinje />
-          <SkalBrukerMottaBrev mottakere={mottakere} />
+          <SkalBrukerMottaBrev mottakere={mottakere} leggTilMottaker={leggTilMottaker} fjernMottaker={fjernMottaker} />
         </VStack>
         <Skillelinje />
         <VStack minWidth={"47%"}>
