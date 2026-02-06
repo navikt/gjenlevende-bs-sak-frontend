@@ -20,13 +20,17 @@ export default function BrevmottakerModalInnhold({
   return (
     <Modal.Body>
       <HStack gap={"4"}>
-        <VStack gap={"4"} minWidth={"47%"}>
+        <VStack gap={"4"} width={"47%"}>
           <ManueltSøk leggTilMottaker={leggTilMottaker} />
           <Skillelinje />
-          <SkalBrukerMottaBrev mottakere={mottakere} leggTilMottaker={leggTilMottaker} fjernMottaker={fjernMottaker} />
+          <SkalBrukerMottaBrev
+            mottakere={mottakere}
+            leggTilMottaker={leggTilMottaker}
+            fjernMottaker={fjernMottaker}
+          />
         </VStack>
         <Skillelinje />
-        <VStack minWidth={"47%"}>
+        <VStack width={"47%"}>
           <BrevmottakereListe mottakere={mottakere} fjernMottaker={fjernMottaker} />
         </VStack>
       </HStack>

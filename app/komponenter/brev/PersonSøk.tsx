@@ -15,12 +15,32 @@ interface Props {
   leggTilMottaker: (mottaker: Brevmottaker) => void;
 }
 
+interface Feilmeldinger {
+  personident?: string;
+  mottakerRolle?: string;
+}
+
 export function PersonSøk({ leggTilMottaker }: Props) {
   const [personident, settPersonident] = useState("");
   const [mottakerRolle, settMottakerRolle] = useState<BrevmottakerRolle>();
+  const [feilmeldinger, settFeilmeldinger] = useState<Feilmeldinger>({});
+
+  const validerFelter = (): boolean => {
+    const nyeFeilmeldinger: Feilmeldinger = {};
+
+    if (!personident) {
+      nyeFeilmeldinger.personident = "Personident er påkrevd";
+    }
+    if (!mottakerRolle) {
+      nyeFeilmeldinger.mottakerRolle = "Mangler mottakerrolle";
+    }
+
+    settFeilmeldinger(nyeFeilmeldinger);
+    return Object.keys(nyeFeilmeldinger).length === 0;
+  };
 
   const håndterLeggTilPerson = () => {
-    if (personident && mottakerRolle) {
+    if (validerFelter()) {
       const nyPersonMottaker: Brevmottaker = {
         personident: personident,
         personRolle: mottakerRolle,
@@ -39,6 +59,7 @@ export function PersonSøk({ leggTilMottaker }: Props) {
         value={personident}
         onChange={(e) => settPersonident(e.target.value)}
         autoComplete="off"
+        error={feilmeldinger.personident}
         style={{
           width: "50%",
           paddingRight: "1rem",
@@ -50,6 +71,7 @@ export function PersonSøk({ leggTilMottaker }: Props) {
             legend="Velg mottakerrolle"
             onChange={(rolle: BrevmottakerRolle) => settMottakerRolle(rolle)}
             value={mottakerRolle}
+            error={feilmeldinger.mottakerRolle}
           >
             <Stack gap="space-0 space-24" direction={"row"} wrap={false}>
               <Radio value={BrevmottakerRolle.FULLMEKTIG}>Fullmektig</Radio>
