@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import React from "react";
 import { BodyShort, Button, CopyButton, HStack, VStack } from "@navikt/ds-react";
-import { type Brevmottaker, useBrevmottaker } from "~/hooks/useBrevmottaker";
+import { useBrevmottaker } from "~/hooks/useBrevmottaker";
 import { TrashIcon } from "@navikt/aksel-icons";
 
 export const BrevmottakereListe: FC = () => {
   const { mottakere } = useBrevmottaker();
-  const nyMottakerliste: Brevmottaker[] = [];
+  // const nyMottakerliste: Brevmottaker[] = [];
 
   return (
     <>

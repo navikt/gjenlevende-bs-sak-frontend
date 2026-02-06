@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Heading, HStack, Modal, Select, VStack } from "@navikt/ds-react";
+import { BodyShort, Button, Heading, HStack, Modal, Select, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
@@ -38,11 +38,11 @@ export default function Brev() {
       <Modal
         open={modalÅpen}
         onClose={() => settModalÅpen(false)}
-        header={{ heading: "Brevmottakere" }}
+        header={{ heading: "Hvem skal motta brevet?" }}
       >
         <Modal.Body>
           <HStack gap={"4"}>
-            <VStack>
+            <VStack gap={"4"}>
               <Select
                 label="Manuelt søk"
                 value={søktype}
@@ -53,6 +53,7 @@ export default function Brev() {
                 <option value={Søktype.PERSON}>Person</option>
               </Select>
               {søktype === Søktype.ORGANISASJON && <OrganisasjonsSøk />}
+              <BodyShort>Skal bruker motta brevet?</BodyShort>
             </VStack>
             <div style={{ border: "2px solid #f3f3f3" }}></div>
             <VStack>

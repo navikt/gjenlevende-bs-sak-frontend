@@ -1,11 +1,18 @@
 import React, { useState } from "react";
-import { Button, Radio, RadioGroup, Stack, TextField, VStack } from "@navikt/ds-react";
+import {
+  BodyShort,
+  Button,
+  HStack,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  VStack,
+} from "@navikt/ds-react";
 import { BrevmottakerRolle } from "~/hooks/useBrevmottaker";
+import { PlusCircleIcon } from "@navikt/aksel-icons";
 
 export const OrganisasjonsSøk: React.FC = () => {
-  // const [mottakerRolle, settMottakerRolle] = useState<BrevmottakerRolleOrganisasjon>(
-  //   EBrevmottakerRolle.FULLMEKTIG
-  // );
   const [organisasjonsnummer, settOrganisasjonsnummer] = useState("");
   const [kontaktpersonHosOrganisasjon, settKontaktpersonHosOrganisasjon] = useState("");
   const [mottakerRolle, settMottakerRolle] = useState<BrevmottakerRolle>();
@@ -35,21 +42,29 @@ export const OrganisasjonsSøk: React.FC = () => {
             <Radio value={BrevmottakerRolle.ANNEN}>Annen mottaker</Radio>
           </Stack>
         </RadioGroup>
-        <div>
+        <HStack style={{ background: "rgba(196, 196, 196, 0.2)" }} padding={"2"} gap={"24"}>
+          <VStack gap={"1"}>
+            <BodyShort>Orgnavn</BodyShort>
+            <BodyShort>orgnr</BodyShort>
+            <TextField
+              htmlSize={25}
+              label={"Ved"}
+              placeholder={"Personen brevet skal til"}
+              value={kontaktpersonHosOrganisasjon}
+              onChange={(e) => settKontaktpersonHosOrganisasjon(e.target.value)}
+              autoComplete="off"
+            />
+          </VStack>
           <Button
+            icon={<PlusCircleIcon />}
+            style={{ width: "fit-content", alignSelf: "flex-start" }}
+            variant={"secondary"}
+            size={"medium"}
             onClick={() => {}} // Legge til organisasjon og navn i mottakerlisten
           >
             Legg til
           </Button>
-          <TextField
-            htmlSize={25}
-            label={"Ved"}
-            placeholder={"Personen brevet skal til"}
-            value={kontaktpersonHosOrganisasjon}
-            onChange={(e) => settKontaktpersonHosOrganisasjon(e.target.value)}
-            autoComplete="off"
-          />
-        </div>
+        </HStack>
       </VStack>
     </>
   );
