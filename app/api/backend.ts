@@ -1,5 +1,4 @@
 import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
-import type {BarnetilsynBeregningRequest, IBeløpsperioder, IVedtak} from "~/komponenter/behandling/vedtak/vedtak";
 
 export interface ApiResponse<T = unknown> {
   data?: T;
