@@ -1,5 +1,5 @@
-import {useCallback, useEffect, useRef, useState} from "react";
-import {apiCall, type ApiResponse} from "~/api/backend";
+import { useCallback, useState } from "react";
+import { apiCall, type ApiResponse } from "~/api/backend";
 import type {
     BeløpsperioderDto,
     IBarnetilsynperiode
@@ -12,34 +12,17 @@ interface BeløpsperioderState {
     laster: boolean;
 }
 
-
-
-
-export function useHentBeløppsperioderManual() {
-    useEffect(() => {
-        const hentBeløpsperioderForVedtak = async(
-            behandlingId: string,
-            barnetilsynBeregningRequest: BarnetilsynBeregningRequest
-        ): Promise<ApiResponse<BeløpsperioderDto>> => {
-            return apiCall(`/vedtak/${behandlingId}/beregn`, {
-                method: "POST",
-                body: JSON.stringify(barnetilsynBeregningRequest)
-            });
-        }
-
-
-
+export function useHentBeløpsPerioderForVedtak() {
     const [state, settState] = useState<BeløpsperioderState>({
         beløpsperioderDto: null,
         melding: null,
         laster: false,
     });
-    const behandlingIdRef = useRef<string | undefined>();
-    const perioderRef = useRef<IBarnetilsynperiode[]>();
 
-    const hent = useCallback(async (behandlingId: string | undefined, barnetilsynsperioder: IBarnetilsynperiode[]) => {
-        behandlingIdRef.current = behandlingId;
-        perioderRef.current = barnetilsynsperioder;
+    const hent = useCallback(async (
+        behandlingId: string | undefined,
+        barnetilsynsperioder: IBarnetilsynperiode[]
+    ) => {
         if (!behandlingId) {
             settState((prev) => ({
                 ...prev,
@@ -51,16 +34,21 @@ export function useHentBeløppsperioderManual() {
         settState((prev) => ({ ...prev, melding: null, laster: true }));
         const request: BarnetilsynBeregningRequest = {
             barnetilsynBeregning: barnetilsynsperioder
-                .filter(periode => periode.periodetype !== undefined)
-                .map(periode => ({
+                .filter((periode) => periode.periodetype !== undefined)
+                .map((periode) => ({
                     datoFra: periode.datoFra,
                     datoTil: periode.datoTil,
                     utgifter: periode.utgifter,
                     barn: periode.barn,
-                    periodetype: periode.periodetype!
-                }))
+                    periodetype: periode.periodetype!,
+                })),
         };
-        const response = await hentBeløpsperioderForVedtak(behandlingId, request);
+        const response: ApiResponse<BeløpsperioderDto> = await apiCall(
+            `/vedtak/${behandlingId}/beregn`, {
+                method: "POST",
+                body: JSON.stringify(request),
+            }
+        );
         if (response.data) {
             settState((prev) => ({
                 ...prev,
@@ -71,5 +59,4 @@ export function useHentBeløppsperioderManual() {
     }, []);
 
     return { ...state, hent };
-    })
 }

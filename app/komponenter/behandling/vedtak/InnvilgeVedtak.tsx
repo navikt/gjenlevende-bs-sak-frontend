@@ -8,7 +8,6 @@ import {
 } from "~/komponenter/behandling/vedtak/vedtak";
 import {useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
-import { useHentBeløppsperioderManual } from "~/hooks/useHentBeløpsPerioderForVedtak";
 import {
     Label,
     Select,
@@ -18,6 +17,7 @@ import {
 } from "@navikt/ds-react";
 import { TrashIcon } from '@navikt/aksel-icons';
 import styles from "./Grid.module.css";
+import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderForVedtak";
 
 interface GridProps {
     lesevisning?: boolean;
@@ -62,7 +62,7 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
     const lagretPerioder = lagretVedtak?.barnetilsynperioder || [];
     const { behandlingId } = useParams<{ behandlingId: string }>();
     const { lagreVedtak } = useLagreVedtak();
-    const { beløpsperioderDto, hent } = useHentBeløppsperioderManual();
+    const { beløpsperioderDto, hent } = useHentBeløpsPerioderForVedtak();
     const barnOptions = [
         { label: 'Barn 1', value: 'b1e1d2c3-1111-2222-3333-444455556666' },
         { label: 'Barn 2', value: 'b2e2d3c4-7777-8888-9999-000011112222' },
