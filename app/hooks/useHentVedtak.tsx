@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hentVedtakForBehandling } from "~/api/backend";
+import {apiCall, type ApiResponse} from "~/api/backend";
 import type {IVedtak} from "~/komponenter/behandling/vedtak/vedtak";
 
 interface VedtakState {
@@ -16,6 +16,14 @@ export function useHentVedtak(behandlingId: string | undefined) {
     });
 
     useEffect(() => {
+        const hentVedtakForBehandling = async(
+            behandlingId: string
+        ): Promise<ApiResponse<IVedtak>> => {
+            return apiCall(`/vedtak/${behandlingId}/hent-vedtak`, {
+                method: "GET",
+            });
+        };
+
         const hentVedtak = async () => {
             if (!behandlingId) {
                 settState((prev) => ({

@@ -8,6 +8,7 @@ import {
 } from "~/komponenter/behandling/vedtak/vedtak";
 import {useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
+import { useHentBeløppsperioderManual } from "~/hooks/useHentBeløpsPerioderForVedtak";
 import {
     Label,
     Select,
@@ -45,9 +46,8 @@ function månedStringTilDatoString(value: string | undefined): string {
     const måned = månederStrings.indexOf((månedNavn || '').toLowerCase());
     const year = Number(årString);
     if (måned >= 0 && year >= 1000 && year <= 9999) {
-        // Always use day 1
         const mm = String(måned + 1).padStart(2, '0');
-        return `${year}-${mm}-01`;
+        return `${year}-${mm}`;
     }
     return ''
 }
@@ -62,6 +62,7 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
     const lagretPerioder = lagretVedtak?.barnetilsynperioder || [];
     const { behandlingId } = useParams<{ behandlingId: string }>();
     const { lagreVedtak } = useLagreVedtak();
+    const { beløpsperioderDto, hent } = useHentBeløppsperioderManual();
     const barnOptions = [
         { label: 'Barn 1', value: 'b1e1d2c3-1111-2222-3333-444455556666' },
         { label: 'Barn 2', value: 'b2e2d3c4-7777-8888-9999-000011112222' },
@@ -183,26 +184,36 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
             </HStack>
             <Textarea label={'Begrunnelse'} value={begrunnelse} onChange={e => setBegrunnelse(e.target.value)}></Textarea>
             <HStack>
-                <Button>
+                <Button onClick={() => hent(behandlingId, perioder)}>
                     Beregn
                 </Button>
             </HStack>
+            {beløpsperioderDto && (
             <GridLiten>
                 <Label>Periode</Label>
                 <Label>Antall barn</Label>
                 <Label>Utgifter</Label>
                 <Label>Stønadsbeløp pr mnd</Label>
+                {beløpsperioderDto.map((periode, idx) => (
+                    <React.Fragment key={idx}>
+                        <span>{periode.datoFra} - {periode.datoTil}</span>
+                        <span>{periode.antallBarn}</span>
+                        <span>{periode.utgifter}</span>
+                        <span>{periode.beløp}</span>
+                    </React.Fragment>
+                ))}
             </GridLiten>
+            )}
             <HStack>
                 <Button
                     onClick={() => {
                         if (!behandlingId) return;
-                        const mockVedtak = {
+                        const Vedtak = {
                             resultatType: EResultatType.INNVILGET,
                             begrunnelse: begrunnelse,
                             barnetilsynperioder: perioder,
                         };
-                        lagreVedtak(behandlingId, mockVedtak);
+                        lagreVedtak(behandlingId, Vedtak);
                     }}
                 >
                     Lagre vedtak

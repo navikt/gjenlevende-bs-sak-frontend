@@ -28,13 +28,13 @@ export const OppgørVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretV
                 <Button size="medium"
                         onClick={() => {
                             if (!behandlingId || !selectedMonth) return;
-                            const mockVedtak = {
+                            const vedtak = {
                                 resultatType: EResultatType.OPPHØR,
                                 begrunnelse: begrunnelse,
                                 barnetilsynperioder: [],
                                 opphørFom: format(selectedMonth, 'yyyy-MM')
                             };
-                            lagreVedtak(behandlingId, mockVedtak);
+                            lagreVedtak(behandlingId, vedtak);
                         }}
                 >
                     Lagre vedtak

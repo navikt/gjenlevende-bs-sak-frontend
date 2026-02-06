@@ -1,5 +1,3 @@
-
-
 export enum EBehandlingResultat {
     INNVILGE = 'INNVILGE',
     INNVILGE_UTEN_UTBETALING = 'INNVILGE_UTEN_UTBETALING',
@@ -46,3 +44,24 @@ export interface IBarnetilsynperiode {
     periodetype: EPeriodetype | undefined;
     aktivitetstype: EAktivitetstypeBarnetilsyn | undefined;
 }
+
+export interface BarnetilsynBeregningRequest {
+    barnetilsynBeregning: IBarnetilsynberegning[]
+}
+
+export interface IBarnetilsynberegning {
+    datoFra: string;
+    datoTil: string;
+    utgifter: number;
+    barn: string[];
+    periodetype: EPeriodetype;
+}
+
+export type BeløpsperioderDto = {
+    datoFra: string;
+    datoTil: string;
+    utgifter: number;
+    antallBarn: number;
+    beløp: number;
+    periodetype: EPeriodetype;
+}[];
