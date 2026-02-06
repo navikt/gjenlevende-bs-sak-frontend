@@ -1,4 +1,4 @@
-import { Select } from "@navikt/ds-react";
+import { BodyShort, Select } from "@navikt/ds-react";
 import React, { useState } from "react";
 import { OrganisasjonsSøk } from "~/komponenter/brev/OrganisasjonSøk";
 import { PersonSøk } from "~/komponenter/brev/PersonSøk";
@@ -18,8 +18,10 @@ export const ManueltSøk = ({ leggTilMottaker }: Props) => {
 
   return (
     <>
+      <BodyShort size={"large"}>Manuelt søk</BodyShort>
       <Select
         label="Manuelt søk"
+        hideLabel
         value={søktype}
         onChange={(e) => settSøktype(e.target.value as Søktype)}
         style={{ width: "50%" }}
@@ -28,9 +30,7 @@ export const ManueltSøk = ({ leggTilMottaker }: Props) => {
         <option value={Søktype.ORGANISASJON}>Organisasjon</option>
         <option value={Søktype.PERSON}>Person</option>
       </Select>
-      {søktype === Søktype.ORGANISASJON && (
-        <OrganisasjonsSøk leggTilMottaker={leggTilMottaker} />
-      )}
+      {søktype === Søktype.ORGANISASJON && <OrganisasjonsSøk leggTilMottaker={leggTilMottaker} />}
       {søktype === Søktype.PERSON && <PersonSøk leggTilMottaker={leggTilMottaker} />}
     </>
   );

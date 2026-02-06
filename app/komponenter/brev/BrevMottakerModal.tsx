@@ -40,30 +40,37 @@ export default function BrevmottakerModalInnhold({ mottakere, settMottakere, luk
   const harEndringer = JSON.stringify(mottakere) !== JSON.stringify(midlertidigMottakerliste);
 
   return (
-    <Modal.Body>
-      <HStack gap={"4"} justify={"space-evenly"}>
-        <VStack gap={"4"} width={"47%"}>
-          <ManueltSøk leggTilMottaker={leggTilMottaker} />
+    <>
+      <Modal.Body style={{ height: "100%" }}>
+        <HStack gap={"4"} justify={"space-evenly"}>
+          <VStack gap={"4"} width={"47%"}>
+            <ManueltSøk leggTilMottaker={leggTilMottaker} />
+            <Skillelinje />
+            <SkalBrukerMottaBrev
+              mottakere={midlertidigMottakerliste}
+              leggTilMottaker={leggTilMottaker}
+              fjernMottaker={fjernMottaker}
+            />
+          </VStack>
           <Skillelinje />
-          <SkalBrukerMottaBrev
-            mottakere={midlertidigMottakerliste}
-            leggTilMottaker={leggTilMottaker}
-            fjernMottaker={fjernMottaker}
-          />
-        </VStack>
-        <Skillelinje />
-        <VStack width={"47%"}>
-          <BrevmottakereListe mottakere={midlertidigMottakerliste} fjernMottaker={fjernMottaker} />
-        </VStack>
-      </HStack>
-      <HStack gap={"2"} width={"100%"} justify={"center"} style={{ marginTop: "1rem" }}>
-        <Button variant={"secondary"} onClick={håndterAvbryt}>
-          Avbryt
-        </Button>
-        <Button onClick={håndterSettMottakere} disabled={!harEndringer}>
-          Sett mottakere
-        </Button>
-      </HStack>
-    </Modal.Body>
+          <VStack width={"47%"}>
+            <BrevmottakereListe
+              mottakere={midlertidigMottakerliste}
+              fjernMottaker={fjernMottaker}
+            />
+          </VStack>
+        </HStack>
+      </Modal.Body>
+      <Modal.Footer>
+        <HStack gap={"2"} justify={"center"} style={{ marginTop: "1rem" }}>
+          <Button variant={"secondary"} onClick={håndterAvbryt}>
+            Avbryt
+          </Button>
+          <Button onClick={håndterSettMottakere} disabled={!harEndringer}>
+            Sett mottakere
+          </Button>
+        </HStack>
+      </Modal.Footer>
+    </>
   );
 }
