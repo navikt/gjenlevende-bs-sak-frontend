@@ -6,9 +6,10 @@ import { TrashIcon } from "@navikt/aksel-icons";
 
 interface Props {
   mottakere: Brevmottaker[];
+  fjernMottaker: (index: number) => void;
 }
 
-export const BrevmottakereListe: FC<Props> = ({ mottakere }) => {
+export const BrevmottakereListe: FC<Props> = ({ mottakere, fjernMottaker }) => {
   // const nyMottakerliste: Brevmottaker[] = [];
 
   return (
@@ -36,7 +37,7 @@ export const BrevmottakereListe: FC<Props> = ({ mottakere }) => {
               </VStack>
               <Button
                 variant={"tertiary"}
-                onClick={() => {}} //TODO fjern person fra mottakerlisten
+                onClick={() => fjernMottaker(index)}
                 icon={<TrashIcon />}
               ></Button>
             </HStack>
@@ -62,7 +63,7 @@ export const BrevmottakereListe: FC<Props> = ({ mottakere }) => {
               </VStack>
               <Button
                 variant={"tertiary"}
-                onClick={() => {}} //TODO fjern person fra mottakerlisten
+                onClick={() => fjernMottaker(index)}
                 icon={<TrashIcon />}
               ></Button>
             </HStack>

@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { BodyShort, Button, HStack, Radio, RadioGroup, Stack, TextField, VStack, } from "@navikt/ds-react";
+import {
+  BodyShort,
+  Button,
+  HStack,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  VStack,
+} from "@navikt/ds-react";
 import { type Brevmottaker, BrevmottakerRolle } from "~/hooks/useBrevmottaker";
 import { PlusCircleIcon } from "@navikt/aksel-icons";
 
@@ -12,7 +21,7 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
   const [kontaktpersonHosOrganisasjon, settKontaktpersonHosOrganisasjon] = useState("");
   const [mottakerRolle, settMottakerRolle] = useState<BrevmottakerRolle>();
 
-  const handleLeggTilOrganisasjon = () => {
+  const håndterLeggTilOrganisasjon = () => {
     if (organisasjonsnummer && kontaktpersonHosOrganisasjon && mottakerRolle) {
       const nyOrganisasjonMottaker: Brevmottaker = {
         personRolle: mottakerRolle,
@@ -69,7 +78,7 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
               variant={"secondary"}
               size={"medium"}
               onClick={() => {
-                handleLeggTilOrganisasjon();
+                håndterLeggTilOrganisasjon();
               }}
             >
               Legg til
@@ -80,8 +89,3 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
     </>
   );
 };
-
-export interface IOrganisasjon {
-  navn: string;
-  organisasjonsnummer: string;
-}
