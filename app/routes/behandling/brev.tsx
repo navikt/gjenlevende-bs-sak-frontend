@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import { BodyShort, Button, Heading, HStack, Modal, Select, VStack } from "@navikt/ds-react";
+import React from "react";
+import { Button, Heading, Modal, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
-import { OrganisasjonsSøk } from "~/komponenter/brev/OrganisasjonSøk";
-import { BrevmottakereListe } from "~/komponenter/brev/BrevmottakereListe";
+import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -16,14 +15,9 @@ export function meta(_args: Route.MetaArgs) {
   ];
 }
 
-enum Søktype {
-  ORGANISASJON = "ORGANISASJON",
-  PERSON = "PERSON",
-}
-
 export default function Brev() {
-  const { mottakere, leggTilMottaker, utledBrevmottakere, modalÅpen, settModalÅpen } = useBrevmottaker();
-  const [søktype, settSøktype] = useState<Søktype>();
+  const { mottakere, leggTilMottaker, utledBrevmottakere, modalÅpen, settModalÅpen } =
+    useBrevmottaker();
 
   return (
     <VStack gap="space-4">
@@ -41,28 +35,7 @@ export default function Brev() {
         header={{ heading: "Hvem skal motta brevet?" }}
         width={"70rem"}
       >
-        <Modal.Body>
-          <HStack gap={"4"}>
-            <VStack gap={"4"} minWidth={"50%"}>
-              <Select
-                label="Manuelt søk"
-                value={søktype}
-                onChange={(e) => settSøktype(e.target.value as Søktype)}
-                style={{ width: "50%" }}
-              >
-                <option value="">Velg</option>
-                <option value={Søktype.ORGANISASJON}>Organisasjon</option>
-                <option value={Søktype.PERSON}>Person</option>
-              </Select>
-              {søktype === Søktype.ORGANISASJON && <OrganisasjonsSøk leggTilMottaker={leggTilMottaker} />}
-              <BodyShort>Skal bruker motta brevet?</BodyShort>
-            </VStack>
-            <div style={{ border: "2px solid #f3f3f3" }}></div>
-            <VStack>
-              <BrevmottakereListe mottakere={mottakere} />
-            </VStack>
-          </HStack>
-        </Modal.Body>
+        <BrevmottakerModalInnhold mottakere={mottakere} leggTilMottaker={leggTilMottaker} />
       </Modal>
     </VStack>
   );

@@ -12,7 +12,7 @@ export const BrevmottakereListe: FC<Props> = ({ mottakere }) => {
   // const nyMottakerliste: Brevmottaker[] = [];
 
   return (
-    <VStack gap={"2"}>
+    <VStack gap={"2"} width={"100%"}>
       <BodyShort>Brevmottakere</BodyShort>
       {mottakere.map((mottaker, index) => {
         if (mottaker.mottakerType === "ORGANISASJON") {
