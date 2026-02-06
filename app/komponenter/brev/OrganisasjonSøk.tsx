@@ -1,29 +1,18 @@
 import React, { useState } from "react";
-import {
-  BodyShort,
-  Button,
-  HStack,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  VStack,
-} from "@navikt/ds-react";
-import { type Brevmottaker, BrevmottakerRolle, useBrevmottaker } from "~/hooks/useBrevmottaker";
+import { BodyShort, Button, HStack, Radio, RadioGroup, Stack, TextField, VStack, } from "@navikt/ds-react";
+import { type Brevmottaker, BrevmottakerRolle } from "~/hooks/useBrevmottaker";
 import { PlusCircleIcon } from "@navikt/aksel-icons";
 
-export const OrganisasjonsSøk: React.FC = () => {
-  const { leggTilMottaker } = useBrevmottaker();
+interface Props {
+  leggTilMottaker: (mottaker: Brevmottaker) => void;
+}
+
+export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
   const [organisasjonsnummer, settOrganisasjonsnummer] = useState("");
   const [kontaktpersonHosOrganisasjon, settKontaktpersonHosOrganisasjon] = useState("");
   const [mottakerRolle, settMottakerRolle] = useState<BrevmottakerRolle>();
 
   const handleLeggTilOrganisasjon = () => {
-    if (!organisasjonsnummer || !kontaktpersonHosOrganisasjon || !mottakerRolle) {
-      alert("Vennligst fyll inn alle feltene før du legger til organisasjonen.");
-      return;
-    }
-
     if (organisasjonsnummer && kontaktpersonHosOrganisasjon && mottakerRolle) {
       const nyOrganisasjonMottaker: Brevmottaker = {
         personRolle: mottakerRolle,

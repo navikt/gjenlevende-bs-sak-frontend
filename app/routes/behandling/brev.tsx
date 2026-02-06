@@ -22,7 +22,7 @@ enum Søktype {
 }
 
 export default function Brev() {
-  const { utledBrevmottakere, modalÅpen, settModalÅpen } = useBrevmottaker();
+  const { mottakere, leggTilMottaker, utledBrevmottakere, modalÅpen, settModalÅpen } = useBrevmottaker();
   const [søktype, settSøktype] = useState<Søktype>();
 
   return (
@@ -54,12 +54,12 @@ export default function Brev() {
                 <option value={Søktype.ORGANISASJON}>Organisasjon</option>
                 <option value={Søktype.PERSON}>Person</option>
               </Select>
-              {søktype === Søktype.ORGANISASJON && <OrganisasjonsSøk />}
+              {søktype === Søktype.ORGANISASJON && <OrganisasjonsSøk leggTilMottaker={leggTilMottaker} />}
               <BodyShort>Skal bruker motta brevet?</BodyShort>
             </VStack>
             <div style={{ border: "2px solid #f3f3f3" }}></div>
             <VStack>
-              <BrevmottakereListe />
+              <BrevmottakereListe mottakere={mottakere} />
             </VStack>
           </HStack>
         </Modal.Body>
