@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import type {
-    BeløpsperioderDto,
+    IBeløpsperioder,
     IBarnetilsynperiode
 } from "~/komponenter/behandling/vedtak/vedtak";
 import type { BarnetilsynBeregningRequest } from "~/komponenter/behandling/vedtak/vedtak";
 
 interface BeløpsperioderState {
-    beløpsperioderDto: BeløpsperioderDto | null;
+    beløpsperioderDto: IBeløpsperioder | null;
     melding: string | null;
     laster: boolean;
 }
@@ -43,7 +43,7 @@ export function useHentBeløpsPerioderForVedtak() {
                     periodetype: periode.periodetype!,
                 })),
         };
-        const response: ApiResponse<BeløpsperioderDto> = await apiCall(
+        const response: ApiResponse<IBeløpsperioder> = await apiCall(
             `/vedtak/${behandlingId}/beregn`, {
                 method: "POST",
                 body: JSON.stringify(request),

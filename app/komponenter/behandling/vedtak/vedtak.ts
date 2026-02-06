@@ -57,7 +57,7 @@ export interface IBarnetilsynberegning {
     periodetype: EPeriodetype;
 }
 
-export type BeløpsperioderDto = {
+export type IBeløpsperioder = {
     datoFra: string;
     datoTil: string;
     utgifter: number;
