@@ -39,14 +39,16 @@ export default function Brev() {
         open={modalÅpen}
         onClose={() => settModalÅpen(false)}
         header={{ heading: "Hvem skal motta brevet?" }}
+        width={"70rem"}
       >
         <Modal.Body>
           <HStack gap={"4"}>
-            <VStack gap={"4"}>
+            <VStack gap={"4"} minWidth={"50%"}>
               <Select
                 label="Manuelt søk"
                 value={søktype}
                 onChange={(e) => settSøktype(e.target.value as Søktype)}
+                style={{ width: "50%" }}
               >
                 <option value="">Velg</option>
                 <option value={Søktype.ORGANISASJON}>Organisasjon</option>

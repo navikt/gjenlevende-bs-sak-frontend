@@ -9,13 +9,31 @@ import {
   TextField,
   VStack,
 } from "@navikt/ds-react";
-import { BrevmottakerRolle } from "~/hooks/useBrevmottaker";
+import { type Brevmottaker, BrevmottakerRolle, useBrevmottaker } from "~/hooks/useBrevmottaker";
 import { PlusCircleIcon } from "@navikt/aksel-icons";
 
 export const OrganisasjonsSøk: React.FC = () => {
+  const { leggTilMottaker } = useBrevmottaker();
   const [organisasjonsnummer, settOrganisasjonsnummer] = useState("");
   const [kontaktpersonHosOrganisasjon, settKontaktpersonHosOrganisasjon] = useState("");
   const [mottakerRolle, settMottakerRolle] = useState<BrevmottakerRolle>();
+
+  const handleLeggTilOrganisasjon = () => {
+    if (!organisasjonsnummer || !kontaktpersonHosOrganisasjon || !mottakerRolle) {
+      alert("Vennligst fyll inn alle feltene før du legger til organisasjonen.");
+      return;
+    }
+
+    if (organisasjonsnummer && kontaktpersonHosOrganisasjon && mottakerRolle) {
+      const nyOrganisasjonMottaker: Brevmottaker = {
+        personRolle: mottakerRolle,
+        mottakerType: "ORGANISASJON",
+        orgnr: organisasjonsnummer,
+        navnHosOrganisasjon: kontaktpersonHosOrganisasjon,
+      };
+      leggTilMottaker(nyOrganisasjonMottaker);
+    }
+  };
 
   return (
     <>
@@ -31,41 +49,45 @@ export const OrganisasjonsSøk: React.FC = () => {
           paddingRight: "1rem",
         }}
       />
-      <VStack>
-        <RadioGroup
-          legend="Velg mottakerrolle"
-          onChange={(rolle: BrevmottakerRolle) => settMottakerRolle(rolle)}
-          value={mottakerRolle}
-        >
-          <Stack gap="space-0 space-24" direction={"row"} wrap={false}>
-            <Radio value={BrevmottakerRolle.FULLMEKTIG}>Fullmektig</Radio>
-            <Radio value={BrevmottakerRolle.ANNEN}>Annen mottaker</Radio>
-          </Stack>
-        </RadioGroup>
-        <HStack style={{ background: "rgba(196, 196, 196, 0.2)" }} padding={"2"} gap={"24"}>
-          <VStack gap={"1"}>
-            <BodyShort>Orgnavn</BodyShort>
-            <BodyShort>orgnr</BodyShort>
-            <TextField
-              htmlSize={25}
-              label={"Ved"}
-              placeholder={"Personen brevet skal til"}
-              value={kontaktpersonHosOrganisasjon}
-              onChange={(e) => settKontaktpersonHosOrganisasjon(e.target.value)}
-              autoComplete="off"
-            />
-          </VStack>
-          <Button
-            icon={<PlusCircleIcon />}
-            style={{ width: "fit-content", alignSelf: "flex-start" }}
-            variant={"secondary"}
-            size={"medium"}
-            onClick={() => {}} // Legge til organisasjon og navn i mottakerlisten
+      {organisasjonsnummer && (
+        <VStack>
+          <RadioGroup
+            legend="Velg mottakerrolle"
+            onChange={(rolle: BrevmottakerRolle) => settMottakerRolle(rolle)}
+            value={mottakerRolle}
           >
-            Legg til
-          </Button>
-        </HStack>
-      </VStack>
+            <Stack gap="space-0 space-24" direction={"row"} wrap={false}>
+              <Radio value={BrevmottakerRolle.FULLMEKTIG}>Fullmektig</Radio>
+              <Radio value={BrevmottakerRolle.ANNEN}>Annen mottaker</Radio>
+            </Stack>
+          </RadioGroup>
+          <HStack style={{ background: "rgba(196, 196, 196, 0.2)" }} padding={"2"} gap={"24"}>
+            <VStack gap={"1"}>
+              <BodyShort>Orgnavn</BodyShort>
+              <BodyShort>orgnr</BodyShort>
+              <TextField
+                htmlSize={25}
+                label={"Ved"}
+                placeholder={"Personen brevet skal til"}
+                value={kontaktpersonHosOrganisasjon}
+                onChange={(e) => settKontaktpersonHosOrganisasjon(e.target.value)}
+                autoComplete="off"
+              />
+            </VStack>
+            <Button
+              icon={<PlusCircleIcon />}
+              style={{ width: "fit-content", alignSelf: "flex-start" }}
+              variant={"secondary"}
+              size={"medium"}
+              onClick={() => {
+                handleLeggTilOrganisasjon();
+              }}
+            >
+              Legg til
+            </Button>
+          </HStack>
+        </VStack>
+      )}
     </>
   );
 };

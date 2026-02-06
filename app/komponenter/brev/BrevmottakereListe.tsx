@@ -19,18 +19,16 @@ export const BrevmottakereListe: FC = () => {
         >
           {/*TODO hent navn til personident under*/}
           <VStack>
-            <BodyShort>
-              {`${mottaker.personident} (${mottaker.personRolle})`}
-              <HStack gap="space-2" align={"center"}>
-                <BodyShort size={"small"}>{mottaker.personident}</BodyShort>
-                <CopyButton
-                  size={"xsmall"}
-                  copyText={mottaker.personident ?? ""}
-                  variant={"action"}
-                  activeText={"kopiert"}
-                />
-              </HStack>
-            </BodyShort>
+            <BodyShort>{`${mottaker.personident} (${mottaker.personRolle})`}</BodyShort>
+            <HStack gap="space-2" align={"center"}>
+              <BodyShort size={"small"}>{mottaker.personident}</BodyShort>
+              <CopyButton
+                size={"xsmall"}
+                copyText={mottaker.personident ?? ""}
+                variant={"action"}
+                activeText={"kopiert"}
+              />
+            </HStack>
           </VStack>
           <Button
             variant={"tertiary"}
