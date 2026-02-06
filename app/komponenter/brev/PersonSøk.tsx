@@ -47,6 +47,9 @@ export function PersonSøk({ leggTilMottaker }: Props) {
         mottakerType: "PERSON",
       };
       leggTilMottaker(nyPersonMottaker);
+      settPersonident("");
+      settMottakerRolle(undefined);
+      settFeilmeldinger({});
     }
   };
 

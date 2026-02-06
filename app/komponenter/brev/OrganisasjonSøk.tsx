@@ -54,6 +54,10 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
         navnHosOrganisasjon: kontaktpersonHosOrganisasjon,
       };
       leggTilMottaker(nyOrganisasjonMottaker);
+      settOrganisasjonsnummer("");
+      settKontaktpersonHosOrganisasjon("");
+      settMottakerRolle(undefined);
+      settFeilmeldinger({});
     }
   };
 
