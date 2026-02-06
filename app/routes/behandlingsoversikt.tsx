@@ -25,7 +25,7 @@ export const TableDataCellSmall = forwardRef<HTMLTableCellElement, DataCellProps
 ));
 TableDataCellSmall.displayName = "TableDataCellSmall";
 
-export const Behandlingsoversikt = () => {
+export default function Behandlingsoversikt() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
   const navigate = useNavigate();
   const { fagsak, fagsakId } = usePersonContext();
@@ -94,4 +94,4 @@ export const Behandlingsoversikt = () => {
       </div>
     </VStack>
   );
-};
+}
