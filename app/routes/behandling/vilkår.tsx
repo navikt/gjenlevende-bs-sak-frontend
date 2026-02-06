@@ -12,11 +12,11 @@ export function meta(_: Route.MetaArgs) {
 
 export default function Vilkår() {
   // const { behandlingId } = useBehandlingContext();
-  const [erVilkårUtfylt, settErVilkårUtfylt] = useState(false);
+  const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean>(false);
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
 
-  useMarkerStegFerdige("Vilkår", erVilkårUtfylt);
+  useMarkerStegFerdige("Vilkår", erVilkårUtfylt === true);
   const harFyltUtAlt = erVilkårUtfylt;
 
   const navigerTilNeste = () => {

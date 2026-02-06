@@ -42,52 +42,52 @@ export default function Behandlingsoversikt() {
     );
   }
 
-  async function startOpprettBehandling() {
+  const startOpprettBehandling = async () => {
     if (fagsak) {
       const behandlingId = await opprettBehandling(fagsak.id);
       if (behandlingId) {
         gåTilBehandling(behandlingId);
       }
     }
-  }
+  };
 
-  function gåTilBehandling(behandlingId: string) {
+  const gåTilBehandling = (behandlingId: string) => {
     navigate(`/person/${fagsakPersonId}/behandling/${behandlingId}/arsak-behandling`);
-  }
+  };
 
   return (
     <VStack gap="4">
       <Heading level="1" size="large">
         Behandlingsoversikt
       </Heading>
-      <Table.Body>
-        <Table>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Behandling opprettetdato</Table.HeaderCell>
-              <Table.HeaderCell>Opprettet av</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Resultat</Table.HeaderCell>
-              <Table.HeaderCell></Table.HeaderCell>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Behandling opprettetdato</Table.HeaderCell>
+            <Table.HeaderCell>Opprettet av</Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell>Resultat</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+
+        <Table.Body>
+          {behandlinger.map((behandling) => (
+            <Table.Row key={behandling.id}>
+              <TableDataCellSmall>{formaterIsoDatoTid(behandling.opprettet)}</TableDataCellSmall>
+              <TableDataCellSmall>{behandling.opprettetAv}</TableDataCellSmall>
+              <TableDataCellSmall>{formatterEnumVerdi(behandling.status)}</TableDataCellSmall>
+              <TableDataCellSmall>{formatterEnumVerdi(behandling.resultat)}</TableDataCellSmall>
+              <TableDataCellSmall>
+                <Button size={"small"} onClick={() => gåTilBehandling(behandling.id)}>
+                  Gå til behandling
+                </Button>
+              </TableDataCellSmall>
             </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {behandlinger.map((behandling) => (
-              <Table.Row key={behandling.id}>
-                <TableDataCellSmall>{formaterIsoDatoTid(behandling.opprettet)}</TableDataCellSmall>
-                <TableDataCellSmall>{behandling.opprettetAv}</TableDataCellSmall>
-                <TableDataCellSmall>{formatterEnumVerdi(behandling.status)}</TableDataCellSmall>
-                <TableDataCellSmall>{formatterEnumVerdi(behandling.resultat)}</TableDataCellSmall>
-                <TableDataCellSmall>
-                  <Button size={"small"} onClick={() => gåTilBehandling(behandling.id)}>
-                    Gå til behandling
-                  </Button>
-                </TableDataCellSmall>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      </Table.Body>
+          ))}
+        </Table.Body>
+      </Table>
+
       <div>
         <Button onClick={startOpprettBehandling}>Lag behandling</Button>
         <BodyShort>{opprettFeilmelding}</BodyShort>
