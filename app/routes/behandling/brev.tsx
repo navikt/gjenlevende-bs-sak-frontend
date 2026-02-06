@@ -16,7 +16,7 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export default function Brev() {
-  const { mottakere, leggTilMottaker, fjernMottaker, utledBrevmottakere, modalÅpen, settModalÅpen } =
+  const { mottakere, settMottakere, utledBrevmottakere, modalÅpen, settModalÅpen } =
     useBrevmottaker();
 
   return (
@@ -35,7 +35,11 @@ export default function Brev() {
         header={{ heading: "Hvem skal motta brevet?" }}
         width={"70rem"}
       >
-        <BrevmottakerModalInnhold mottakere={mottakere} leggTilMottaker={leggTilMottaker} fjernMottaker={fjernMottaker} />
+        <BrevmottakerModalInnhold
+          mottakere={mottakere}
+          settMottakere={settMottakere}
+          lukkModal={() => settModalÅpen(false)}
+        />
       </Modal>
     </VStack>
   );
