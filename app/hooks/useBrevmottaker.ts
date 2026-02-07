@@ -22,13 +22,11 @@ export interface Brevmottaker {
 export const useBrevmottaker = (behandlingId?: string) => {
   const { personident } = usePersonContext();
   const [mottakere, settMottakere] = useState<Brevmottaker[]>([]);
-  const [laster, settLaster] = useState(true);
 
   useEffect(() => {
     if (!behandlingId) return;
 
     const hentBrevmottakere = async () => {
-      settLaster(true);
       const response = await apiCall<Brevmottaker[]>(`/brevmottaker/${behandlingId}`);
 
       if (response.data && response.data.length > 0) {
@@ -42,7 +40,6 @@ export const useBrevmottaker = (behandlingId?: string) => {
           },
         ]);
       }
-      settLaster(false);
     };
 
     hentBrevmottakere();
@@ -96,6 +93,5 @@ export const useBrevmottaker = (behandlingId?: string) => {
     fjernMottaker,
     utledBrevmottakere,
     sendMottakereTilSak,
-    laster,
   };
 };
