@@ -5,15 +5,23 @@ import { type Brevmottaker } from "~/hooks/useBrevmottaker";
 import { ManueltSøk } from "~/komponenter/brev/ManueltSøk";
 import { Skillelinje } from "~/komponenter/layout/Skillelinje";
 import { SkalBrukerMottaBrev } from "~/komponenter/brev/SkalBrukerMottaBrev";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 interface Props {
   mottakere: Brevmottaker[];
   settMottakere: (mottakere: Brevmottaker[]) => void;
   lukkModal: () => void;
+  sendMottakereTilSak: (behandlingId: string, mottakere: Brevmottaker[]) => void;
 }
 
-export default function BrevmottakerModalInnhold({ mottakere, settMottakere, lukkModal }: Props) {
+export default function BrevmottakerModalInnhold({
+  mottakere,
+  settMottakere,
+  lukkModal,
+  sendMottakereTilSak,
+}: Props) {
   const [midlertidigMottakerliste, settMidlertidigMottakerliste] = useState<Brevmottaker[]>([]);
+  const { behandlingId } = useBehandlingContext();
 
   useEffect(() => {
     settMidlertidigMottakerliste([...mottakere]);
@@ -29,6 +37,8 @@ export default function BrevmottakerModalInnhold({ mottakere, settMottakere, luk
 
   const håndterSettMottakere = () => {
     settMottakere(midlertidigMottakerliste);
+    sendMottakereTilSak(behandlingId, midlertidigMottakerliste);
+
     lukkModal();
   };
 

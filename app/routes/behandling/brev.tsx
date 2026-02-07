@@ -17,7 +17,7 @@ export function meta(_args: Route.MetaArgs) {
 
 export default function Brev() {
   const [modalÅpen, settModalÅpen] = useState(false);
-  const { mottakere, settMottakere, utledBrevmottakere } = useBrevmottaker();
+  const { mottakere, settMottakere, utledBrevmottakere, sendMottakereTilSak } = useBrevmottaker();
 
   return (
     <VStack gap="space-4">
@@ -40,6 +40,7 @@ export default function Brev() {
           mottakere={mottakere}
           settMottakere={settMottakere}
           lukkModal={() => settModalÅpen(false)}
+          sendMottakereTilSak={sendMottakereTilSak}
         />
       </Modal>
     </VStack>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiCall, type ApiResponse } from "~/api/backend";
 import { usePersonContext } from "~/contexts/PersonContext";
 
 export enum BrevmottakerRolle {
@@ -52,11 +53,25 @@ export const useBrevmottaker = () => {
       .join(", ");
   };
 
+  const sendMottakereTilSak = async (
+    behandlingId: string,
+    brevmottakere: Brevmottaker[]
+  ): Promise<ApiResponse<unknown>> => {
+    return apiCall(`/brevmottaker/settMottakere/${behandlingId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(brevmottakere),
+    });
+  };
+
   return {
     mottakere,
     settMottakere,
     leggTilMottaker,
     fjernMottaker,
     utledBrevmottakere,
+    sendMottakereTilSak,
   };
 };
