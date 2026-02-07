@@ -4,6 +4,7 @@ import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
 import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -17,7 +18,9 @@ export function meta(_args: Route.MetaArgs) {
 
 export default function Brev() {
   const [modalÅpen, settModalÅpen] = useState(false);
-  const { mottakere, settMottakere, utledBrevmottakere, sendMottakereTilSak } = useBrevmottaker();
+  const { behandlingId } = useBehandlingContext();
+  const { mottakere, settMottakere, utledBrevmottakere, sendMottakereTilSak } =
+    useBrevmottaker(behandlingId);
 
   return (
     <VStack gap="space-4">

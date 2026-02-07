@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import { usePersonContext } from "~/contexts/PersonContext";
 
@@ -19,11 +19,34 @@ export interface Brevmottaker {
   navnHosOrganisasjon?: string;
 }
 
-export const useBrevmottaker = () => {
+export const useBrevmottaker = (behandlingId?: string) => {
   const { personident } = usePersonContext();
-  const [mottakere, settMottakere] = useState<Brevmottaker[]>([
-    { mottakerType: "PERSON", personRolle: BrevmottakerRolle.BRUKER, personident: personident },
-  ]);
+  const [mottakere, settMottakere] = useState<Brevmottaker[]>([]);
+  const [laster, settLaster] = useState(true);
+
+  useEffect(() => {
+    if (!behandlingId) return;
+
+    const hentBrevmottakere = async () => {
+      settLaster(true);
+      const response = await apiCall<Brevmottaker[]>(`/brevmottaker/${behandlingId}`);
+
+      if (response.data && response.data.length > 0) {
+        settMottakere(response.data);
+      } else {
+        settMottakere([
+          {
+            mottakerType: "PERSON",
+            personRolle: BrevmottakerRolle.BRUKER,
+            personident: personident,
+          },
+        ]);
+      }
+      settLaster(false);
+    };
+
+    hentBrevmottakere();
+  }, [behandlingId, personident]);
 
   const leggTilMottaker = (mottaker: Brevmottaker) => {
     settMottakere((prev) => [...prev, mottaker]);
@@ -73,5 +96,6 @@ export const useBrevmottaker = () => {
     fjernMottaker,
     utledBrevmottakere,
     sendMottakereTilSak,
+    laster,
   };
 };
