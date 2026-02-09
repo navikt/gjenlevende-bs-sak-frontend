@@ -26,7 +26,7 @@ export function useHentBeløpsPerioderForVedtak() {
         if (!behandlingId) {
             settState((prev) => ({
                 ...prev,
-                melding: "Mangler fagsakId",
+                melding: "Mangler behandlingId",
                 laster: false,
             }));
             return;
