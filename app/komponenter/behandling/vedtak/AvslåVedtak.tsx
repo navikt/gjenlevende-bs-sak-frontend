@@ -18,12 +18,12 @@ export const AvslåVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretVe
                 <Button size="medium"
                     onClick={() => {
                         if (!behandlingId) return;
-                        const mockVedtak = {
+                        const vedtak = {
                             resultatType: EResultatType.AVSLÅTT,
                             begrunnelse: begrunnelse,
                             barnetilsynperioder: [],
                         };
-                        lagreVedtak(behandlingId, mockVedtak);
+                        lagreVedtak(behandlingId, vedtak);
                     }}
                 >
                     Lagre vedtak
