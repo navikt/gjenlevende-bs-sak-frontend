@@ -7,19 +7,19 @@ import type {
 import type { BarnetilsynBeregningRequest } from "~/komponenter/behandling/vedtak/vedtak";
 
 interface BeløpsperioderState {
-    beløpsperioderDto: IBeløpsperioder | null;
+    beløpsperioder: IBeløpsperioder | null;
     melding: string | null;
     laster: boolean;
 }
 
 export function useHentBeløpsPerioderForVedtak() {
     const [state, settState] = useState<BeløpsperioderState>({
-        beløpsperioderDto: null,
+        beløpsperioder: null,
         melding: null,
         laster: false,
     });
 
-    const hent = useCallback(async (
+    const hentBeløpsperioder = useCallback(async (
         behandlingId: string | undefined,
         barnetilsynsperioder: IBarnetilsynperiode[]
     ) => {
@@ -52,11 +52,11 @@ export function useHentBeløpsPerioderForVedtak() {
         if (response.data) {
             settState((prev) => ({
                 ...prev,
-                beløpsperioderDto: response.data ?? null,
+                beløpsperioder: response.data ?? null,
                 laster: false,
             }));
         }
     }, []);
 
-    return { ...state, hent };
+    return { ...state, hent: hentBeløpsperioder };
 }

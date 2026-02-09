@@ -18,6 +18,7 @@ import {
 import { TrashIcon } from '@navikt/aksel-icons';
 import styles from "./Grid.module.css";
 import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderForVedtak";
+import {månedStringTilYearMonth, formaterYearMonthStringTilNorskDato} from "~/utils/utils";
 
 interface GridProps {
     lesevisning?: boolean;
@@ -36,33 +37,12 @@ const GridLiten: React.FC<GridProps> = ({ lesevisning, children }) => (
     </div>
 );
 
-function månedStringTilDatoString(value: string | undefined): string {
-    if (!value) return ''
-    const månederStrings = [
-        'januar', 'februar', 'mars', 'april', 'mai', 'juni',
-        'juli', 'august', 'september', 'oktober', 'november', 'desember'
-    ];
-    const [månedNavn, årString] = value.trim().split(' ');
-    const måned = månederStrings.indexOf((månedNavn || '').toLowerCase());
-    const year = Number(årString);
-    if (måned >= 0 && year >= 1000 && year <= 9999) {
-        const mm = String(måned + 1).padStart(2, '0');
-        return `${year}-${mm}`;
-    }
-    return ''
-}
-
-function formatToNorwegianMonthYear(dateString: string | undefined): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' });
-}
 
 export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretVedtak}) => {
     const lagretPerioder = lagretVedtak?.barnetilsynperioder || [];
     const { behandlingId } = useParams<{ behandlingId: string }>();
     const { lagreVedtak } = useLagreVedtak();
-    const { beløpsperioderDto, hent } = useHentBeløpsPerioderForVedtak();
+    const { beløpsperioder, hent } = useHentBeløpsPerioderForVedtak();
     const barnOptions = [
         { label: 'Barn 1', value: 'b1e1d2c3-1111-2222-3333-444455556666' },
         { label: 'Barn 2', value: 'b2e2d3c4-7777-8888-9999-000011112222' },
@@ -137,24 +117,25 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
                         </Select>
                         <MonthPicker
                             selected={periode.datoFra ? new Date(periode.datoFra) : undefined}
-                            onMonthSelect={date => handlePeriodeMonthChange(index, 'datoFra', date ? månedStringTilDatoString(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
+                            onMonthSelect={date => handlePeriodeMonthChange(index, 'datoFra', date ? månedStringTilYearMonth(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
                         >
                             <MonthPicker.Input
                                 label="Fra og med"
                                 hideLabel
-                                value={formatToNorwegianMonthYear(periode.datoFra)}
+                                value={formaterYearMonthStringTilNorskDato(periode.datoFra)}
                                 onChange={e => handlePeriodeMonthChange(index, 'datoFra', e.target.value)}
                                 description="Format: mm.åååå"
                             />
                         </MonthPicker>
                         <MonthPicker
                             selected={periode.datoTil ? new Date(periode.datoTil) : undefined}
-                            onMonthSelect={date => handlePeriodeMonthChange(index, 'datoTil', date ? månedStringTilDatoString(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
+                            onMonthSelect={date => handlePeriodeMonthChange(index, 'datoTil', date ? månedStringTilYearMonth(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
+                            fromDate={periode.datoFra ? new Date(periode.datoFra) : undefined}
                         >
                             <MonthPicker.Input
                                 label="Til og med"
                                 hideLabel
-                                value={formatToNorwegianMonthYear(periode.datoTil)}
+                                value={formaterYearMonthStringTilNorskDato(periode.datoTil)}
                                 onChange={e => handlePeriodeMonthChange(index, 'datoTil', e.target.value)}
                                 description="Format: mm.åååå"
                             />
@@ -188,13 +169,13 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
                     Beregn
                 </Button>
             </HStack>
-            {beløpsperioderDto && (
+            {beløpsperioder && (
             <GridLiten>
                 <Label>Periode</Label>
                 <Label>Antall barn</Label>
                 <Label>Utgifter</Label>
                 <Label>Stønadsbeløp pr mnd</Label>
-                {beløpsperioderDto.map((periode, idx) => (
+                {beløpsperioder.map((periode, idx) => (
                     <React.Fragment key={idx}>
                         <span>{periode.datoFra} - {periode.datoTil}</span>
                         <span>{periode.antallBarn}</span>
