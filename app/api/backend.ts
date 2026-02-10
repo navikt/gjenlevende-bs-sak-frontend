@@ -41,6 +41,10 @@ export async function apiCall<T = unknown>(
       },
     });
 
+    if (response.status === 204) {
+      return { data: undefined };
+    }
+
     const data = await response.json();
 
     if (!response.ok) {

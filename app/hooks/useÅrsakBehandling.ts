@@ -48,7 +48,6 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
       try {
         await hentÅrsakData();
-        settErLagret(true);
       } catch {
         settFeilmelding("Kunne ikke hente eksisterende data");
       } finally {
