@@ -1,4 +1,4 @@
-import { Button, HStack, Modal, VStack } from "@navikt/ds-react";
+import { Button, HGrid, HStack, Modal, VStack } from "@navikt/ds-react";
 import React, { useEffect, useState } from "react";
 import { BrevmottakereListe } from "~/komponenter/brev/BrevmottakereListe";
 import { type Brevmottaker } from "~/hooks/useBrevmottaker";
@@ -52,8 +52,8 @@ export default function BrevmottakerModalInnhold({
   return (
     <>
       <Modal.Body style={{ minHeight: "40rem", height: "100%" }}>
-        <HStack gap={"4"} justify={"space-evenly"}>
-          <VStack gap={"4"} width={"47%"}>
+        <HGrid columns={"1fr auto 1fr"} gap={"4"}>
+          <VStack gap={"4"}>
             <ManueltSøk leggTilMottaker={leggTilMottaker} />
             <Skillelinje />
             <SkalBrukerMottaBrev
@@ -63,13 +63,8 @@ export default function BrevmottakerModalInnhold({
             />
           </VStack>
           <Skillelinje />
-          <VStack width={"47%"}>
-            <BrevmottakereListe
-              mottakere={midlertidigMottakerliste}
-              fjernMottaker={fjernMottaker}
-            />
-          </VStack>
-        </HStack>
+          <BrevmottakereListe mottakere={midlertidigMottakerliste} fjernMottaker={fjernMottaker} />
+        </HGrid>
       </Modal.Body>
       <Modal.Footer>
         <HStack gap={"2"} justify={"center"} style={{ marginTop: "1rem" }}>
