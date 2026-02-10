@@ -1,7 +1,7 @@
 export interface Behandling {
   id: string;
   fagsakId: string;
-  status: "OPPRETTET" | "UTREDES" | "FERDIGSTILT";
+  status: "OPPRETTET" | "UTREDES" | "FATTER_VEDTAK" | "IVERKSETTER_VEDTAK" | "FERDIGSTILT";
   sistEndret: string;
   opprettet: string;
   opprettetAv: string;
