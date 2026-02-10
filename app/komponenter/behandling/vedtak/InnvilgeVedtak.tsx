@@ -9,34 +9,14 @@ import {
 import {useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {
-    Label,
     Select,
     UNSAFE_Combobox,
     TextField,
-    Button, Textarea, HStack, VStack, MonthPicker
+    Button, Textarea, HStack, VStack, MonthPicker, Table
 } from "@navikt/ds-react";
 import { TrashIcon } from '@navikt/aksel-icons';
-import styles from "./Grid.module.css";
 import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderForVedtak";
 import {månedStringTilYearMonth, formaterYearMonthStringTilNorskDato} from "~/utils/utils";
-
-interface GridProps {
-    lesevisning?: boolean;
-    children: React.ReactNode;
-}
-
-const GridComponent: React.FC<GridProps> = ({ lesevisning, children }) => (
-    <div className={lesevisning ? `${styles.grid} ${styles.lesevisning}` : styles.grid}>
-        {children}
-    </div>
-);
-
-const GridLiten: React.FC<GridProps> = ({ lesevisning, children }) => (
-    <div className={lesevisning ? `${styles.gridLiten} ${styles.lesevisning}` : styles.gridLiten}>
-        {children}
-    </div>
-);
-
 
 export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretVedtak}) => {
     const lagretPerioder = lagretVedtak?.barnetilsynperioder || [];
@@ -94,70 +74,92 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
 
     return (
         <VStack gap="16">
-            <GridComponent>
-                <Label>Periodetype</Label>
-                <Label>Aktivitet</Label>
-                <Label>Periode fra og med</Label>
-                <Label>Periode til og med</Label>
-                <Label>Velg barn</Label>
-                <Label>Antall barn</Label>
-                <Label>Utgifter</Label>
-                <Label> </Label>
+            <Table>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell scope="col">Periodetype</Table.HeaderCell>
+                        <Table.HeaderCell scope="col">Aktivitet</Table.HeaderCell>
+                        <Table.HeaderCell scope="col">Periode fra og med</Table.HeaderCell>
+                        <Table.HeaderCell scope="col">Periode til og med</Table.HeaderCell>
+                        <Table.HeaderCell scope="col">Velg barn</Table.HeaderCell>
+                        <Table.HeaderCell scope="col">Antall barn</Table.HeaderCell>
+                        <Table.HeaderCell scope="col">Utgifter</Table.HeaderCell>
+                        <Table.HeaderCell scope="col"> </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
                 {perioder.map((periode, index) => (
-                    <React.Fragment key={index}>
-                        <Select label="Periodetype" value={periode.periodetype} onChange={e => handlePeriodeChange(index, 'periodetype', e.target.value as EPeriodetype)} hideLabel>
-                            <option value="">Velg</option>
-                            <option value={EPeriodetype.ORDINÆR}>Ordinær</option>
-                            <option value={EPeriodetype.INGEN_STØNAD}>Ingen stønad</option>
-                        </Select>
-                        <Select label="Aktivitet" value={periode.aktivitetstype} onChange={e => handlePeriodeChange(index, 'aktivitetstype', e.target.value as EAktivitetstypeBarnetilsyn)} hideLabel>
-                            <option value="">Velg</option>
-                            <option value={EAktivitetstypeBarnetilsyn.I_ARBEID}>I arbeid</option>
-                            <option value={EAktivitetstypeBarnetilsyn.FORBIGÅENDE_SYKDOM}>Forbigående sykdom</option>
-                        </Select>
-                        <MonthPicker
-                            selected={periode.datoFra ? new Date(periode.datoFra) : undefined}
-                            onMonthSelect={date => handlePeriodeMonthChange(index, 'datoFra', date ? månedStringTilYearMonth(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
-                        >
-                            <MonthPicker.Input
-                                label="Fra og med"
+                    <Table.Row key={index}>
+                        <Table.DataCell>
+                            <Select label="Periodetype" value={periode.periodetype} onChange={e => handlePeriodeChange(index, 'periodetype', e.target.value as EPeriodetype)} hideLabel>
+                                <option value="">Velg</option>
+                                <option value={EPeriodetype.ORDINÆR}>Ordinær</option>
+                                <option value={EPeriodetype.INGEN_STØNAD}>Ingen stønad</option>
+                            </Select>
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <Select label="Aktivitet" value={periode.aktivitetstype} onChange={e => handlePeriodeChange(index, 'aktivitetstype', e.target.value as EAktivitetstypeBarnetilsyn)} hideLabel>
+                                <option value="">Velg</option>
+                                <option value={EAktivitetstypeBarnetilsyn.I_ARBEID}>I arbeid</option>
+                                <option value={EAktivitetstypeBarnetilsyn.FORBIGÅENDE_SYKDOM}>Forbigående sykdom</option>
+                            </Select>
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <MonthPicker
+                                selected={periode.datoFra ? new Date(periode.datoFra) : undefined}
+                                onMonthSelect={date => handlePeriodeMonthChange(index, 'datoFra', date ? månedStringTilYearMonth(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
+                            >
+                                <MonthPicker.Input
+                                    label="Fra og med"
+                                    hideLabel
+                                    value={formaterYearMonthStringTilNorskDato(periode.datoFra)}
+                                    onChange={e => handlePeriodeMonthChange(index, 'datoFra', e.target.value)}
+                                    description="Format: mm.åååå"
+                                />
+                            </MonthPicker>
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <MonthPicker
+                                selected={periode.datoTil ? new Date(periode.datoTil) : undefined}
+                                onMonthSelect={date => handlePeriodeMonthChange(index, 'datoTil', date ? månedStringTilYearMonth(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
+                                fromDate={periode.datoFra ? new Date(periode.datoFra) : undefined}
+                            >
+                                <MonthPicker.Input
+                                    label="Til og med"
+                                    hideLabel
+                                    value={formaterYearMonthStringTilNorskDato(periode.datoTil)}
+                                    onChange={e => handlePeriodeMonthChange(index, 'datoTil', e.target.value)}
+                                    description="Format: mm.åååå"
+                                />
+                            </MonthPicker>
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <UNSAFE_Combobox
+                                label={'Barn'}
+                                options={barnOptions.map((o) => ({
+                                    label: o.label,
+                                    value: o.value,
+                                }))}
+                                isMultiSelect
                                 hideLabel
-                                value={formaterYearMonthStringTilNorskDato(periode.datoFra)}
-                                onChange={e => handlePeriodeMonthChange(index, 'datoFra', e.target.value)}
-                                description="Format: mm.åååå"
+                                placeholder={'Velg barn'}
+                                selectedOptions={periode.barn}
+                                onToggleSelected={(option, isSelected) => handleBarnChange(index, option, isSelected)}
                             />
-                        </MonthPicker>
-                        <MonthPicker
-                            selected={periode.datoTil ? new Date(periode.datoTil) : undefined}
-                            onMonthSelect={date => handlePeriodeMonthChange(index, 'datoTil', date ? månedStringTilYearMonth(date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' })) : '')}
-                            fromDate={periode.datoFra ? new Date(periode.datoFra) : undefined}
-                        >
-                            <MonthPicker.Input
-                                label="Til og med"
-                                hideLabel
-                                value={formaterYearMonthStringTilNorskDato(periode.datoTil)}
-                                onChange={e => handlePeriodeMonthChange(index, 'datoTil', e.target.value)}
-                                description="Format: mm.åååå"
-                            />
-                        </MonthPicker>
-                        <UNSAFE_Combobox
-                            label={'Barn'}
-                            options={barnOptions.map((o) => ({
-                                label: o.label,
-                                value: o.value,
-                            }))}
-                            isMultiSelect
-                            hideLabel
-                            placeholder={'Velg barn'}
-                            selectedOptions={periode.barn}
-                            onToggleSelected={(option, isSelected) => handleBarnChange(index, option, isSelected)}
-                        />
-                        <span>{periode.barn.length}</span>
-                        <TextField label="Utgifter" value={periode.utgifter} onChange={e => handlePeriodeChange(index, 'utgifter', Number(e.target.value))} hideLabel />
-                        <TrashIcon onClick={() => slettPeriode(index)} fontSize="1.5rem"></TrashIcon>
-                    </React.Fragment>
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <span>{periode.barn.length}</span>
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <TextField label="Utgifter" value={periode.utgifter} onChange={e => handlePeriodeChange(index, 'utgifter', Number(e.target.value))} hideLabel />
+                        </Table.DataCell>
+                        <Table.DataCell>
+                            <TrashIcon onClick={() => slettPeriode(index)} fontSize="1.5rem"></TrashIcon>
+                        </Table.DataCell>
+                    </Table.Row>
                 ))}
-            </GridComponent>
+                </Table.Body>
+            </Table>
             <HStack>
                 <Button onClick={leggTilPeriode}>
                     Legg til vedtaksperiode
@@ -170,20 +172,26 @@ export const InnvilgeVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagret
                 </Button>
             </HStack>
             {beløpsperioder && (
-            <GridLiten>
-                <Label>Periode</Label>
-                <Label>Antall barn</Label>
-                <Label>Utgifter</Label>
-                <Label>Stønadsbeløp pr mnd</Label>
+                <Table>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Periode</Table.HeaderCell>
+                        <Table.HeaderCell>Antall barn</Table.HeaderCell>
+                        <Table.HeaderCell>Utgifter</Table.HeaderCell>
+                        <Table.HeaderCell>Stønadsbeløp pr mnd</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                    <Table.Body>
                 {beløpsperioder.map((periode, idx) => (
-                    <React.Fragment key={idx}>
-                        <span>{periode.datoFra} - {periode.datoTil}</span>
-                        <span>{periode.antallBarn}</span>
-                        <span>{periode.utgifter}</span>
-                        <span>{periode.beløp}</span>
-                    </React.Fragment>
+                    <Table.Row key={idx}>
+                        <Table.DataCell>{periode.datoFra} - {periode.datoTil}</Table.DataCell>
+                        <Table.DataCell>{periode.antallBarn}</Table.DataCell>
+                        <Table.DataCell>{periode.utgifter}</Table.DataCell>
+                        <Table.DataCell>{periode.beløp}</Table.DataCell>
+                    </Table.Row>
                 ))}
-            </GridLiten>
+                    </Table.Body>
+            </Table>
             )}
             <HStack>
                 <Button
