@@ -113,7 +113,7 @@ export const VilkårKomponent: React.FC<{
                 {vilkårStatusIkon}
               </HStack>
 
-              <HStack gap="2" style={{ visibility: erLesevisning ? "hidden" : "visible" }}>
+              <HStack gap="2" className={erLesevisning ? styles.gjemtILesevisning : undefined}>
                 <Button
                   variant="tertiary"
                   size="small"
