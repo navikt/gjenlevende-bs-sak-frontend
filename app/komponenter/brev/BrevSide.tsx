@@ -6,8 +6,11 @@ import { PdfForhåndsvisning } from "~/komponenter/brev/PdfForhåndsvisning";
 import { brevmaler } from "~/komponenter/brev/brevmaler";
 import { useBrev } from "~/komponenter/brev/useBrev";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import { useErRedigerbar } from "~/hooks/useErRedigerbar";
 
 export const BrevSide = () => {
+  const erRedigerbar = useErRedigerbar();
+
   const { behandlingId } = useBehandlingContext();
   const {
     brevMal,
@@ -47,6 +50,7 @@ export const BrevSide = () => {
               velgBrevmal(e.target.value);
             }}
             size={"small"}
+            disabled={!erRedigerbar}
           >
             <option value="" disabled>
               Ikke valgt
@@ -79,6 +83,7 @@ export const BrevSide = () => {
                 icon={<PlusIcon title={"Legg til fritekstfelt"} />}
                 onClick={leggTilFritekstbolk}
                 size={"small"}
+                disabled={!erRedigerbar}
               >
                 Legg til fritekstfelt
               </Button>
@@ -93,7 +98,7 @@ export const BrevSide = () => {
             <Button
               style={{ width: "fit-content" }}
               onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-              disabled={sender}
+              disabled={sender || !erRedigerbar}
             >
               Send pdf til sak{" "}
             </Button>

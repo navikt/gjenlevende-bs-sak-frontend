@@ -18,6 +18,7 @@ import {
   XMarkOctagonFillIcon,
 } from "@navikt/aksel-icons";
 import { Vurdering } from "~/types/vilkår";
+import { useErRedigerbar } from "~/hooks/useErRedigerbar";
 
 export const VilkårKomponent: React.FC<{
   navn: string;
@@ -46,6 +47,9 @@ export const VilkårKomponent: React.FC<{
   onLagre,
   onSlett,
 }) => {
+  const erRedigerbar = useErRedigerbar();
+  const erLåstEllerVisningsmodus = låst || !erRedigerbar;
+
   const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
 
   const handleLagreOgLås = async () => {
@@ -111,6 +115,7 @@ export const VilkårKomponent: React.FC<{
                   size="small"
                   icon={<PencilIcon title="Rediger" />}
                   onClick={handleKanRedigere}
+                  disabled={!erRedigerbar}
                 >
                   Rediger
                 </Button>
@@ -119,6 +124,7 @@ export const VilkårKomponent: React.FC<{
                   size="small"
                   icon={<TrashIcon title="slett" fontSize="1.5rem" />}
                   onClick={handleTilbakestillVilkår}
+                  disabled={!erRedigerbar}
                 >
                   Slett
                 </Button>
@@ -130,7 +136,7 @@ export const VilkårKomponent: React.FC<{
             legend={valgSpørsmål}
             onChange={onChangeSpørsmål}
             value={spørsmålSvar}
-            readOnly={låst}
+            readOnly={erLåstEllerVisningsmodus}
           >
             <Radio value="JA">Ja</Radio>
             <Radio value="NEI">Nei</Radio>
@@ -140,13 +146,13 @@ export const VilkårKomponent: React.FC<{
             label="Begrunnelse"
             onChange={(e) => onChangeBegrunnelse(e.target.value)}
             value={begrunnelse}
-            readOnly={låst}
+            readOnly={erLåstEllerVisningsmodus}
           />
 
           <div>
             <Button
               onClick={handleLagreOgLås}
-              disabled={!harSvaralternativOgBegrunnelse || låst}
+              disabled={!harSvaralternativOgBegrunnelse || erLåstEllerVisningsmodus}
               loading={lagrer}
             >
               Lagre

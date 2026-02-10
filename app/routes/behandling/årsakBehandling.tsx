@@ -14,6 +14,7 @@ import { useNavigate } from "react-router";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useArsakBehandling } from "~/hooks/useÅrsakBehandling";
+import { useErRedigerbar } from "~/hooks/useErRedigerbar";
 import type { ÅrsakType } from "~/types/årsak";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 
@@ -32,6 +33,8 @@ const ÅRSAK_ALTERNATIVER = [
 ] as const;
 
 export default function ArsakBehandling() {
+  const erRedigerbar = useErRedigerbar();
+
   const { behandlingId } = useBehandlingContext();
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
@@ -77,13 +80,14 @@ export default function ArsakBehandling() {
   return (
     <VStack gap="6" style={{ maxWidth: MAKS_BREDDE }}>
       <DatePicker {...datepickerProps}>
-        <DatePicker.Input {...inputProps} label="Kravdato" />
+        <DatePicker.Input {...inputProps} label="Kravdato" readOnly={!erRedigerbar} />
       </DatePicker>
 
       <Select
         label="Årsak til behandling"
         onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
         value={årsak}
+        disabled={!erRedigerbar}
       >
         <option value="" disabled>
           Velg årsak
@@ -99,10 +103,11 @@ export default function ArsakBehandling() {
         label="Beskrivelse av årsak (fylles ut ved behov)"
         onChange={(e) => oppdaterBeskrivelse(e.target.value)}
         value={beskrivelse}
+        readOnly={!erRedigerbar}
       />
 
       <div>
-        <Button onClick={håndterLagring} disabled={!kanLagre} loading={laster}>
+        <Button onClick={håndterLagring} disabled={!kanLagre || !erRedigerbar} loading={laster}>
           Lagre
         </Button>
       </div>

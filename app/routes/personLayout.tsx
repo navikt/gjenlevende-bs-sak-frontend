@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, useParams, useMatch } from "react-router";
 import { Alert, Loader, VStack } from "@navikt/ds-react";
-import { Navbar } from "../komponenter/navbar/Navbar";
+import { Navbar } from "~/komponenter/navbar/Navbar";
 import { Side } from "~/komponenter/layout/Side";
 import Personheader from "~/komponenter/personheader/Personheader";
 import { PersonContext } from "~/contexts/PersonContext";
+import { RedigeringsContext } from "~/contexts/RedigeringsContext";
 import { useHentPersonNavn } from "~/hooks/useHentPersonNavn";
 import { useFagsak } from "~/hooks/useFagsak";
 
@@ -17,6 +18,7 @@ export default function PersonLayout() {
   const { navn, melding, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
 
   const laster = lasterFagsak || lasterNavn;
+  const [erRedigerbar, settErRedigerbar] = useState(true);
 
   if (laster) {
     return (
@@ -48,17 +50,19 @@ export default function PersonLayout() {
         laster: lasterNavn,
       }}
     >
-      <Personheader />
-      {!erPåBehandling ? (
-        <>
-          <Navbar />
-          <Side>
-            <Outlet />
-          </Side>
-        </>
-      ) : (
-        <Outlet />
-      )}
+      <RedigeringsContext.Provider value={{ erRedigerbar, settErRedigerbar }}>
+        <Personheader />
+        {!erPåBehandling ? (
+          <>
+            <Navbar />
+            <Side>
+              <Outlet />
+            </Side>
+          </>
+        ) : (
+          <Outlet />
+        )}
+      </RedigeringsContext.Provider>
     </PersonContext.Provider>
   );
 }
