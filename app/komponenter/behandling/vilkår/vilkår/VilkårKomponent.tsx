@@ -51,7 +51,6 @@ export const VilkårKomponent: React.FC<{
   const erLåst = låst || erLesevisning;
 
   const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
-
   const handleLagreOgLås = async () => {
     if (onLagre) {
       await onLagre();
@@ -109,26 +108,28 @@ export const VilkårKomponent: React.FC<{
                 {vilkårStatusIkon}
               </HStack>
 
-              <HStack gap="2">
-                <Button
-                  variant="tertiary"
-                  size="small"
-                  icon={<PencilIcon title="Rediger" />}
-                  onClick={handleKanRedigere}
-                  disabled={erLesevisning}
-                >
-                  Rediger
-                </Button>
-                <Button
-                  variant="tertiary"
-                  size="small"
-                  icon={<TrashIcon title="slett" fontSize="1.5rem" />}
-                  onClick={handleTilbakestillVilkår}
-                  disabled={erLesevisning}
-                >
-                  Slett
-                </Button>
-              </HStack>
+              {!erLesevisning && (
+                <HStack gap="2">
+                  <Button
+                    variant="tertiary"
+                    size="small"
+                    icon={<PencilIcon title="Rediger" />}
+                    onClick={handleKanRedigere}
+                    disabled={erLesevisning}
+                  >
+                    Rediger
+                  </Button>
+                  <Button
+                    variant="tertiary"
+                    size="small"
+                    icon={<TrashIcon title="slett" fontSize="1.5rem" />}
+                    onClick={handleTilbakestillVilkår}
+                    disabled={erLesevisning}
+                  >
+                    Slett
+                  </Button>
+                </HStack>
+              )}
             </HStack>
           )}
 
