@@ -9,7 +9,7 @@ import {
   TextField,
   VStack,
 } from "@navikt/ds-react";
-import { type Brevmottaker, BrevmottakerRolle } from "~/hooks/useBrevmottaker";
+import { type Brevmottaker, BrevmottakerRolle, MottakerType } from "~/hooks/useBrevmottaker";
 import { PlusCircleIcon } from "@navikt/aksel-icons";
 
 interface Props {
@@ -49,7 +49,7 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
     if (validerFelter()) {
       const nyOrganisasjonMottaker: Brevmottaker = {
         personRolle: mottakerRolle,
-        mottakerType: "ORGANISASJON",
+        mottakerType: MottakerType.ORGANISASJON,
         orgnr: organisasjonsnummer,
         navnHosOrganisasjon: kontaktpersonHosOrganisasjon,
       };

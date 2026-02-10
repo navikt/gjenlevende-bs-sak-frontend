@@ -2,19 +2,14 @@ import { BodyShort, Select } from "@navikt/ds-react";
 import React, { useState } from "react";
 import { OrganisasjonsSøk } from "~/komponenter/brev/OrganisasjonSøk";
 import { PersonSøk } from "~/komponenter/brev/PersonSøk";
-import type { Brevmottaker } from "~/hooks/useBrevmottaker";
-
-enum Søktype {
-  ORGANISASJON = "ORGANISASJON",
-  PERSON = "PERSON",
-}
+import { type Brevmottaker, MottakerType } from "~/hooks/useBrevmottaker";
 
 interface Props {
   leggTilMottaker: (mottaker: Brevmottaker) => void;
 }
 
 export const ManueltSøk = ({ leggTilMottaker }: Props) => {
-  const [søktype, settSøktype] = useState<Søktype>();
+  const [søktype, settSøktype] = useState<MottakerType>();
 
   return (
     <>
@@ -23,15 +18,17 @@ export const ManueltSøk = ({ leggTilMottaker }: Props) => {
         label="Manuelt søk"
         hideLabel
         value={søktype}
-        onChange={(e) => settSøktype(e.target.value as Søktype)}
+        onChange={(e) => settSøktype(e.target.value as MottakerType)}
         style={{ width: "50%" }}
       >
         <option value="">Velg</option>
-        <option value={Søktype.ORGANISASJON}>Organisasjon</option>
-        <option value={Søktype.PERSON}>Person</option>
+        <option value={MottakerType.ORGANISASJON}>Organisasjon</option>
+        <option value={MottakerType.PERSON}>Person</option>
       </Select>
-      {søktype === Søktype.ORGANISASJON && <OrganisasjonsSøk leggTilMottaker={leggTilMottaker} />}
-      {søktype === Søktype.PERSON && <PersonSøk leggTilMottaker={leggTilMottaker} />}
+      {søktype === MottakerType.ORGANISASJON && (
+        <OrganisasjonsSøk leggTilMottaker={leggTilMottaker} />
+      )}
+      {søktype === MottakerType.PERSON && <PersonSøk leggTilMottaker={leggTilMottaker} />}
     </>
   );
 };

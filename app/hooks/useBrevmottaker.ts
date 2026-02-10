@@ -3,13 +3,16 @@ import { apiCall, type ApiResponse } from "~/api/backend";
 import { usePersonContext } from "~/contexts/PersonContext";
 
 export enum BrevmottakerRolle {
-  "BRUKER" = "BRUKER",
-  "VERGE" = "VERGE",
-  "FULLMEKTIG" = "FULLMEKTIG",
-  "ANNEN" = "ANNEN",
+  BRUKER = "BRUKER",
+  VERGE = "VERGE",
+  FULLMEKTIG = "FULLMEKTIG",
+  ANNEN = "ANNEN",
 }
 
-export type MottakerType = "PERSON" | "ORGANISASJON";
+export enum MottakerType {
+  PERSON = "PERSON",
+  ORGANISASJON = "ORGANISASJON",
+}
 
 export interface Brevmottaker {
   personRolle?: BrevmottakerRolle;
@@ -34,7 +37,7 @@ export const useBrevmottaker = (behandlingId?: string) => {
       } else {
         settMottakere([
           {
-            mottakerType: "PERSON",
+            mottakerType: MottakerType.PERSON,
             personRolle: BrevmottakerRolle.BRUKER,
             personident: personident,
           },
@@ -56,16 +59,16 @@ export const useBrevmottaker = (behandlingId?: string) => {
   const utledBrevmottakere = () => {
     return mottakere
       .map((mottaker) => {
-        if (mottaker.mottakerType === "ORGANISASJON") {
+        if (mottaker.mottakerType === MottakerType.ORGANISASJON) {
           return `${mottaker.orgnr} v/ ${mottaker.navnHosOrganisasjon} (organisasjon)`;
         }
         switch (mottaker.personRolle) {
-          case "BRUKER":
-            return `${mottaker.personident} (bruker)`;
-          case "VERGE":
-            return `${mottaker.personident} (verge)`;
-          case "FULLMEKTIG":
-            return `${mottaker.personident} (fullmektig)`;
+          case BrevmottakerRolle.BRUKER:
+            return `${mottaker.personident} (Bruker)`;
+          case BrevmottakerRolle.VERGE:
+            return `${mottaker.personident} (Verge)`;
+          case BrevmottakerRolle.FULLMEKTIG:
+            return `${mottaker.personident} (Fullmektig)`;
           default:
             return "";
         }
@@ -79,9 +82,6 @@ export const useBrevmottaker = (behandlingId?: string) => {
   ): Promise<ApiResponse<unknown>> => {
     return apiCall(`/brevmottaker/settMottakere/${behandlingId}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(brevmottakere),
     });
   };

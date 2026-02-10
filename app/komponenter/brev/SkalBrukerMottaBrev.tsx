@@ -1,7 +1,7 @@
 import { BodyShort, Radio, RadioGroup, VStack } from "@navikt/ds-react";
 import React from "react";
 import { usePersonContext } from "~/contexts/PersonContext";
-import { type Brevmottaker, BrevmottakerRolle } from "~/hooks/useBrevmottaker";
+import { type Brevmottaker, BrevmottakerRolle, MottakerType } from "~/hooks/useBrevmottaker";
 
 interface Props {
   mottakere: Brevmottaker[];
@@ -18,7 +18,7 @@ export function SkalBrukerMottaBrev({ mottakere, leggTilMottaker, fjernMottaker 
   const håndterLeggTilBruker = () => {
     if (!brukerSkalHaBrev) {
       leggTilMottaker({
-        mottakerType: "PERSON",
+        mottakerType: MottakerType.PERSON,
         personRolle: BrevmottakerRolle.BRUKER,
         personident: personident,
       });

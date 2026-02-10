@@ -76,7 +76,10 @@ export default function BrevmottakerModalInnhold({
           <Button variant={"secondary"} onClick={håndterAvbryt}>
             Avbryt
           </Button>
-          <Button onClick={håndterSettMottakere} disabled={!harEndringer}>
+          <Button
+            onClick={håndterSettMottakere}
+            disabled={!harEndringer || midlertidigMottakerliste.length === 0}
+          >
             Sett mottakere
           </Button>
         </HStack>

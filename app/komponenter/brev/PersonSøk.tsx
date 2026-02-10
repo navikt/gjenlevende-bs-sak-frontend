@@ -9,7 +9,7 @@ import {
   TextField,
   VStack,
 } from "@navikt/ds-react";
-import { type Brevmottaker, BrevmottakerRolle } from "~/hooks/useBrevmottaker";
+import { type Brevmottaker, BrevmottakerRolle, MottakerType } from "~/hooks/useBrevmottaker";
 
 interface Props {
   leggTilMottaker: (mottaker: Brevmottaker) => void;
@@ -44,7 +44,7 @@ export function PersonSøk({ leggTilMottaker }: Props) {
       const nyPersonMottaker: Brevmottaker = {
         personident: personident,
         personRolle: mottakerRolle,
-        mottakerType: "PERSON",
+        mottakerType: MottakerType.PERSON,
       };
       leggTilMottaker(nyPersonMottaker);
       settPersonident("");
