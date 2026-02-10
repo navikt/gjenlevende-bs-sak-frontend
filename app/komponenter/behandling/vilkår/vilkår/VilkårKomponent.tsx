@@ -18,6 +18,7 @@ import {
   XMarkOctagonFillIcon,
 } from "@navikt/aksel-icons";
 import { Vurdering } from "~/types/vilkår";
+import { useErLesevisning } from "~/hooks/useErLesevisning";
 
 export const VilkårKomponent: React.FC<{
   navn: string;
@@ -46,8 +47,10 @@ export const VilkårKomponent: React.FC<{
   onLagre,
   onSlett,
 }) => {
-  const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
+  const erLesevisning = useErLesevisning();
+  const erLåst = låst || erLesevisning;
 
+  const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
   const handleLagreOgLås = async () => {
     if (onLagre) {
       await onLagre();
@@ -105,24 +108,28 @@ export const VilkårKomponent: React.FC<{
                 {vilkårStatusIkon}
               </HStack>
 
-              <HStack gap="2">
-                <Button
-                  variant="tertiary"
-                  size="small"
-                  icon={<PencilIcon title="Rediger" />}
-                  onClick={handleKanRedigere}
-                >
-                  Rediger
-                </Button>
-                <Button
-                  variant="tertiary"
-                  size="small"
-                  icon={<TrashIcon title="slett" fontSize="1.5rem" />}
-                  onClick={handleTilbakestillVilkår}
-                >
-                  Slett
-                </Button>
-              </HStack>
+              {!erLesevisning && (
+                <HStack gap="2">
+                  <Button
+                    variant="tertiary"
+                    size="small"
+                    icon={<PencilIcon title="Rediger" />}
+                    onClick={handleKanRedigere}
+                    disabled={erLesevisning}
+                  >
+                    Rediger
+                  </Button>
+                  <Button
+                    variant="tertiary"
+                    size="small"
+                    icon={<TrashIcon title="slett" fontSize="1.5rem" />}
+                    onClick={handleTilbakestillVilkår}
+                    disabled={erLesevisning}
+                  >
+                    Slett
+                  </Button>
+                </HStack>
+              )}
             </HStack>
           )}
 
@@ -130,7 +137,7 @@ export const VilkårKomponent: React.FC<{
             legend={valgSpørsmål}
             onChange={onChangeSpørsmål}
             value={spørsmålSvar}
-            readOnly={låst}
+            readOnly={erLåst}
           >
             <Radio value="JA">Ja</Radio>
             <Radio value="NEI">Nei</Radio>
@@ -140,13 +147,13 @@ export const VilkårKomponent: React.FC<{
             label="Begrunnelse"
             onChange={(e) => onChangeBegrunnelse(e.target.value)}
             value={begrunnelse}
-            readOnly={låst}
+            readOnly={erLåst}
           />
 
           <div>
             <Button
               onClick={handleLagreOgLås}
-              disabled={!harSvaralternativOgBegrunnelse || låst}
+              disabled={!harSvaralternativOgBegrunnelse || erLåst}
               loading={lagrer}
             >
               Lagre
