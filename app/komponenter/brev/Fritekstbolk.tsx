@@ -2,7 +2,7 @@ import { Button, HStack, Textarea, TextField, VStack } from "@navikt/ds-react";
 import React from "react";
 import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from "@navikt/aksel-icons";
 import type { Tekstbolk } from "~/komponenter/brev/typer";
-import { useErRedigerbar } from "~/hooks/useErRedigerbar";
+import { useErLesevisning } from "~/hooks/useErLesevisning";
 
 interface Props {
   underoverskrift?: string;
@@ -23,7 +23,7 @@ export const Fritekstbolk = ({
   handleSlett,
   fritekstfeltListe,
 }: Props) => {
-  const erRedigerbar = useErRedigerbar();
+  const erLesevisning = useErLesevisning();
 
   return (
     <VStack
@@ -38,31 +38,37 @@ export const Fritekstbolk = ({
         value={underoverskrift}
         onChange={(e) => handleOppdaterFelt({ underoverskrift: e.target.value })}
         size={"small"}
-        readOnly={!erRedigerbar}
+        readOnly={!erLesevisning}
       />
       <Textarea
         label="Innhold"
         value={innhold}
         onChange={(e) => handleOppdaterFelt({ innhold: e.target.value })}
         size={"small"}
-        readOnly={!erRedigerbar}
+        readOnly={!erLesevisning}
       />
       {fritekstfeltListe.length > 1 && (
         <HStack justify={"end"}>
-          <Button variant={"tertiary"} icon={<TrashIcon />} onClick={handleSlett} size={"small"} disabled={!erRedigerbar} />
+          <Button
+            variant={"tertiary"}
+            icon={<TrashIcon />}
+            onClick={handleSlett}
+            size={"small"}
+            disabled={!erLesevisning}
+          />
           <Button
             variant={"tertiary"}
             icon={<ArrowDownIcon />}
             onClick={handleFlyttNed}
             size={"small"}
-            disabled={!erRedigerbar}
+            disabled={!erLesevisning}
           />
           <Button
             variant={"tertiary"}
             icon={<ArrowUpIcon />}
             onClick={handleFlyttOpp}
             size={"small"}
-            disabled={!erRedigerbar}
+            disabled={!erLesevisning}
           />
         </HStack>
       )}

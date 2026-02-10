@@ -3,14 +3,14 @@ import styles from "./Personheader.module.css";
 import { PersonIcon } from "@navikt/aksel-icons";
 import { BodyShort, CopyButton, HStack, Link, Switch } from "@navikt/ds-react";
 import { usePersonContext } from "~/contexts/PersonContext";
-import { useRedigeringsContext } from "~/contexts/RedigeringsContext";
+import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
 import { useMatch } from "react-router";
 import { formaterNavn } from "~/utils/utils";
 
 export const Personheader = () => {
   const context = usePersonContext();
 
-  const { erRedigerbar, settErRedigerbar } = useRedigeringsContext();
+  const { erLesevisning, settErLesevisning } = useLesevisningsContext();
 
   const erPåBehandling = useMatch("/person/:fagsakPersonId/behandling/:behandlingId/*");
 
@@ -39,10 +39,10 @@ export const Personheader = () => {
         <li className={styles.redigeringsmodus}>
           <Switch
             size="small"
-            checked={erRedigerbar}
-            onChange={() => settErRedigerbar(!erRedigerbar)}
+            checked={erLesevisning}
+            onChange={() => settErLesevisning(!erLesevisning)}
           >
-            Redigeringsmodus
+            Lesevisning
           </Switch>
         </li>
       )}

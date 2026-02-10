@@ -5,7 +5,7 @@ import { Navbar } from "~/komponenter/navbar/Navbar";
 import { Side } from "~/komponenter/layout/Side";
 import Personheader from "~/komponenter/personheader/Personheader";
 import { PersonContext } from "~/contexts/PersonContext";
-import { RedigeringsContext } from "~/contexts/RedigeringsContext";
+import { LesevisningsContext } from "~/contexts/LesevisningsContext";
 import { useHentPersonNavn } from "~/hooks/useHentPersonNavn";
 import { useFagsak } from "~/hooks/useFagsak";
 
@@ -18,7 +18,7 @@ export default function PersonLayout() {
   const { navn, melding, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
 
   const laster = lasterFagsak || lasterNavn;
-  const [erRedigerbar, settErRedigerbar] = useState(true);
+  const [erLesevisning, settErLesevisning] = useState(true);
 
   if (laster) {
     return (
@@ -50,7 +50,7 @@ export default function PersonLayout() {
         laster: lasterNavn,
       }}
     >
-      <RedigeringsContext.Provider value={{ erRedigerbar, settErRedigerbar }}>
+      <LesevisningsContext.Provider value={{ erLesevisning, settErLesevisning }}>
         <Personheader />
         {!erPåBehandling ? (
           <>
@@ -62,7 +62,7 @@ export default function PersonLayout() {
         ) : (
           <Outlet />
         )}
-      </RedigeringsContext.Provider>
+      </LesevisningsContext.Provider>
     </PersonContext.Provider>
   );
 }

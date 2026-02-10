@@ -18,7 +18,7 @@ import {
   XMarkOctagonFillIcon,
 } from "@navikt/aksel-icons";
 import { Vurdering } from "~/types/vilkår";
-import { useErRedigerbar } from "~/hooks/useErRedigerbar";
+import { useErLesevisning } from "~/hooks/useErLesevisning";
 
 export const VilkårKomponent: React.FC<{
   navn: string;
@@ -47,8 +47,8 @@ export const VilkårKomponent: React.FC<{
   onLagre,
   onSlett,
 }) => {
-  const erRedigerbar = useErRedigerbar();
-  const erLåstEllerVisningsmodus = låst || !erRedigerbar;
+  const erLesevisning = useErLesevisning();
+  const erLåstEllerVisningsmodus = låst || !erLesevisning;
 
   const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
 
@@ -115,7 +115,7 @@ export const VilkårKomponent: React.FC<{
                   size="small"
                   icon={<PencilIcon title="Rediger" />}
                   onClick={handleKanRedigere}
-                  disabled={!erRedigerbar}
+                  disabled={!erLesevisning}
                 >
                   Rediger
                 </Button>
@@ -124,7 +124,7 @@ export const VilkårKomponent: React.FC<{
                   size="small"
                   icon={<TrashIcon title="slett" fontSize="1.5rem" />}
                   onClick={handleTilbakestillVilkår}
-                  disabled={!erRedigerbar}
+                  disabled={!erLesevisning}
                 >
                   Slett
                 </Button>
