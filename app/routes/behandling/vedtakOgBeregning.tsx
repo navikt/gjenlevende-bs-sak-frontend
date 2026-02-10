@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import type {Route} from "./+types/vedtakOgBeregning";
-import {VStack, Select, HStack} from '@navikt/ds-react';
+import {VStack, Select, HStack, Heading} from '@navikt/ds-react';
 import {EBehandlingResultat} from "~/komponenter/behandling/vedtak/vedtak";
 import {InnvilgeVedtak} from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
 import {useHentVedtak} from "~/hooks/useHentVedtak";
@@ -37,9 +37,8 @@ export default function VedtakOgBeregning() {
     }, [vedtak]);
 
     return (
-        <>
-            <div>Vedtak og beregning</div>
             <VStack gap="space-40 space-96">
+            <Heading size="large">Vedtak og beregning</Heading>
                 <HStack>
                     <Select label={'Vedtaksresultat'} value={vedtaksresultat || ''} onChange={(e) => {
                         const vedtaksresultatSelect =
@@ -64,6 +63,5 @@ export default function VedtakOgBeregning() {
                 <OppgørVedtak lagretVedtak={vedtak}></OppgørVedtak>
             )}
             </VStack>
-        </>
     );
 }
