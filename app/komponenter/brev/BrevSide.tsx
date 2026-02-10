@@ -7,11 +7,12 @@ import { brevmaler } from "~/komponenter/brev/brevmaler";
 import { useBrev } from "~/komponenter/brev/useBrev";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
+import { useBeslutter } from "~/hooks/useBeslutter";
 
 export const BrevSide = () => {
   const erLesevisning = useErLesevisning();
 
-  const { behandlingId } = useBehandlingContext();
+  const { behandlingId, revaliderBehandling } = useBehandlingContext();
   const {
     brevMal,
     fritekstbolker,
@@ -26,6 +27,8 @@ export const BrevSide = () => {
     slettFritekstbolk,
   } = useBrev(behandlingId);
 
+  const { sender: senderTilBeslutter, sendTilBeslutter, angreSendTilBeslutter } = useBeslutter();
+
   useEffect(() => {
     if (!brevMal) return;
     const timer = setTimeout(() => {
@@ -34,6 +37,20 @@ export const BrevSide = () => {
 
     return () => clearTimeout(timer);
   }, [behandlingId, brevMal, fritekstbolker, mellomlagreBrev]);
+
+  const handleSendTilBeslutter = async () => {
+    const respons = await sendTilBeslutter(behandlingId);
+    if (respons.data) {
+      revaliderBehandling();
+    }
+  };
+
+  const handleAngreSendTilBeslutter = async () => {
+    const respons = await angreSendTilBeslutter(behandlingId);
+    if (respons.data) {
+      revaliderBehandling();
+    }
+  };
 
   return (
     <HGrid gap="32" columns={2} width={"100%"}>
@@ -103,7 +120,19 @@ export const BrevSide = () => {
               Send pdf til sak{" "}
             </Button>
           )}
-          {/* //TODO Knappen over skal bli "Send til beslutter" etterhvert*/}
+
+          {brevMal && fritekstbolker && (
+            <>
+              <Button
+                onClick={handleSendTilBeslutter}
+                disabled={senderTilBeslutter || erLesevisning}
+              >
+                Send til beslutter
+              </Button>
+
+              <Button onClick={handleAngreSendTilBeslutter}>Angre send til beslutter</Button>
+            </>
+          )}
         </VStack>
       </Box>
     </HGrid>
