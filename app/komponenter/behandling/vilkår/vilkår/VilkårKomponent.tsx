@@ -48,7 +48,7 @@ export const VilkårKomponent: React.FC<{
   onSlett,
 }) => {
   const erLesevisning = useErLesevisning();
-  const erLåstEllerVisningsmodus = låst || !erLesevisning;
+  const erLåst = låst || erLesevisning;
 
   const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
 
@@ -115,7 +115,7 @@ export const VilkårKomponent: React.FC<{
                   size="small"
                   icon={<PencilIcon title="Rediger" />}
                   onClick={handleKanRedigere}
-                  disabled={!erLesevisning}
+                  disabled={erLesevisning}
                 >
                   Rediger
                 </Button>
@@ -124,7 +124,7 @@ export const VilkårKomponent: React.FC<{
                   size="small"
                   icon={<TrashIcon title="slett" fontSize="1.5rem" />}
                   onClick={handleTilbakestillVilkår}
-                  disabled={!erLesevisning}
+                  disabled={erLesevisning}
                 >
                   Slett
                 </Button>
@@ -136,7 +136,7 @@ export const VilkårKomponent: React.FC<{
             legend={valgSpørsmål}
             onChange={onChangeSpørsmål}
             value={spørsmålSvar}
-            readOnly={erLåstEllerVisningsmodus}
+            readOnly={erLåst}
           >
             <Radio value="JA">Ja</Radio>
             <Radio value="NEI">Nei</Radio>
@@ -146,13 +146,13 @@ export const VilkårKomponent: React.FC<{
             label="Begrunnelse"
             onChange={(e) => onChangeBegrunnelse(e.target.value)}
             value={begrunnelse}
-            readOnly={erLåstEllerVisningsmodus}
+            readOnly={erLåst}
           />
 
           <div>
             <Button
               onClick={handleLagreOgLås}
-              disabled={!harSvaralternativOgBegrunnelse || erLåstEllerVisningsmodus}
+              disabled={!harSvaralternativOgBegrunnelse || erLåst}
               loading={lagrer}
             >
               Lagre

@@ -50,7 +50,7 @@ export const BrevSide = () => {
               velgBrevmal(e.target.value);
             }}
             size={"small"}
-            disabled={!erLesevisning}
+            disabled={erLesevisning}
           >
             <option value="" disabled>
               Ikke valgt
@@ -83,7 +83,7 @@ export const BrevSide = () => {
                 icon={<PlusIcon title={"Legg til fritekstfelt"} />}
                 onClick={leggTilFritekstbolk}
                 size={"small"}
-                disabled={!erLesevisning}
+                disabled={erLesevisning}
               >
                 Legg til fritekstfelt
               </Button>
@@ -98,7 +98,7 @@ export const BrevSide = () => {
             <Button
               style={{ width: "fit-content" }}
               onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-              disabled={sender || !erLesevisning}
+              disabled={sender || erLesevisning}
             >
               Send pdf til sak{" "}
             </Button>

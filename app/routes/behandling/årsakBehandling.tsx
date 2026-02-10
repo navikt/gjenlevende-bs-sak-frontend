@@ -80,14 +80,14 @@ export default function ArsakBehandling() {
   return (
     <VStack gap="6" style={{ maxWidth: MAKS_BREDDE }}>
       <DatePicker {...datepickerProps}>
-        <DatePicker.Input {...inputProps} label="Kravdato" readOnly={!erLesevisning} />
+        <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
       </DatePicker>
 
       <Select
         label="Årsak til behandling"
         onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
         value={årsak}
-        disabled={!erLesevisning}
+        disabled={erLesevisning}
       >
         <option value="" disabled>
           Velg årsak
@@ -103,11 +103,11 @@ export default function ArsakBehandling() {
         label="Beskrivelse av årsak (fylles ut ved behov)"
         onChange={(e) => oppdaterBeskrivelse(e.target.value)}
         value={beskrivelse}
-        readOnly={!erLesevisning}
+        readOnly={erLesevisning}
       />
 
       <div>
-        <Button onClick={håndterLagring} disabled={!kanLagre || !erLesevisning} loading={laster}>
+        <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>
           Lagre
         </Button>
       </div>

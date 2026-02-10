@@ -18,7 +18,7 @@ export default function PersonLayout() {
   const { navn, melding, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
 
   const laster = lasterFagsak || lasterNavn;
-  const [erLesevisning, settErLesevisning] = useState(true);
+  const [erLesevisning, settErLesevisning] = useState(false);
 
   if (laster) {
     return (

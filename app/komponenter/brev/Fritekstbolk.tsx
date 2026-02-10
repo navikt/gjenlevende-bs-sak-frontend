@@ -38,14 +38,14 @@ export const Fritekstbolk = ({
         value={underoverskrift}
         onChange={(e) => handleOppdaterFelt({ underoverskrift: e.target.value })}
         size={"small"}
-        readOnly={!erLesevisning}
+        readOnly={erLesevisning}
       />
       <Textarea
         label="Innhold"
         value={innhold}
         onChange={(e) => handleOppdaterFelt({ innhold: e.target.value })}
         size={"small"}
-        readOnly={!erLesevisning}
+        readOnly={erLesevisning}
       />
       {fritekstfeltListe.length > 1 && (
         <HStack justify={"end"}>
@@ -54,21 +54,21 @@ export const Fritekstbolk = ({
             icon={<TrashIcon />}
             onClick={handleSlett}
             size={"small"}
-            disabled={!erLesevisning}
+            disabled={erLesevisning}
           />
           <Button
             variant={"tertiary"}
             icon={<ArrowDownIcon />}
             onClick={handleFlyttNed}
             size={"small"}
-            disabled={!erLesevisning}
+            disabled={erLesevisning}
           />
           <Button
             variant={"tertiary"}
             icon={<ArrowUpIcon />}
             onClick={handleFlyttOpp}
             size={"small"}
-            disabled={!erLesevisning}
+            disabled={erLesevisning}
           />
         </HStack>
       )}
