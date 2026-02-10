@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { Button } from "@navikt/ds-react";
+import { Button, VStack } from "@navikt/ds-react";
 import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import { VilkårInnhold } from "~/komponenter/behandling/vilkår/VilkårInnhold";
@@ -34,7 +34,7 @@ export default function Vilkår() {
   };
 
   return (
-    <>
+    <VStack gap={"space-24"}>
       <VilkårInnhold settErVilkårUtfylt={settErVilkårUtfylt} />
 
       <div>
@@ -42,6 +42,6 @@ export default function Vilkår() {
           Neste
         </Button>
       </div>
-    </>
+    </VStack>
   );
 }

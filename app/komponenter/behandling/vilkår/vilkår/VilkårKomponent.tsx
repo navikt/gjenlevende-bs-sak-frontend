@@ -1,13 +1,13 @@
 import {
-  Heading,
   BodyLong,
-  VStack,
-  RadioGroup,
-  Radio,
-  Textarea,
-  Button,
-  HStack,
   Box,
+  Button,
+  Heading,
+  HStack,
+  Radio,
+  RadioGroup,
+  Textarea,
+  VStack,
 } from "@navikt/ds-react";
 import React from "react";
 import styles from "./VilkårKomponent.module.css";
@@ -87,49 +87,50 @@ export const VilkårKomponent: React.FC<{
       className={styles.container}
       shadow="small"
       background="surface-subtle"
-      padding="space-16"
+      padding={"space-24"}
       borderRadius="large"
     >
       <div className={styles.venstreKolonne}>
-        <Heading size="small">{navn}</Heading>
-        {beskrivelse.map((tekst, index) => (
-          <BodyLong size="small" key={index}>
-            {tekst}
-          </BodyLong>
-        ))}
+        <VStack gap="6">
+          <Heading size="small">{navn}</Heading>
+
+          <VStack>
+            {beskrivelse.map((tekst, index) => (
+              <BodyLong size="small" key={index}>
+                {tekst}
+              </BodyLong>
+            ))}
+          </VStack>
+        </VStack>
       </div>
 
       <div className={styles.høyreKolonne}>
         <VStack gap="6">
           {låst && (
-            <HStack gap="6" align="center">
-              <HStack gap="2">
+            <HStack gap="6" align="center" justify="space-between">
+              <HStack gap="2" align="center">
                 <Heading size="small">Vilkår oppfylt</Heading>
                 {vilkårStatusIkon}
               </HStack>
 
-              {!erLesevisning && (
-                <HStack gap="2">
-                  <Button
-                    variant="tertiary"
-                    size="small"
-                    icon={<PencilIcon title="Rediger" />}
-                    onClick={handleKanRedigere}
-                    disabled={erLesevisning}
-                  >
-                    Rediger
-                  </Button>
-                  <Button
-                    variant="tertiary"
-                    size="small"
-                    icon={<TrashIcon title="slett" fontSize="1.5rem" />}
-                    onClick={handleTilbakestillVilkår}
-                    disabled={erLesevisning}
-                  >
-                    Slett
-                  </Button>
-                </HStack>
-              )}
+              <HStack gap="2" style={{ visibility: erLesevisning ? "hidden" : "visible" }}>
+                <Button
+                  variant="tertiary"
+                  size="small"
+                  icon={<PencilIcon title="Rediger" />}
+                  onClick={handleKanRedigere}
+                >
+                  Rediger
+                </Button>
+                <Button
+                  variant="tertiary"
+                  size="small"
+                  icon={<TrashIcon title="slett" fontSize="1.5rem" />}
+                  onClick={handleTilbakestillVilkår}
+                >
+                  Slett
+                </Button>
+              </HStack>
             </HStack>
           )}
 
