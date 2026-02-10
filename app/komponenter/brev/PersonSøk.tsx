@@ -82,7 +82,7 @@ export function PersonSøk({ leggTilMottaker }: Props) {
             </Stack>
           </RadioGroup>
           <HStack
-            style={{ background: "rgba(196, 196, 196, 0.2)" }}
+            style={{ background: "var(--a-surface-subtle)" }}
             padding={"2"}
             gap={"24"}
             justify={"space-between"}

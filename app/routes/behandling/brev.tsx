@@ -37,7 +37,7 @@ export default function Brev() {
         onClose={() => settModalÅpen(false)}
         header={{ heading: "Hvem skal motta brevet?" }}
         width={"70rem"}
-        style={{ height: "40rem" }}
+        style={{ minHeight: "40rem" }}
       >
         <BrevmottakerModalInnhold
           mottakere={mottakere}

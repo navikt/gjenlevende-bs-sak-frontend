@@ -18,7 +18,7 @@ export const BrevmottakereListe: FC<Props> = ({ mottakere, fjernMottaker }) => {
         const orgNrEllerPersonIdent = erOrganisasjon ? mottaker.orgnr : mottaker.personident;
 
         return (
-          <HStack key={index} style={{ background: "rgba(196, 196, 196, 0.2)" }} padding={"2"}>
+          <HStack key={index} style={{ background: "var(--a-surface-subtle)" }} padding={"2"}>
             <VStack>
               <BodyShort>
                 {erOrganisasjon

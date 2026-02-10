@@ -51,7 +51,7 @@ export default function BrevmottakerModalInnhold({
 
   return (
     <>
-      <Modal.Body style={{ height: "100%" }}>
+      <Modal.Body style={{ minHeight: "40rem", height: "100%" }}>
         <HStack gap={"4"} justify={"space-evenly"}>
           <VStack gap={"4"} width={"47%"}>
             <ManueltSøk leggTilMottaker={leggTilMottaker} />
