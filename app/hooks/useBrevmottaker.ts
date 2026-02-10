@@ -35,13 +35,13 @@ export const useBrevmottaker = (behandlingId?: string) => {
       if (response.data && response.data.length > 0) {
         settMottakere(response.data);
       } else {
-        settMottakere([
-          {
-            mottakerType: MottakerType.PERSON,
-            personRolle: BrevmottakerRolle.BRUKER,
-            personident: personident,
-          },
-        ]);
+        const søker: Brevmottaker = {
+          mottakerType: MottakerType.PERSON,
+          personRolle: BrevmottakerRolle.BRUKER,
+          personident: personident,
+        };
+        settMottakere([søker]);
+        await sendMottakereTilSak(behandlingId, [søker]);
       }
     };
 
