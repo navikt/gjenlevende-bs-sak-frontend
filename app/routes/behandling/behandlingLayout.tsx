@@ -7,13 +7,14 @@ import {
   type Steg,
 } from "~/komponenter/navbar/BehandlingFaner";
 import { Side } from "~/komponenter/layout/Side";
-import { HøyreMeny } from "~/komponenter/layout/HøyreMeny";
+import { HøyreMeny } from "~/komponenter/behandling/høyremeny/HøyreMeny";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
 import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
-import { HStack } from "@navikt/ds-react";
+import { Box } from "@navikt/ds-react";
+import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -158,13 +159,19 @@ export default function BehandlingLayout() {
         revaliderBehandling,
       }}
     >
-      <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
-      <HStack gap="space-24">
-        <Side>
-          <Outlet />
-        </Side>
-        <HøyreMeny>{/* Innhold i høyremenyen */}</HøyreMeny>
-      </HStack>
+      <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+        <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
+        <Box style={{ display: "flex", flex: 1, minHeight: 0 }}>
+          <Box style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
+            <Side>
+              <Outlet />
+            </Side>
+          </Box>
+          <HøyreMeny>
+            <AnsvarligSaksbehandler />
+          </HøyreMeny>
+        </Box>
+      </Box>
     </BehandlingContext.Provider>
   );
 }

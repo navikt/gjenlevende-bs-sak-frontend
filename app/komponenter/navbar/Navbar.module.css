@@ -6,7 +6,7 @@
   border-bottom: 1px solid var(--a-border-default);
   position: sticky;
   top: var(--personheader-høyde);
-  background-color: var(--a-bg-default);
+  background-color: var(--ax-bg-default);
   box-shadow: var(--ax-shadow-dialog);
   z-index: 1;
 }
