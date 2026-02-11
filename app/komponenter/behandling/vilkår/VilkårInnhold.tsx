@@ -52,7 +52,7 @@ export const VilkårInnhold: React.FC<{
   }
 
   return (
-    <VStack gap="space-12">
+    <VStack gap="space-36">
       {feilmelding && (
         <Alert variant="error" size="small">
           {feilmelding}

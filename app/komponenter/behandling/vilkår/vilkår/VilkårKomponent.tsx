@@ -75,13 +75,13 @@ export const VilkårKomponent: React.FC<{
     <CheckmarkCircleFillIcon
       title={vilkårResultatTekst.toLowerCase()}
       fontSize="1.5rem"
-      color="var(--a-icon-success)"
+      color="var(--ax-bg-success-strong)"
     />
   ) : (
     <XMarkOctagonFillIcon
       title={vilkårResultatTekst.toLowerCase()}
       fontSize="1.5rem"
-      color="var(--a-icon-danger)"
+      color="var(--ax-bg-danger-strong)"
     />
   );
 
@@ -111,7 +111,7 @@ export const VilkårKomponent: React.FC<{
         <VStack gap="space-6">
           {låst && (
             <HStack gap="space-6" align="center" justify="space-between">
-              <HStack gap="space-2" align="center">
+              <HStack gap="space-8" align="center">
                 <Heading size="small">{vilkårResultatTekst}</Heading>
                 {vilkårStatusIkon}
               </HStack>
