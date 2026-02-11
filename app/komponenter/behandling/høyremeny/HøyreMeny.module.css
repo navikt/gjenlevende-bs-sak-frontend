@@ -1,9 +1,8 @@
 .høyreMeny {
   width: 20rem;
-  height: 100vh;
+  flex-shrink: 0;
   background-color: var(--a-surface-default);
-  border-left: 1px solid var(--a-border-default);
+  border-left: 1px solid var(--ax-border-neutral-subtle);
   overflow-y: auto;
-  position: sticky;
-  top: 0;
+  padding: 1rem;
 }

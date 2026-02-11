@@ -4,6 +4,7 @@ ul {
   margin: 0;
   padding: 0;
   border-bottom: solid 1px var(--ax-border-neutral-subtle);
+  background-color: var(--ax-bg-default);
   align-items: center;
   position: sticky;
   top: 0;

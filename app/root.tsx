@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import type { Saksbehandler } from "~/server/types";
 import Header from "~/komponenter/header/Header";
 import "@navikt/ds-css";
+import "./global.css";
 import { TogglesProvider } from "./contexts/TogglesContext";
 
 export async function loader({ context }: Route.LoaderArgs) {
