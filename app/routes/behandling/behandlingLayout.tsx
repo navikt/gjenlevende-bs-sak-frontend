@@ -7,11 +7,13 @@ import {
   type Steg,
 } from "~/komponenter/navbar/BehandlingFaner";
 import { Side } from "~/komponenter/layout/Side";
+import { HøyreMeny } from "~/komponenter/layout/HøyreMeny";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
 import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
+import { HStack } from "@navikt/ds-react";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -56,16 +58,14 @@ export default function BehandlingLayout() {
 
     const hentData = async () => {
       try {
-        const behandlingResponse: ApiResponse<Behandling> = await apiCall(
-          `/behandling/hent`,
-          {
-            method: "POST",
-            body: JSON.stringify({ behandlingId }),
-          }
-        );
+        const behandlingResponse: ApiResponse<Behandling> = await apiCall(`/behandling/hent`, {
+          method: "POST",
+          body: JSON.stringify({ behandlingId }),
+        });
 
         if (behandlingResponse.data) {
-          const skalHaLesevisning = behandlingResponse.data.status === "FATTER_VEDTAK" ||
+          const skalHaLesevisning =
+            behandlingResponse.data.status === "FATTER_VEDTAK" ||
             behandlingResponse.data.status === "IVERKSETTER_VEDTAK" ||
             behandlingResponse.data.status === "FERDIGSTILT";
           settErLesevisning(skalHaLesevisning);
@@ -159,9 +159,12 @@ export default function BehandlingLayout() {
       }}
     >
       <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
-      <Side>
-        <Outlet />
-      </Side>
+      <HStack gap="space-24">
+        <Side>
+          <Outlet />
+        </Side>
+        <HøyreMeny>{/* Innhold i høyremenyen */}</HøyreMeny>
+      </HStack>
     </BehandlingContext.Provider>
   );
 }
