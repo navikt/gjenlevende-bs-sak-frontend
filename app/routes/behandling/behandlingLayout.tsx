@@ -13,7 +13,7 @@ import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
 import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
-import { Box } from "@navikt/ds-react";
+import { BodyShort, Box, Heading, HStack, InfoCard, VStack } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
@@ -169,6 +169,46 @@ export default function BehandlingLayout() {
           </Box>
           <HøyreMeny>
             <AnsvarligSaksbehandler />
+            <InfoCard data-color={"success"}>
+              <InfoCard.Header>
+                <InfoCard.Title>Ansvarlig saksbehandler</InfoCard.Title>
+              </InfoCard.Header>
+              <InfoCard.Content>
+                <VStack gap={"space-16"}>
+                  <Heading size={"xsmall"}>F_Z990227 E_Z990227</Heading>
+
+                  <VStack gap={"space-6"}>
+                    <HStack gap="space-6" align="center" justify="space-between">
+                      <BodyShort size={"small"} weight={"semibold"}>
+                        Behandlingstatus
+                      </BodyShort>
+                      <BodyShort size={"small"}>Utredes</BodyShort>
+                    </HStack>
+
+                    <HStack gap="space-6" align="center" justify="space-between">
+                      <BodyShort size={"small"} weight={"semibold"}>
+                        Behandlingresultat
+                      </BodyShort>
+                      <BodyShort size={"small"}>Ikke satt</BodyShort>
+                    </HStack>
+
+                    <HStack gap="space-6" align="center" justify="space-between">
+                      <BodyShort size={"small"} weight={"semibold"}>
+                        Opprettet
+                      </BodyShort>
+                      <BodyShort size={"small"}>24.01.2026</BodyShort>
+                    </HStack>
+
+                    <HStack gap="space-6" align="center" justify="space-between">
+                      <BodyShort size={"small"} weight={"semibold"}>
+                        Sist endret
+                      </BodyShort>
+                      <BodyShort size={"small"}>24.01.2026</BodyShort>
+                    </HStack>
+                  </VStack>
+                </VStack>
+              </InfoCard.Content>
+            </InfoCard>
           </HøyreMeny>
         </Box>
       </Box>
