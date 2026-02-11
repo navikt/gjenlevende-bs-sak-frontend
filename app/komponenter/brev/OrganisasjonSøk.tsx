@@ -91,10 +91,10 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
           </RadioGroup>
           <HStack
             style={{ background: "var(--a-surface-subtle)" }}
-            padding={"2"}
+            padding={"space-2"}
             justify={"space-between"}
           >
-            <VStack gap={"1"}>
+            <VStack gap={"space-1"}>
               <BodyShort>Orgnavn</BodyShort>
               <BodyShort>orgnr</BodyShort>
               <TextField

@@ -56,7 +56,7 @@ export default function Behandlingsoversikt() {
   };
 
   return (
-    <VStack gap="4">
+    <VStack gap="space-4">
       <Heading level="1" size="large">
         Behandlingsoversikt
       </Heading>

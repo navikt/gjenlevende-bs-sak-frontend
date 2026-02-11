@@ -88,13 +88,13 @@ export const VilkårKomponent: React.FC<{
   return (
     <Box
       className={styles.container}
-      shadow="small"
-      background="surface-subtle"
+      shadow="dialog"
+      background="neutral-soft"
       padding={"space-24"}
-      borderRadius="large"
+      borderRadius="4"
     >
       <div className={styles.venstreKolonne}>
-        <VStack gap="6">
+        <VStack gap="space-6">
           <Heading size="small">{navn}</Heading>
 
           <VStack>
@@ -108,15 +108,18 @@ export const VilkårKomponent: React.FC<{
       </div>
 
       <div className={styles.høyreKolonne}>
-        <VStack gap="6">
+        <VStack gap="space-6">
           {låst && (
-            <HStack gap="6" align="center" justify="space-between">
-              <HStack gap="2" align="center">
+            <HStack gap="space-6" align="center" justify="space-between">
+              <HStack gap="space-2" align="center">
                 <Heading size="small">{vilkårResultatTekst}</Heading>
                 {vilkårStatusIkon}
               </HStack>
 
-              <HStack gap="2" className={erLesevisning ? styles.gjemtILesevisning : undefined}>
+              <HStack
+                gap="space-2"
+                className={erLesevisning ? styles.gjemtILesevisning : undefined}
+              >
                 <Button
                   variant="tertiary"
                   size="small"

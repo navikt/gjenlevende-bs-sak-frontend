@@ -40,16 +40,16 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
     <Popover open={open} onClose={onClose} anchorEl={anchorEl} placement="bottom" arrow={false}>
       <Popover.Content>
         {søker && !søkeresultat ? (
-          <HStack gap="3" align="center">
+          <HStack gap="space-4" align="center">
             <Loader size="small" />
             <BodyShort>Søker...</BodyShort>
           </HStack>
         ) : visFeilmelding ? (
-          <VStack gap="2">
+          <VStack gap="space-2">
             <BodyShort>{visFeilmelding}</BodyShort>
           </VStack>
         ) : søkeresultat ? (
-          <VStack gap="3">
+          <VStack gap="space-4">
             <div>
               <Heading level="2" size="xsmall" spacing>
                 {søkeresultat.navn}

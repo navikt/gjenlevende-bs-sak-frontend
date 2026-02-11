@@ -11,14 +11,14 @@ interface Props {
 
 export const BrevmottakereListe: FC<Props> = ({ mottakere, fjernMottaker }) => {
   return (
-    <VStack gap={"2"} width={"100%"}>
+    <VStack gap={"space-2"} width={"100%"}>
       <BodyShort>Brevmottakere</BodyShort>
       {mottakere.map((mottaker, index) => {
         const erOrganisasjon = mottaker.mottakerType === MottakerType.ORGANISASJON;
         const orgNrEllerPersonIdent = erOrganisasjon ? mottaker.orgnr : mottaker.personident;
 
         return (
-          <HStack key={index} style={{ background: "var(--a-surface-subtle)" }} padding={"2"}>
+          <HStack key={index} style={{ background: "var(--a-surface-subtle)" }} padding={"space-2"}>
             <VStack>
               <BodyShort>
                 {erOrganisasjon

@@ -13,12 +13,12 @@ export default function PersonOversikt() {
   const visningsNavn = navn ? formaterNavn(navn) : "Navn ikke tilgjengelig";
 
   return (
-    <VStack gap="6">
+    <VStack gap="space-6">
       <Heading level="1" size="large">
         Personoversikt
       </Heading>
 
-      <VStack gap="4">
+      <VStack gap="space-4">
         <BodyShort size="large" weight="semibold">
           {visningsNavn}
         </BodyShort>

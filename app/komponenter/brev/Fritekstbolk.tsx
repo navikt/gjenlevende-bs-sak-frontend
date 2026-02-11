@@ -27,8 +27,8 @@ export const Fritekstbolk = ({
 
   return (
     <VStack
-      gap={"2"}
-      padding={"4"}
+      gap={"space-2"}
+      padding={"space-4"}
       style={{
         border: "1px solid var(--a-border-default)",
       }}

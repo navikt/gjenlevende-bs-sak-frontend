@@ -53,13 +53,13 @@ export const BrevSide = () => {
   };
 
   return (
-    <HGrid gap="32" columns={2} width={"100%"}>
+    <HGrid gap="space-32" columns={2} width={"100%"}>
       <Box
         style={{ backgroundColor: "white", alignSelf: "flex-start" }}
-        borderRadius="small"
+        borderRadius="2"
         padding={"space-16"}
       >
-        <VStack gap={"4"}>
+        <VStack gap={"space-4"}>
           <Select
             label="Velg dokument"
             value={brevMal?.tittel ?? ""}
@@ -79,7 +79,7 @@ export const BrevSide = () => {
             ))}
           </Select>
           {brevMal && (
-            <VStack gap={"2"}>
+            <VStack gap={"space-2"}>
               <Heading level={"3"} size={"small"} spacing>
                 Fritekstområde
               </Heading>
@@ -109,7 +109,7 @@ export const BrevSide = () => {
         </VStack>
       </Box>
       <Box>
-        <VStack gap={"4"} align={"center"}>
+        <VStack gap={"space-4"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
           {brevMal && fritekstbolker && (
             <Button
