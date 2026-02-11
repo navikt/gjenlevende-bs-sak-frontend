@@ -1,15 +1,32 @@
 import React from "react";
 import { InfoCard, VStack, Heading, HStack, BodyShort, Skeleton } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
-import { useHentSaksbehandler } from "~/hooks/useHentSaksbehandler";
+import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { formatterEnumVerdi, formaterIsoDatoTid } from "~/utils/utils";
+
+
+const rolleDataColor = {
+  INNLOGGET_SAKSBEHANDLER: "success",
+  ANNEN_SAKSBEHANDLER: "warning",
+  IKKE_SATT: "neutral",
+} as const;
 
 export const AnsvarligSaksbehandler = () => {
   const { behandling } = useBehandlingContext();
-  const { visningNavn, laster } = useHentSaksbehandler(behandling?.opprettetAv);
+  const { ansvarligSaksbehandler, laster } = useHentAnsvarligSaksbehandler(behandling?.id);
+
+  const dataColor = ansvarligSaksbehandler
+    ? rolleDataColor[ansvarligSaksbehandler.rolle]
+    : ("neutral" as const);
+
+  const visningNavn = ansvarligSaksbehandler
+    ? ansvarligSaksbehandler.rolle === "IKKE_SATT"
+      ? "Ikke tildelt"
+      : `${ansvarligSaksbehandler.fornavn} ${ansvarligSaksbehandler.etternavn}`
+    : null;
 
   return (
-    <InfoCard data-color={"success"}>
+    <InfoCard data-color={dataColor}>
       <InfoCard.Header>
         <InfoCard.Title>Ansvarlig saksbehandler</InfoCard.Title>
       </InfoCard.Header>
@@ -18,7 +35,7 @@ export const AnsvarligSaksbehandler = () => {
           {laster ? (
             <Skeleton variant="text" width="60%" />
           ) : (
-            <Heading size={"xsmall"}>{visningNavn ?? behandling?.opprettetAv}</Heading>
+            <Heading size={"xsmall"}>{visningNavn ?? "-"}</Heading>
           )}
 
           <VStack gap={"space-6"}>
