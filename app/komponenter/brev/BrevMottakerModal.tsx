@@ -52,8 +52,8 @@ export default function BrevmottakerModalInnhold({
   return (
     <>
       <Modal.Body style={{ minHeight: "40rem", height: "100%" }}>
-        <HGrid columns={"1fr auto 1fr"} gap={"4"}>
-          <VStack gap={"4"}>
+        <HGrid columns={"1fr auto 1fr"} gap={"space-4"}>
+          <VStack gap={"space-4"}>
             <ManueltSøk leggTilMottaker={leggTilMottaker} />
             <Skillelinje />
             <SkalBrukerMottaBrev
@@ -67,7 +67,7 @@ export default function BrevmottakerModalInnhold({
         </HGrid>
       </Modal.Body>
       <Modal.Footer>
-        <HStack gap={"2"} justify={"center"} style={{ marginTop: "1rem" }}>
+        <HStack gap={"space-2"} justify={"center"} style={{ marginTop: "1rem" }}>
           <Button variant={"secondary"} onClick={håndterAvbryt}>
             Avbryt
           </Button>

@@ -35,7 +35,7 @@ export function SkalBrukerMottaBrev({ mottakere, leggTilMottaker, fjernMottaker 
   };
 
   return (
-    <VStack gap={"4"}>
+    <VStack gap={"space-4"}>
       <BodyShort size={"large"}>Skal bruker motta brevet?</BodyShort>
       <RadioGroup
         legend={"Skal bruker motta brevet?"}

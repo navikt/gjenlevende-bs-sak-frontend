@@ -13,7 +13,7 @@ export const Personheader = () => {
   return (
     <ul className={styles.ul}>
       <li className={styles.li}>
-        <HStack gap="2">
+        <HStack gap="space-2">
           <PersonIcon title="person" fontSize="1.5rem" />
           <BodyShort weight="semibold">
             <Link href={`/person/${fagsakPersonId}/behandlingsoversikt`}>{visningsNavn}</Link>

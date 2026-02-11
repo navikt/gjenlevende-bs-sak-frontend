@@ -40,7 +40,7 @@ export const Søkefelt: React.FC<SøkefeltProps> = ({
 
   return (
     <HStack align="center">
-      <VStack gap="1">
+      <VStack gap="space-1">
         <Search
           label="Søk etter personident"
           size="small"

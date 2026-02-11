@@ -2,7 +2,6 @@ import React from "react";
 import { InternalHeader, Spacer } from "@navikt/ds-react";
 import type { Saksbehandler } from "~/server/types";
 import { useNavigate, useRouteLoaderData } from "react-router";
-import styles from "./Header.module.css";
 import { Søkefelt } from "./Søkefelt";
 import { SaksbehandlerMenu } from "./SaksbehandlerMenu";
 import { useSøk } from "~/hooks/useSøk";
@@ -13,13 +12,10 @@ export const Header: React.FC = () => {
   const { søk, søkeresultat, søker, feilmelding, settSøk, tilbakestillSøk } = useSøk();
   const { opprettFagsak, oppretter, opprettFeilmelding } = useOpprettFagsak();
 
-  const { saksbehandler, env } =
+  const { saksbehandler } =
     useRouteLoaderData<{
       saksbehandler: Saksbehandler | null;
-      env: "lokalt" | "development" | "production";
     }>("root") || {};
-
-  const erDev = env !== "production";
 
   const handleNavigate = (fagsakPersonId: string) => {
     navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
@@ -33,7 +29,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <InternalHeader className={erDev ? styles.devHeader : undefined} data-theme="light">
+    <InternalHeader>
       <InternalHeader.Title as="a" href="/">
         Gjenlevende BS
       </InternalHeader.Title>

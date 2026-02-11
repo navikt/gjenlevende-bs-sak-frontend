@@ -78,7 +78,7 @@ export default function ArsakBehandling() {
   }, [kravdato]);
 
   return (
-    <VStack gap="6" style={{ maxWidth: MAKS_BREDDE }}>
+    <VStack gap="space-6" style={{ maxWidth: MAKS_BREDDE }}>
       <DatePicker {...datepickerProps}>
         <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
       </DatePicker>

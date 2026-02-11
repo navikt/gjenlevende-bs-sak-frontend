@@ -22,7 +22,7 @@ export default function PersonLayout() {
 
   if (laster) {
     return (
-      <VStack gap="6" align="center" style={{ padding: "2rem" }}>
+      <VStack gap="space-6" align="center" style={{ padding: "2rem" }}>
         <Loader size="large" title="Henter personinformasjon..." />
       </VStack>
     );
@@ -30,7 +30,7 @@ export default function PersonLayout() {
 
   if (!fagsakPersonId || !personident) {
     return (
-      <VStack gap="4" style={{ padding: "2rem" }}>
+      <VStack gap="space-4" style={{ padding: "2rem" }}>
         <Alert variant="error">
           Kunne ikke hente personinformasjon: {melding || "Mangler data"}
           {fagsakMelding && <p>{fagsakMelding}</p>}

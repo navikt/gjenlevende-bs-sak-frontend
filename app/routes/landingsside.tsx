@@ -25,7 +25,7 @@ export default function Landingsside() {
 
   return (
     <Side>
-      <VStack gap="8">
+      <VStack gap="space-8">
         <Heading level="1" size="large" spacing>
           Gjenlevende barnetilsyn og skolepenger
         </Heading>
@@ -35,7 +35,7 @@ export default function Landingsside() {
         )}
 
         {saksbehandler && (
-          <VStack gap="4">
+          <VStack gap="space-4">
             <BodyShort spacing>Velkommen, {saksbehandler.navn}!</BodyShort>
           </VStack>
         )}
