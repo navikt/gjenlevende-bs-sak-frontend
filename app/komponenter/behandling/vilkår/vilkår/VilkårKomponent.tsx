@@ -67,20 +67,23 @@ export const VilkårKomponent: React.FC<{
     onSlett();
   };
 
-  const vilkårStatusIkon =
-    spørsmålSvar === Vurdering.JA ? (
-      <CheckmarkCircleFillIcon
-        title="vilkår oppfylt"
-        fontSize="1.5rem"
-        color="var(--a-icon-success)"
-      />
-    ) : (
-      <XMarkOctagonFillIcon
-        title="vilkår ikke oppfylt"
-        fontSize="1.5rem"
-        color="var(--a-icon-danger)"
-      />
-    );
+  const erOppfylt = spørsmålSvar === Vurdering.JA;
+
+  const vilkårResultatTekst = erOppfylt ? "Vilkår oppfylt" : "Vilkår ikke oppfylt";
+
+  const vilkårStatusIkon = erOppfylt ? (
+    <CheckmarkCircleFillIcon
+      title={vilkårResultatTekst.toLowerCase()}
+      fontSize="1.5rem"
+      color="var(--a-icon-success)"
+    />
+  ) : (
+    <XMarkOctagonFillIcon
+      title={vilkårResultatTekst.toLowerCase()}
+      fontSize="1.5rem"
+      color="var(--a-icon-danger)"
+    />
+  );
 
   return (
     <Box
@@ -109,7 +112,7 @@ export const VilkårKomponent: React.FC<{
           {låst && (
             <HStack gap="6" align="center" justify="space-between">
               <HStack gap="2" align="center">
-                <Heading size="small">Vilkår oppfylt</Heading>
+                <Heading size="small">{vilkårResultatTekst}</Heading>
                 {vilkårStatusIkon}
               </HStack>
 
