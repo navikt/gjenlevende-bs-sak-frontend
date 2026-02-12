@@ -39,7 +39,7 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagre
 
     return (
         <VStack gap="space-20 space-20">
-            <BarnetilsynperiodeValg lagretVedtak={lagretVedtak} perioder={perioder}
+            <BarnetilsynperiodeValg perioder={perioder}
                                     settPerioder={settPerioder}></BarnetilsynperiodeValg>
             <Textarea label={'Begrunnelse'} value={begrunnelse}
                       onChange={e => settBegrunnelse(e.target.value)}></Textarea>
