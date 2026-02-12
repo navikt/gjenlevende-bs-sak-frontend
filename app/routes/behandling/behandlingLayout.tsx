@@ -42,6 +42,7 @@ export default function BehandlingLayout() {
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const [ferdigeSteg, settFerdigeSteg] = useState<Steg[]>([]);
   const [årsakState, settÅrsakState] = useState<ÅrsakState | undefined>(undefined);
+  const [behandling, settBehandling] = useState<Behandling | undefined>(undefined);
   const [årsakDataHentet, settÅrsakDataHentet] = useState(false);
   const { settErLesevisning } = useLesevisningsContext();
   const revalidator = useRevalidator();
@@ -65,6 +66,7 @@ export default function BehandlingLayout() {
         });
 
         if (behandlingResponse.data) {
+          settBehandling(behandlingResponse.data);
           const skalHaLesevisning =
             behandlingResponse.data.status === "FATTER_VEDTAK" ||
             behandlingResponse.data.status === "IVERKSETTER_VEDTAK" ||
@@ -152,6 +154,7 @@ export default function BehandlingLayout() {
         ferdigeSteg,
         markerStegSomFerdig,
         stegListe: BEHANDLING_STEG_LISTE,
+        behandling,
         årsakState,
         oppdaterÅrsakState,
         hentÅrsakData,

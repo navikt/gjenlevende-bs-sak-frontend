@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import type { BehandlingSteg, Steg } from "~/komponenter/navbar/BehandlingFaner";
 import type { ÅrsakType } from "~/types/årsak";
-// import type { Behandling } from "~/types/behandling";
+import type { Behandling } from "~/types/behandling";
 
 export interface ÅrsakState {
   kravdato: Date;
@@ -14,7 +14,7 @@ export const BehandlingContext = React.createContext<{
   ferdigeSteg: Steg[];
   markerStegSomFerdig: (steg: Steg) => void;
   stegListe?: BehandlingSteg[];
-  //   behandling?: Behandling;
+  behandling?: Behandling;
   årsakState?: ÅrsakState;
   oppdaterÅrsakState: (data: Partial<ÅrsakState>) => void;
   hentÅrsakData: () => Promise<void>;
@@ -25,7 +25,7 @@ export const BehandlingContext = React.createContext<{
   ferdigeSteg: [],
   markerStegSomFerdig: () => {},
   stegListe: undefined,
-  //   behandling: undefined,
+  behandling: undefined,
   årsakState: undefined,
   oppdaterÅrsakState: () => {},
   hentÅrsakData: async () => {},

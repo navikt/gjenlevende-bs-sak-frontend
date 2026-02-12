@@ -108,7 +108,7 @@ export const VilkårKomponent: React.FC<{
       </div>
 
       <div className={styles.høyreKolonne}>
-        <VStack gap="space-6">
+        <VStack gap="space-24">
           {låst && (
             <HStack gap="space-6" align="center" justify="space-between">
               <HStack gap="space-8" align="center">
