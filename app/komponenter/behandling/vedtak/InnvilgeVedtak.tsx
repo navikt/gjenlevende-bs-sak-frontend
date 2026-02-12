@@ -14,22 +14,22 @@ import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderFor
 import {BarnetilsynperiodeValg} from "~/komponenter/behandling/vedtak/BarnetilsynperiodeValg";
 import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/BeregningBarnetilsynTabell";
 
-
-const tomBarnetilsynperiode: Barnetilsynperiode = {
-    behandlingId: '',
-    datoFra: '',
-    datoTil: '',
-    utgifter: 0,
-    barn: [],
-    periodetype: undefined,
-    aktivitetstype: undefined,
-};
-
 export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
+    const {behandlingId} = useParams<{ behandlingId: string }>();
+    const tomBarnetilsynperiode: Barnetilsynperiode = {
+        behandlingId: behandlingId ?? '',
+        datoFra: '',
+        datoTil: '',
+        utgifter: 0,
+        barn: [],
+        periodetype: undefined,
+        aktivitetstype: undefined,
+    };
+
     const lagretPerioder = lagretVedtak?.barnetilsynperioder && lagretVedtak.barnetilsynperioder.length > 0
         ? lagretVedtak.barnetilsynperioder
         : [tomBarnetilsynperiode];
-    const {behandlingId} = useParams<{ behandlingId: string }>();
+
     const {lagreVedtak, opprettFeilmelding} = useLagreVedtak();
     const {beløpsperioder, hentBeløpsperioder, beregnFeilmelding} = useHentBeløpsPerioderForVedtak();
 
