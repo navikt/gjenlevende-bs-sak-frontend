@@ -5,5 +5,5 @@ export interface Behandling {
   sistEndret: string;
   opprettet: string;
   opprettetAv: string;
-  resultat: "OPPHØRT" | "AVSLÅTT" | "IKKE_SATT" | "HENLAGT";
+  resultat: "INNVILGET" | "OPPHØRT" | "AVSLÅTT" | "IKKE_SATT" | "HENLAGT";
 }
