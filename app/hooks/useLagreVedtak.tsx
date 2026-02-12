@@ -1,6 +1,6 @@
-import { useState } from "react";
-import type { IVedtak } from "~/komponenter/behandling/vedtak/vedtak";
-import { apiCall, type ApiResponse } from "~/api/backend";
+import {useState} from "react";
+import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
+import {apiCall, type ApiResponse} from "~/api/backend";
 
 interface LagreVedtakState {
     oppretter: boolean;
@@ -15,16 +15,16 @@ export function useLagreVedtak() {
 
     const lagreVedtak = async (
         behandlingId: string,
-        vedtak: IVedtak
+        vedtak: Vedtak
     ): Promise<string | undefined> => {
-        settState((prev) => ({ ...prev, oppretter: true, opprettFeilmelding: null }));
+        settState((prev) => ({...prev, oppretter: true, opprettFeilmelding: null}));
         const response: ApiResponse<string> = await apiCall(
             `/vedtak/${behandlingId}/lagre-vedtak`, {
                 method: "POST",
                 body: JSON.stringify(vedtak),
             }
         );
-        settState((prev) => ({ ...prev, oppretter: false, opprettFeilmelding: response.melding ?? null }));
+        settState((prev) => ({...prev, oppretter: false, opprettFeilmelding: response.melding ?? null}));
         if (!response.data && response.melding) {
             return undefined;
         }

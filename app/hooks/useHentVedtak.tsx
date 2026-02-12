@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { apiCall, type ApiResponse } from "~/api/backend";
-import type { IVedtak } from "~/komponenter/behandling/vedtak/vedtak";
+import {useEffect, useState} from "react";
+import {apiCall, type ApiResponse} from "~/api/backend";
+import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 
 interface VedtakState {
-    vedtak: IVedtak | null;
+    vedtak: Vedtak | null;
     melding: string | null;
     laster: boolean;
 }
@@ -18,7 +18,7 @@ export function useHentVedtak(behandlingId: string | undefined) {
     useEffect(() => {
         const hentVedtakForBehandling = async (
             behandlingId: string
-        ): Promise<ApiResponse<IVedtak>> => {
+        ): Promise<ApiResponse<Vedtak>> => {
             return apiCall(`/vedtak/${behandlingId}/hent-vedtak`, {
                 method: "GET",
             });
@@ -34,7 +34,7 @@ export function useHentVedtak(behandlingId: string | undefined) {
                 return;
             }
 
-            settState((prev) => ({ ...prev, melding: null, laster: true }));
+            settState((prev) => ({...prev, melding: null, laster: true}));
 
             const response = await hentVedtakForBehandling(behandlingId);
 

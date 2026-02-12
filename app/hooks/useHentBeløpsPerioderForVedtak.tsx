@@ -1,37 +1,30 @@
-import { useCallback, useState } from "react";
-import { apiCall, type ApiResponse } from "~/api/backend";
+import {useCallback, useState} from "react";
+import {apiCall, type ApiResponse} from "~/api/backend";
 import type {
-    IBeløpsperioder,
-    IBarnetilsynperiode
+    Beløpsperioder,
+    Barnetilsynperiode
 } from "~/komponenter/behandling/vedtak/vedtak";
-import type { BarnetilsynBeregningRequest } from "~/komponenter/behandling/vedtak/vedtak";
+import type {BarnetilsynBeregningRequest} from "~/komponenter/behandling/vedtak/vedtak";
 
 interface BeløpsperioderState {
-    beløpsperioder: IBeløpsperioder | null;
-    melding: string | null;
+    beløpsperioder: Beløpsperioder | null;
+    beregnFeilmelding: string | null;
     laster: boolean;
 }
 
 export function useHentBeløpsPerioderForVedtak() {
     const [state, settState] = useState<BeløpsperioderState>({
         beløpsperioder: null,
-        melding: null,
+        beregnFeilmelding: null,
         laster: false,
     });
 
     const hentBeløpsperioder = useCallback(async (
         behandlingId: string | undefined,
-        barnetilsynsperioder: IBarnetilsynperiode[]
+        barnetilsynsperioder: Barnetilsynperiode[]
     ) => {
-        if (!behandlingId) {
-            settState((prev) => ({
-                ...prev,
-                melding: "Mangler behandlingId",
-                laster: false,
-            }));
-            return;
-        }
-        settState((prev) => ({ ...prev, melding: null, laster: true }));
+
+        settState((prev) => ({...prev, laster: true, beregnFeilmelding: null}));
         const request: BarnetilsynBeregningRequest = {
             barnetilsynBeregning: barnetilsynsperioder
                 .filter((periode) => periode.periodetype !== undefined)
@@ -43,20 +36,22 @@ export function useHentBeløpsPerioderForVedtak() {
                     periodetype: periode.periodetype!,
                 })),
         };
-        const response: ApiResponse<IBeløpsperioder> = await apiCall(
+        const response: ApiResponse<Beløpsperioder> = await apiCall(
             `/vedtak/${behandlingId}/beregn`, {
                 method: "POST",
                 body: JSON.stringify(request),
             }
         );
+        settState((prev) => ({...prev, oppretter: false, beregnFeilmelding: response.melding ?? null}));
         if (response.data) {
             settState((prev) => ({
                 ...prev,
+                beregnFeilmelding: response.melding ?? null,
                 beløpsperioder: response.data ?? null,
                 laster: false,
             }));
         }
     }, []);
 
-    return { ...state, hent: hentBeløpsperioder };
+    return {...state, hentBeløpsperioder};
 }

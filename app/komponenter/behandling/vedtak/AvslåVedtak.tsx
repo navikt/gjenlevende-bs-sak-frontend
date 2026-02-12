@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import {EResultatType, type IVedtak} from "~/komponenter/behandling/vedtak/vedtak";
+import {ResultatType, type Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {Button, HStack, Textarea} from "@navikt/ds-react";
 import {useParams} from "react-router";
 
 
-export const AvslåVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretVedtak}) => {
+export const AvslåVedtak: React.FC<{lagretVedtak: Vedtak | null}> = ({lagretVedtak}) => {
     const { lagreVedtak } = useLagreVedtak();
     const { behandlingId } = useParams<{ behandlingId: string }>();
 
@@ -19,7 +19,7 @@ export const AvslåVedtak: React.FC<{lagretVedtak: IVedtak | null}> = ({lagretVe
                     onClick={() => {
                         if (!behandlingId) return;
                         const vedtak = {
-                            resultatType: EResultatType.AVSLÅTT,
+                            resultatType: ResultatType.AVSLÅTT,
                             begrunnelse: begrunnelse,
                             barnetilsynperioder: [],
                         };
