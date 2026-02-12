@@ -1,7 +1,10 @@
-import React from "react";
-import { Heading, VStack } from "@navikt/ds-react";
+import React, { useState } from "react";
+import { Button, Heading, Modal, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
+import { useBrevmottaker } from "~/hooks/useBrevmottaker";
+import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -14,13 +17,35 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export default function Brev() {
+  const [modalÅpen, settModalÅpen] = useState(false);
+  const { behandlingId } = useBehandlingContext();
+  const { mottakere, settMottakere, utledBrevmottakere, sendMottakereTilSak } =
+    useBrevmottaker(behandlingId);
+
   return (
     <VStack gap="space-4">
       <Heading level="1" size="medium">
-        Brevmottaker:
-        {/*  TODO legge til mulighet for å endre brevmottaker*/}
+        Brevmottaker: {utledBrevmottakere()}
+        <Button variant={"tertiary"} onClick={() => settModalÅpen(true)}>
+          Legg til/endre brevmottaker
+        </Button>
       </Heading>
       <BrevSide />
+
+      <Modal
+        open={modalÅpen}
+        onClose={() => settModalÅpen(false)}
+        header={{ heading: "Hvem skal motta brevet?" }}
+        width={"70rem"}
+        style={{ minHeight: "40rem" }}
+      >
+        <BrevmottakerModalInnhold
+          mottakere={mottakere}
+          settMottakere={settMottakere}
+          lukkModal={() => settModalÅpen(false)}
+          sendMottakereTilSak={sendMottakereTilSak}
+        />
+      </Modal>
     </VStack>
   );
 }

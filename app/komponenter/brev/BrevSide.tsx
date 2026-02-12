@@ -6,9 +6,13 @@ import { PdfForhåndsvisning } from "~/komponenter/brev/PdfForhåndsvisning";
 import { brevmaler } from "~/komponenter/brev/brevmaler";
 import { useBrev } from "~/komponenter/brev/useBrev";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import { useErLesevisning } from "~/hooks/useErLesevisning";
+import { useBeslutter } from "~/hooks/useBeslutter";
 
 export const BrevSide = () => {
-  const { behandlingId } = useBehandlingContext();
+  const erLesevisning = useErLesevisning();
+
+  const { behandlingId, revaliderBehandling } = useBehandlingContext();
   const {
     brevMal,
     fritekstbolker,
@@ -23,6 +27,8 @@ export const BrevSide = () => {
     slettFritekstbolk,
   } = useBrev(behandlingId);
 
+  const { sender: senderTilBeslutter, sendTilBeslutter, angreSendTilBeslutter } = useBeslutter();
+
   useEffect(() => {
     if (!brevMal) return;
     const timer = setTimeout(() => {
@@ -32,14 +38,28 @@ export const BrevSide = () => {
     return () => clearTimeout(timer);
   }, [behandlingId, brevMal, fritekstbolker, mellomlagreBrev]);
 
+  const handleSendTilBeslutter = async () => {
+    const respons = await sendTilBeslutter(behandlingId);
+    if (respons.data) {
+      revaliderBehandling();
+    }
+  };
+
+  const handleAngreSendTilBeslutter = async () => {
+    const respons = await angreSendTilBeslutter(behandlingId);
+    if (respons.data) {
+      revaliderBehandling();
+    }
+  };
+
   return (
-    <HGrid gap="32" columns={2} width={"100%"}>
+    <HGrid gap="space-32" columns={2} width={"100%"}>
       <Box
         style={{ backgroundColor: "white", alignSelf: "flex-start" }}
-        borderRadius="small"
+        borderRadius="2"
         padding={"space-16"}
       >
-        <VStack gap={"4"}>
+        <VStack gap={"space-4"}>
           <Select
             label="Velg dokument"
             value={brevMal?.tittel ?? ""}
@@ -47,6 +67,7 @@ export const BrevSide = () => {
               velgBrevmal(e.target.value);
             }}
             size={"small"}
+            disabled={erLesevisning}
           >
             <option value="" disabled>
               Ikke valgt
@@ -58,7 +79,7 @@ export const BrevSide = () => {
             ))}
           </Select>
           {brevMal && (
-            <VStack gap={"2"}>
+            <VStack gap={"space-2"}>
               <Heading level={"3"} size={"small"} spacing>
                 Fritekstområde
               </Heading>
@@ -79,6 +100,7 @@ export const BrevSide = () => {
                 icon={<PlusIcon title={"Legg til fritekstfelt"} />}
                 onClick={leggTilFritekstbolk}
                 size={"small"}
+                disabled={erLesevisning}
               >
                 Legg til fritekstfelt
               </Button>
@@ -87,18 +109,30 @@ export const BrevSide = () => {
         </VStack>
       </Box>
       <Box>
-        <VStack gap={"4"} align={"center"}>
+        <VStack gap={"space-4"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
           {brevMal && fritekstbolker && (
             <Button
               style={{ width: "fit-content" }}
               onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-              disabled={sender}
+              disabled={sender || erLesevisning}
             >
               Send pdf til sak{" "}
             </Button>
           )}
-          {/* //TODO Knappen over skal bli "Send til beslutter" etterhvert*/}
+
+          {brevMal && fritekstbolker && (
+            <>
+              <Button
+                onClick={handleSendTilBeslutter}
+                disabled={senderTilBeslutter || erLesevisning}
+              >
+                Send til beslutter
+              </Button>
+
+              <Button onClick={handleAngreSendTilBeslutter}>Angre send til beslutter</Button>
+            </>
+          )}
         </VStack>
       </Box>
     </HGrid>

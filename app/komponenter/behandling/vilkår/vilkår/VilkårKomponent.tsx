@@ -1,13 +1,13 @@
 import {
-  Heading,
   BodyLong,
-  VStack,
-  RadioGroup,
-  Radio,
-  Textarea,
-  Button,
-  HStack,
   Box,
+  Button,
+  Heading,
+  HStack,
+  Radio,
+  RadioGroup,
+  Textarea,
+  VStack,
 } from "@navikt/ds-react";
 import React from "react";
 import styles from "./VilkårKomponent.module.css";
@@ -18,6 +18,7 @@ import {
   XMarkOctagonFillIcon,
 } from "@navikt/aksel-icons";
 import { Vurdering } from "~/types/vilkår";
+import { useErLesevisning } from "~/hooks/useErLesevisning";
 
 export const VilkårKomponent: React.FC<{
   navn: string;
@@ -46,8 +47,10 @@ export const VilkårKomponent: React.FC<{
   onLagre,
   onSlett,
 }) => {
-  const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
+  const erLesevisning = useErLesevisning();
+  const erLåst = låst || erLesevisning;
 
+  const harSvaralternativOgBegrunnelse = spørsmålSvar !== "" && begrunnelse.trim() !== "";
   const handleLagreOgLås = async () => {
     if (onLagre) {
       await onLagre();
@@ -64,48 +67,59 @@ export const VilkårKomponent: React.FC<{
     onSlett();
   };
 
-  const vilkårStatusIkon =
-    spørsmålSvar === Vurdering.JA ? (
-      <CheckmarkCircleFillIcon
-        title="vilkår oppfylt"
-        fontSize="1.5rem"
-        color="var(--a-icon-success)"
-      />
-    ) : (
-      <XMarkOctagonFillIcon
-        title="vilkår ikke oppfylt"
-        fontSize="1.5rem"
-        color="var(--a-icon-danger)"
-      />
-    );
+  const erOppfylt = spørsmålSvar === Vurdering.JA;
+
+  const vilkårResultatTekst = erOppfylt ? "Vilkår oppfylt" : "Vilkår ikke oppfylt";
+
+  const vilkårStatusIkon = erOppfylt ? (
+    <CheckmarkCircleFillIcon
+      title={vilkårResultatTekst.toLowerCase()}
+      fontSize="1.5rem"
+      color="var(--ax-bg-success-strong)"
+    />
+  ) : (
+    <XMarkOctagonFillIcon
+      title={vilkårResultatTekst.toLowerCase()}
+      fontSize="1.5rem"
+      color="var(--ax-bg-danger-strong)"
+    />
+  );
 
   return (
     <Box
       className={styles.container}
-      shadow="small"
-      background="surface-subtle"
-      padding="space-16"
-      borderRadius="large"
+      shadow="dialog"
+      background="neutral-soft"
+      padding={"space-24"}
+      borderRadius="4"
     >
       <div className={styles.venstreKolonne}>
-        <Heading size="small">{navn}</Heading>
-        {beskrivelse.map((tekst, index) => (
-          <BodyLong size="small" key={index}>
-            {tekst}
-          </BodyLong>
-        ))}
+        <VStack gap="space-6">
+          <Heading size="small">{navn}</Heading>
+
+          <VStack>
+            {beskrivelse.map((tekst, index) => (
+              <BodyLong size="small" key={index}>
+                {tekst}
+              </BodyLong>
+            ))}
+          </VStack>
+        </VStack>
       </div>
 
       <div className={styles.høyreKolonne}>
-        <VStack gap="6">
+        <VStack gap="space-6">
           {låst && (
-            <HStack gap="6" align="center">
-              <HStack gap="2">
-                <Heading size="small">Vilkår oppfylt</Heading>
+            <HStack gap="space-6" align="center" justify="space-between">
+              <HStack gap="space-8" align="center">
+                <Heading size="small">{vilkårResultatTekst}</Heading>
                 {vilkårStatusIkon}
               </HStack>
 
-              <HStack gap="2">
+              <HStack
+                gap="space-2"
+                className={erLesevisning ? styles.gjemtILesevisning : undefined}
+              >
                 <Button
                   variant="tertiary"
                   size="small"
@@ -130,7 +144,7 @@ export const VilkårKomponent: React.FC<{
             legend={valgSpørsmål}
             onChange={onChangeSpørsmål}
             value={spørsmålSvar}
-            readOnly={låst}
+            readOnly={erLåst}
           >
             <Radio value="JA">Ja</Radio>
             <Radio value="NEI">Nei</Radio>
@@ -140,13 +154,13 @@ export const VilkårKomponent: React.FC<{
             label="Begrunnelse"
             onChange={(e) => onChangeBegrunnelse(e.target.value)}
             value={begrunnelse}
-            readOnly={låst}
+            readOnly={erLåst}
           />
 
           <div>
             <Button
               onClick={handleLagreOgLås}
-              disabled={!harSvaralternativOgBegrunnelse || låst}
+              disabled={!harSvaralternativOgBegrunnelse || erLåst}
               loading={lagrer}
             >
               Lagre

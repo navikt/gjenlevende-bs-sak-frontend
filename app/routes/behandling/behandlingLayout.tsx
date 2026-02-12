@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Outlet, useParams } from "react-router";
+import { Outlet, useParams, useRevalidator } from "react-router";
 import { BehandlingContext, type ÅrsakState } from "~/contexts/BehandlingContext";
 import {
   BehandlingFaner,
@@ -7,9 +7,14 @@ import {
   type Steg,
 } from "~/komponenter/navbar/BehandlingFaner";
 import { Side } from "~/komponenter/layout/Side";
+import { HøyreMeny } from "~/komponenter/behandling/høyremeny/HøyreMeny";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
+import type { Behandling } from "~/types/behandling";
+import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
+import { Box } from "@navikt/ds-react";
+import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -38,7 +43,8 @@ export default function BehandlingLayout() {
   const [ferdigeSteg, settFerdigeSteg] = useState<Steg[]>([]);
   const [årsakState, settÅrsakState] = useState<ÅrsakState | undefined>(undefined);
   const [årsakDataHentet, settÅrsakDataHentet] = useState(false);
-  //   const { behandling } = useHentBehandling(behandlingId);
+  const { settErLesevisning } = useLesevisningsContext();
+  const revalidator = useRevalidator();
 
   const markerStegSomFerdig = useCallback((steg: Steg) => {
     settFerdigeSteg((prev) => (prev.includes(steg) ? prev : [...prev, steg]));
@@ -53,6 +59,19 @@ export default function BehandlingLayout() {
 
     const hentData = async () => {
       try {
+        const behandlingResponse: ApiResponse<Behandling> = await apiCall(`/behandling/hent`, {
+          method: "POST",
+          body: JSON.stringify({ behandlingId }),
+        });
+
+        if (behandlingResponse.data) {
+          const skalHaLesevisning =
+            behandlingResponse.data.status === "FATTER_VEDTAK" ||
+            behandlingResponse.data.status === "IVERKSETTER_VEDTAK" ||
+            behandlingResponse.data.status === "FERDIGSTILT";
+          settErLesevisning(skalHaLesevisning);
+        }
+
         const årsakResponse: ApiResponse<ÅrsakBehandlingResponse> = await apiCall(
           `/arsak/${behandlingId}`
         );
@@ -95,7 +114,12 @@ export default function BehandlingLayout() {
     };
 
     hentData();
-  }, [behandlingId, årsakDataHentet]);
+  }, [behandlingId, årsakDataHentet, settErLesevisning]);
+
+  const revaliderBehandling = useCallback(() => {
+    settÅrsakDataHentet(false);
+    revalidator.revalidate();
+  }, [revalidator]);
 
   const hentÅrsakData = useCallback(async () => {
     if (!behandlingId) return;
@@ -132,12 +156,22 @@ export default function BehandlingLayout() {
         oppdaterÅrsakState,
         hentÅrsakData,
         årsakDataHentet,
+        revaliderBehandling,
       }}
     >
-      <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
-      <Side>
-        <Outlet />
-      </Side>
+      <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+        <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
+        <Box style={{ display: "flex", flex: 1, minHeight: 0 }}>
+          <Box style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
+            <Side>
+              <Outlet />
+            </Side>
+          </Box>
+          <HøyreMeny>
+            <AnsvarligSaksbehandler />
+          </HøyreMeny>
+        </Box>
+      </Box>
     </BehandlingContext.Provider>
   );
 }

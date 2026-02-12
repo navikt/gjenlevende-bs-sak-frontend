@@ -19,6 +19,7 @@ export const BehandlingContext = React.createContext<{
   oppdaterÅrsakState: (data: Partial<ÅrsakState>) => void;
   hentÅrsakData: () => Promise<void>;
   årsakDataHentet: boolean;
+  revaliderBehandling: () => void;
 }>({
   behandlingId: "",
   ferdigeSteg: [],
@@ -29,6 +30,7 @@ export const BehandlingContext = React.createContext<{
   oppdaterÅrsakState: () => {},
   hentÅrsakData: async () => {},
   årsakDataHentet: false,
+  revaliderBehandling: () => {},
 });
 
 export function useBehandlingContext() {

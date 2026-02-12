@@ -19,7 +19,7 @@ export default function Dokumentoversikt() {
 
   if (!dokumenter || !fagsakPersonId) {
     return (
-      <VStack gap="4" style={{ padding: "2rem" }}>
+      <VStack gap="space-4" style={{ padding: "2rem" }}>
         <Alert variant="error">Kunne ikke hente dokumenter: {"Mangler data"}</Alert>
       </VStack>
     );

@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  gap: 1rem;
+  gap: 4rem;
 }
 
 .venstreKolonne {
@@ -9,4 +9,8 @@
 
 .høyreKolonne {
   flex: 2;
+}
+
+.gjemtILesevisning {
+  visibility: hidden;
 }

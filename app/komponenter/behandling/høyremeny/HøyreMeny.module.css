@@ -1,0 +1,8 @@
+.høyreMeny {
+  width: 20rem;
+  flex-shrink: 0;
+  background-color: var(--a-surface-default);
+  border-left: 1px solid var(--ax-border-neutral-subtle);
+  overflow-y: auto;
+  padding: 1rem;
+}

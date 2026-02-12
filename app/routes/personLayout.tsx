@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, useParams, useMatch } from "react-router";
 import { Alert, Loader, VStack } from "@navikt/ds-react";
-import { Navbar } from "../komponenter/navbar/Navbar";
+import { Navbar } from "~/komponenter/navbar/Navbar";
 import { Side } from "~/komponenter/layout/Side";
 import Personheader from "~/komponenter/personheader/Personheader";
 import { PersonContext } from "~/contexts/PersonContext";
+import { LesevisningsContext } from "~/contexts/LesevisningsContext";
 import { useHentPersonNavn } from "~/hooks/useHentPersonNavn";
 import { useFagsak } from "~/hooks/useFagsak";
 
@@ -17,10 +18,11 @@ export default function PersonLayout() {
   const { navn, melding, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
 
   const laster = lasterFagsak || lasterNavn;
+  const [erLesevisning, settErLesevisning] = useState(false);
 
   if (laster) {
     return (
-      <VStack gap="6" align="center" style={{ padding: "2rem" }}>
+      <VStack gap="space-6" align="center" style={{ padding: "2rem" }}>
         <Loader size="large" title="Henter personinformasjon..." />
       </VStack>
     );
@@ -28,7 +30,7 @@ export default function PersonLayout() {
 
   if (!fagsakPersonId || !personident) {
     return (
-      <VStack gap="4" style={{ padding: "2rem" }}>
+      <VStack gap="space-4" style={{ padding: "2rem" }}>
         <Alert variant="error">
           Kunne ikke hente personinformasjon: {melding || "Mangler data"}
           {fagsakMelding && <p>{fagsakMelding}</p>}
@@ -48,17 +50,19 @@ export default function PersonLayout() {
         laster: lasterNavn,
       }}
     >
-      <Personheader />
-      {!erPåBehandling ? (
-        <>
-          <Navbar />
-          <Side>
-            <Outlet />
-          </Side>
-        </>
-      ) : (
-        <Outlet />
-      )}
+      <LesevisningsContext.Provider value={{ erLesevisning, settErLesevisning }}>
+        <Personheader />
+        {!erPåBehandling ? (
+          <>
+            <Navbar />
+            <Side>
+              <Outlet />
+            </Side>
+          </>
+        ) : (
+          <Outlet />
+        )}
+      </LesevisningsContext.Provider>
     </PersonContext.Provider>
   );
 }
