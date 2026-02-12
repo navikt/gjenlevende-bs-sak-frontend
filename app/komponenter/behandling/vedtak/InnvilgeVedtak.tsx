@@ -1,9 +1,6 @@
 import React, {useState} from "react";
-import {
-    ResultatType,
-    type Barnetilsynperiode,
-    type Vedtak
-} from "~/komponenter/behandling/vedtak/vedtak";
+import {type Barnetilsynperiode, ResultatType} from "~/komponenter/behandling/vedtak/vedtak";
+import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 import {useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {
@@ -18,8 +15,20 @@ import {BarnetilsynperiodeValg} from "~/komponenter/behandling/vedtak/Barnetilsy
 import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/BeregningBarnetilsynTabell";
 
 
+const tomBarnetilsynperiode: Barnetilsynperiode = {
+    behandlingId: '',
+    datoFra: '',
+    datoTil: '',
+    utgifter: 0,
+    barn: [],
+    periodetype: undefined,
+    aktivitetstype: undefined,
+};
+
 export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
-    const lagretPerioder = lagretVedtak?.barnetilsynperioder ?? [];
+    const lagretPerioder = lagretVedtak?.barnetilsynperioder && lagretVedtak.barnetilsynperioder.length > 0
+        ? lagretVedtak.barnetilsynperioder
+        : [tomBarnetilsynperiode];
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {lagreVedtak, opprettFeilmelding} = useLagreVedtak();
     const {beløpsperioder, hentBeløpsperioder, beregnFeilmelding} = useHentBeløpsPerioderForVedtak();

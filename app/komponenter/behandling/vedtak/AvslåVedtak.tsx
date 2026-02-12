@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import {ResultatType, type Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
+import {ResultatType} from "~/komponenter/behandling/vedtak/vedtak";
+import type { Vedtak } from "~/komponenter/behandling/vedtak/vedtak";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {Button, HStack, Textarea} from "@navikt/ds-react";
 import {useParams} from "react-router";

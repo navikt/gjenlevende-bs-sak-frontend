@@ -1,7 +1,5 @@
 export enum BehandlingResultat {
     INNVILGE = 'INNVILGE',
-    INNVILGE_UTEN_UTBETALING = 'INNVILGE_UTEN_UTBETALING',
-    SANKSJONERE = 'SANKSJONERE',
     AVSLÅ = 'AVSLÅ',
     HENLEGGE = 'HENLEGGE',
     OPPHØRT = 'OPPHØRT',
