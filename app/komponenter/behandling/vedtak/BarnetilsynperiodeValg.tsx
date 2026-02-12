@@ -3,7 +3,6 @@ import {
     AktivitetstypeBarnetilsyn,
     type Barnetilsynperiode,
     Periodetype,
-    type Vedtak
 } from "~/komponenter/behandling/vedtak/vedtak";
 import {
     Button,
@@ -20,10 +19,9 @@ import {useParams} from "react-router";
 
 
 export const BarnetilsynperiodeValg: React.FC<{
-    lagretVedtak: Vedtak | null,
     perioder: Barnetilsynperiode[],
     settPerioder: React.Dispatch<React.SetStateAction<Barnetilsynperiode[]>>
-}> = ({lagretVedtak, perioder, settPerioder}) => {
+}> = ({perioder, settPerioder}) => {
     const {behandlingId} = useParams<{ behandlingId: string }>();
 
     const barnOptions = [
