@@ -5,27 +5,28 @@ import {Button, HStack, Textarea} from "@navikt/ds-react";
 import {useParams} from "react-router";
 
 
-export const AvslåVedtak: React.FC<{lagretVedtak: Vedtak | null}> = ({lagretVedtak}) => {
-    const { lagreVedtak } = useLagreVedtak();
-    const { behandlingId } = useParams<{ behandlingId: string }>();
+export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
+    const {lagreVedtak} = useLagreVedtak();
+    const {behandlingId} = useParams<{ behandlingId: string }>();
 
-    const [begrunnelse, setBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ? String(lagretVedtak.begrunnelse) : "");
+    const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
+
+    function handleLagreVedtak() {
+        if (!behandlingId) return;
+        const Vedtak = {
+            resultatType: ResultatType.AVSLÅTT,
+            begrunnelse: begrunnelse,
+            barnetilsynperioder: [],
+        };
+        lagreVedtak(behandlingId, Vedtak);
+    }
 
     return (
         <>
-            <Textarea label={'Begrunnelse'} value={begrunnelse} onChange={e => setBegrunnelse(e.target.value)}></Textarea>
+            <Textarea label={'Begrunnelse'} value={begrunnelse}
+                      onChange={e => settBegrunnelse(e.target.value)}></Textarea>
             <HStack>
-                <Button size="medium"
-                    onClick={() => {
-                        if (!behandlingId) return;
-                        const vedtak = {
-                            resultatType: ResultatType.AVSLÅTT,
-                            begrunnelse: begrunnelse,
-                            barnetilsynperioder: [],
-                        };
-                        lagreVedtak(behandlingId, vedtak);
-                    }}
-                >
+                <Button size="medium" onClick={() => handleLagreVedtak()}>
                     Lagre vedtak
                 </Button>
             </HStack>

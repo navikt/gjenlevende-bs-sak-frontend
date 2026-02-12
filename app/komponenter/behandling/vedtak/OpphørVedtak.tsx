@@ -6,14 +6,25 @@ import {useParams} from "react-router";
 import {format} from "date-fns";
 
 
-export const OppgørVedtak: React.FC<{lagretVedtak: Vedtak | null}> = ({lagretVedtak}) => {
-    const { lagreVedtak } = useLagreVedtak();
-    const { behandlingId } = useParams<{ behandlingId: string }>();
-    const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker({
+export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
+    const {lagreVedtak} = useLagreVedtak();
+    const {behandlingId} = useParams<{ behandlingId: string }>();
+    const {monthpickerProps, inputProps, selectedMonth} = useMonthpicker({
         defaultSelected: lagretVedtak?.opphørFom ? new Date(lagretVedtak.opphørFom) : undefined,
     });
 
-    const [begrunnelse, setBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ? String(lagretVedtak.begrunnelse) : "");
+    const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
+
+    function handleLagreVedtak() {
+        if (!behandlingId || !selectedMonth) return;
+        const Vedtak = {
+            resultatType: ResultatType.OPPHØR,
+            begrunnelse: begrunnelse,
+            barnetilsynperioder: [],
+            opphørFom: format(selectedMonth, 'yyyy-MM')
+        };
+        lagreVedtak(behandlingId, Vedtak);
+    }
 
     return (
         <>
@@ -23,20 +34,10 @@ export const OppgørVedtak: React.FC<{lagretVedtak: Vedtak | null}> = ({lagretVe
                     label="Velg måned"
                 />
             </MonthPicker>
-            <Textarea label={'Begrunnelse'} value={begrunnelse} onChange={e => setBegrunnelse(e.target.value)}></Textarea>
+            <Textarea label={'Begrunnelse'} value={begrunnelse}
+                      onChange={e => settBegrunnelse(e.target.value)}></Textarea>
             <HStack>
-                <Button size="medium"
-                        onClick={() => {
-                            if (!behandlingId || !selectedMonth) return;
-                            const vedtak = {
-                                resultatType: ResultatType.OPPHØR,
-                                begrunnelse: begrunnelse,
-                                barnetilsynperioder: [],
-                                opphørFom: format(selectedMonth, 'yyyy-MM')
-                            };
-                            lagreVedtak(behandlingId, vedtak);
-                        }}
-                >
+                <Button size="medium" onClick={() => handleLagreVedtak()}>
                     Lagre vedtak
                 </Button>
             </HStack>
