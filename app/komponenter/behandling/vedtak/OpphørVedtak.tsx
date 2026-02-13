@@ -6,7 +6,7 @@ import {useParams} from "react-router";
 import {format} from "date-fns";
 
 
-export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
+export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisning: boolean }> = ({lagretVedtak, erLesevisning}) => {
     const {lagreVedtak} = useLagreVedtak();
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {monthpickerProps, inputProps, selectedMonth} = useMonthpicker({
@@ -32,12 +32,13 @@ export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagret
                 <MonthPicker.Input
                     {...inputProps}
                     label="Velg måned"
+                    disabled={erLesevisning}
                 />
             </MonthPicker>
-            <Textarea label={'Begrunnelse'} value={begrunnelse}
+            <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLesevisning}
                       onChange={e => settBegrunnelse(e.target.value)}></Textarea>
             <HStack>
-                <Button size="medium" onClick={() => handleLagreVedtak()}>
+                <Button size="medium" onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
                     Lagre vedtak
                 </Button>
             </HStack>

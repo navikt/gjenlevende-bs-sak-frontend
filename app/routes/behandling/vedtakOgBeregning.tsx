@@ -7,6 +7,7 @@ import {useHentVedtak} from "~/hooks/useHentVedtak";
 import {useParams} from "react-router";
 import {AvslåVedtak} from "~/komponenter/behandling/vedtak/AvslåVedtak";
 import {OppgørVedtak} from "~/komponenter/behandling/vedtak/OpphørVedtak";
+import {useErLesevisning} from "~/hooks/useErLesevisning";
 
 export function meta(_: Route.MetaArgs) {
     return [{title: "Vedtak og beregning"}];
@@ -16,6 +17,7 @@ export default function VedtakOgBeregning() {
     const [vedtaksresultat, settVedtaksResultat] = useState<ResultatType | undefined>(undefined);
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {vedtak} = useHentVedtak(behandlingId);
+    const erLesevisning = useErLesevisning();
 
     useEffect(() => {
         if (vedtak?.resultatType) {
@@ -35,6 +37,7 @@ export default function VedtakOgBeregning() {
                     label={'Vedtaksresultat'}
                     value={vedtaksresultat || ''}
                     onChange={(e) => handleVedtaksresultatEndring(e.target.value)}
+                    disabled={erLesevisning}
                 >
                     <option value=''>Velg</option>
                     <option value='INNVILGET'>Innvilge</option>
@@ -43,13 +46,13 @@ export default function VedtakOgBeregning() {
                 </Select>
             </HStack>
             {vedtaksresultat === 'INNVILGET' && (
-                <InnvilgeVedtak lagretVedtak={vedtak}></InnvilgeVedtak>
+                <InnvilgeVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></InnvilgeVedtak>
             )}
             {vedtaksresultat === 'AVSLÅTT' && (
-                <AvslåVedtak lagretVedtak={vedtak}></AvslåVedtak>
+                <AvslåVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></AvslåVedtak>
             )}
             {vedtaksresultat === 'OPPHØR' && (
-                <OppgørVedtak lagretVedtak={vedtak}></OppgørVedtak>
+                <OppgørVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></OppgørVedtak>
             )}
         </VStack>
     );

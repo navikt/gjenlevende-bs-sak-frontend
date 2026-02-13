@@ -20,7 +20,8 @@ import { useParams } from "react-router";
 export const BarnetilsynperiodeValg: React.FC<{
   perioder: Barnetilsynperiode[];
   settPerioder: React.Dispatch<React.SetStateAction<Barnetilsynperiode[]>>;
-}> = ({ perioder, settPerioder }) => {
+  erLesevisning: boolean;
+}> = ({ perioder, settPerioder, erLesevisning }) => {
   const { behandlingId } = useParams<{ behandlingId: string }>();
 
   const barnOptions = [
@@ -120,6 +121,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                     handlePeriodeChange(index, "periodetype", e.target.value as Periodetype)
                   }
                   hideLabel
+                  disabled={erLesevisning}
                 >
                   <option value="">Velg</option>
                   <option value={Periodetype.ORDINÆR}>Ordinær</option>
@@ -142,6 +144,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                       )
                     }
                     hideLabel
+                    disabled={erLesevisning}
                   >
                     <option value="">Velg</option>
                     <option value={AktivitetstypeBarnetilsyn.I_ARBEID}>I arbeid</option>
@@ -172,6 +175,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                   <MonthPicker.Input
                     size="small"
                     label="Fra og med"
+                    disabled={erLesevisning}
                     hideLabel
                     value={formaterYearMonthStringTilNorskDato(periode.datoFra)}
                     onChange={(e) => handlePeriodeMonthChange(index, "datoFra", e.target.value)}
@@ -202,6 +206,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                     size="small"
                     label="Til og med"
                     hideLabel
+                    disabled={erLesevisning}
                     value={formaterYearMonthStringTilNorskDato(periode.datoTil)}
                     onChange={(e) => handlePeriodeMonthChange(index, "datoTil", e.target.value)}
                     description="Format: mm.åååå"
@@ -223,6 +228,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                       options={barnOptions}
                       isMultiSelect
                       hideLabel
+                      disabled={erLesevisning}
                       placeholder={"Velg barn"}
                       selectedOptions={getSelectedBarnOptions(periode.barn)}
                       onToggleSelected={(option, isSelected) => {
@@ -240,6 +246,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                       }}
                       size="small"
                       label="Utgifter"
+                      disabled={erLesevisning}
                       value={periode.utgifter}
                       onChange={(e) =>
                         handlePeriodeChange(index, "utgifter", Number(e.target.value))
@@ -250,14 +257,14 @@ export const BarnetilsynperiodeValg: React.FC<{
                 </>
               )}
               <Table.DataCell>
-                <TrashIcon onClick={() => slettPeriode(index)} fontSize="1.5rem"></TrashIcon>
+                <Button onClick={() => slettPeriode(index)} variant="tertiary" disabled={erLesevisning} icon={<TrashIcon fontSize="1.5rem"/>}></Button>
               </Table.DataCell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table>
       <HStack>
-        <Button onClick={leggTilPeriode} variant="secondary">
+        <Button onClick={leggTilPeriode} variant="secondary" disabled={erLesevisning}>
           Legg til vedtaksperiode
         </Button>
       </HStack>

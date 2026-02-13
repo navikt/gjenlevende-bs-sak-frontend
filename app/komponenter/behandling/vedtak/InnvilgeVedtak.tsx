@@ -16,7 +16,7 @@ import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/Beregn
 import {useBehandlingSteg} from "~/hooks/useBehandlingSteg";
 import {useMarkerStegFerdige} from "~/hooks/useMarkerStegFerdige";
 
-export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
+export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisning: boolean}> = ({lagretVedtak, erLesevisning}) => {
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {finnNesteSteg} = useBehandlingSteg();
     const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean>(false);
@@ -65,11 +65,11 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagre
     return (
         <VStack gap="space-20 space-20">
             <BarnetilsynperiodeValg perioder={perioder}
-                                    settPerioder={settPerioder}></BarnetilsynperiodeValg>
+                                    settPerioder={settPerioder} erLesevisning={erLesevisning}></BarnetilsynperiodeValg>
             <Textarea label={'Begrunnelse'} value={begrunnelse}
-                      onChange={e => settBegrunnelse(e.target.value)}></Textarea>
+                      onChange={e => settBegrunnelse(e.target.value)} disabled={erLesevisning}></Textarea>
             <HStack>
-                <Button variant="secondary" onClick={() => hentBeløpsperioder(behandlingId, perioder)}>
+                <Button variant="secondary" onClick={() => hentBeløpsperioder(behandlingId, perioder)} disabled={erLesevisning}>
                     Beregn
                 </Button>
             </HStack>
@@ -80,7 +80,7 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagre
                 <BeregningBarnetilsynTabell beløpsperioder={beløpsperioder}></BeregningBarnetilsynTabell>
             )}
             <HStack>
-                <Button onClick={() => handleLagreVedtak()}>
+                <Button onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
                     Lagre vedtak
                 </Button>
             </HStack>
