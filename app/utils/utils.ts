@@ -28,3 +28,36 @@ export const toTitleCase = (str: string): string =>
 
 export const formatterEnumVerdi = (str: string): string =>
     replaceUnderscoreWithSpace(toTitleCase(str));
+
+export const månedStringTilYearMonth = (value: string | undefined): string => {
+    if (!value?.trim()) return '';
+
+    const månederStrings = [
+        'januar', 'februar', 'mars', 'april', 'mai', 'juni',
+        'juli', 'august', 'september', 'oktober', 'november', 'desember'
+    ];
+
+    const [månedNavn, årString] = value.trim().split(' ');
+    const måned = månederStrings.indexOf(månedNavn?.toLowerCase());
+    const year = Number(årString);
+
+    if (måned >= 0 && year >= 1000 && year <= 9999) {
+        const mm = String(måned + 1).padStart(2, '0');
+        return `${year}-${mm}`;
+    }
+
+    return '';
+};
+
+export const formaterYearMonthStringTilNorskDato = (dateString: string | undefined): string => {
+    if (!dateString?.trim()) return '';
+
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+
+        return date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' });
+    } catch {
+        return '';
+    }
+};
