@@ -5,7 +5,7 @@ import {Button, HStack, Textarea} from "@navikt/ds-react";
 import {useParams} from "react-router";
 
 
-export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
+export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisning: boolean }> = ({lagretVedtak, erLesevisning}) => {
     const {lagreVedtak} = useLagreVedtak();
     const {behandlingId} = useParams<{ behandlingId: string }>();
 
@@ -23,10 +23,10 @@ export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretV
 
     return (
         <>
-            <Textarea label={'Begrunnelse'} value={begrunnelse}
+            <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLesevisning}
                       onChange={e => settBegrunnelse(e.target.value)}></Textarea>
             <HStack>
-                <Button size="medium" onClick={() => handleLagreVedtak()}>
+                <Button size="medium" onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
                     Lagre vedtak
                 </Button>
             </HStack>
