@@ -7,6 +7,10 @@ interface LagreVedtakState {
     opprettFeilmelding: string | null;
 }
 
+interface LagreVedtakResponse {
+    status: string;
+}
+
 export function useLagreVedtak() {
     const [state, settState] = useState<LagreVedtakState>({
         oppretter: false,
@@ -16,9 +20,9 @@ export function useLagreVedtak() {
     const lagreVedtak = async (
         behandlingId: string,
         vedtak: Vedtak
-    ): Promise<string | undefined> => {
+    ): Promise<LagreVedtakResponse | undefined> => {
         settState((prev) => ({...prev, oppretter: true, opprettFeilmelding: null}));
-        const response: ApiResponse<string> = await apiCall(
+        const response: ApiResponse<LagreVedtakResponse> = await apiCall(
             `/vedtak/${behandlingId}/lagre-vedtak`, {
                 method: "POST",
                 body: JSON.stringify(vedtak),

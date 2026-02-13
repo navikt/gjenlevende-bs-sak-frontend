@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import type {Barnetilsynperiode} from "~/komponenter/behandling/vedtak/vedtak";
 import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {
     Alert,
@@ -13,9 +13,16 @@ import {
 import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderForVedtak";
 import {BarnetilsynperiodeValg} from "~/komponenter/behandling/vedtak/BarnetilsynperiodeValg";
 import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/BeregningBarnetilsynTabell";
+import {useBehandlingSteg} from "~/hooks/useBehandlingSteg";
+import {useMarkerStegFerdige} from "~/hooks/useMarkerStegFerdige";
 
 export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretVedtak}) => {
     const {behandlingId} = useParams<{ behandlingId: string }>();
+    const {finnNesteSteg} = useBehandlingSteg();
+    const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean>(false);
+
+    useMarkerStegFerdige("Vilkår", erVilkårUtfylt === true);
+
     const tomBarnetilsynperiode: Barnetilsynperiode = {
         behandlingId: behandlingId ?? '',
         datoFra: '',
@@ -36,14 +43,23 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagre
     const [perioder, settPerioder] = useState<Barnetilsynperiode[]>(lagretPerioder);
     const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
 
-    function handleLagreVedtak() {
+    const navigate = useNavigate();
+
+    async function handleLagreVedtak() {
         if (!behandlingId) return;
         const Vedtak = {
             resultatType: 'INNVILGET' as const,
             begrunnelse: begrunnelse,
             barnetilsynperioder: perioder,
         };
-        lagreVedtak(behandlingId, Vedtak);
+        const response = await lagreVedtak(behandlingId, Vedtak);
+        if (response?.status === 'OK') {
+            settErVilkårUtfylt(true);
+            const nesteSteg = finnNesteSteg("vedtak-og-beregning");
+            if (nesteSteg) {
+                navigate(`../${nesteSteg.path}`, {relative: "path"});
+            }
+        }
     }
 
     return (
