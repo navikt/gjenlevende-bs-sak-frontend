@@ -1,16 +1,4 @@
-export enum BehandlingResultat {
-    INNVILGE = 'INNVILGE',
-    AVSLÅ = 'AVSLÅ',
-    HENLEGGE = 'HENLEGGE',
-    OPPHØRT = 'OPPHØRT',
-}
-
-export enum ResultatType {
-    INNVILGET = 'INNVILGET',
-    AVSLÅTT = 'AVSLÅTT',
-    HENLAGT = 'HENLAGT',
-    OPPHØR = 'OPPHØR',
-}
+export type ResultatType = 'INNVILGET' | 'AVSLÅTT' | 'HENLAGT' | 'OPPHØR';
 
 export enum Periodetype {
     ORDINÆR = 'ORDINÆR',

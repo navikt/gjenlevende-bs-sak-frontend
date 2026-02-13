@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {type Barnetilsynperiode, ResultatType} from "~/komponenter/behandling/vedtak/vedtak";
+import type {Barnetilsynperiode} from "~/komponenter/behandling/vedtak/vedtak";
 import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 import {useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
@@ -39,7 +39,7 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagre
     function handleLagreVedtak() {
         if (!behandlingId) return;
         const Vedtak = {
-            resultatType: ResultatType.INNVILGET,
+            resultatType: 'INNVILGET' as const,
             begrunnelse: begrunnelse,
             barnetilsynperioder: perioder,
         };

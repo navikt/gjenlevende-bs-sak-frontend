@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {ResultatType} from "~/komponenter/behandling/vedtak/vedtak";
 import type { Vedtak } from "~/komponenter/behandling/vedtak/vedtak";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {Button, HStack, Textarea} from "@navikt/ds-react";
@@ -15,7 +14,7 @@ export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagretV
     function handleLagreVedtak() {
         if (!behandlingId) return;
         const Vedtak = {
-            resultatType: ResultatType.AVSLÅTT,
+            resultatType: 'AVSLÅTT' as const,
             begrunnelse: begrunnelse,
             barnetilsynperioder: [],
         };

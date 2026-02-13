@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {ResultatType} from "~/komponenter/behandling/vedtak/vedtak";
 import type { Vedtak } from "~/komponenter/behandling/vedtak/vedtak";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {Button, HStack, MonthPicker, Textarea, useMonthpicker} from "@navikt/ds-react";
@@ -19,7 +18,7 @@ export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null }> = ({lagret
     function handleLagreVedtak() {
         if (!behandlingId || !selectedMonth) return;
         const Vedtak = {
-            resultatType: ResultatType.OPPHØR,
+            resultatType: 'OPPHØR' as const,
             begrunnelse: begrunnelse,
             barnetilsynperioder: [],
             opphørFom: format(selectedMonth, 'yyyy-MM')
