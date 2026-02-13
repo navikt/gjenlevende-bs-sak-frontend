@@ -94,7 +94,7 @@ export const VilkårKomponent: React.FC<{
       borderRadius="4"
     >
       <div className={styles.venstreKolonne}>
-        <VStack gap="space-6">
+        <VStack gap="space-24">
           <Heading size="small">{navn}</Heading>
 
           <VStack>
