@@ -15,6 +15,7 @@ import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
 import { Box } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
+import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -171,6 +172,8 @@ export default function BehandlingLayout() {
             </Side>
           </Box>
           <HøyreMeny>
+            <Totrinnskontroll />
+
             <AnsvarligSaksbehandler />
           </HøyreMeny>
         </Box>

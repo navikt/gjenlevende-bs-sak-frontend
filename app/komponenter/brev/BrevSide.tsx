@@ -27,7 +27,7 @@ export const BrevSide = () => {
     slettFritekstbolk,
   } = useBrev(behandlingId);
 
-  const { sender: senderTilBeslutter, sendTilBeslutter, angreSendTilBeslutter } = useBeslutter();
+  const { sender: senderTilBeslutter, sendTilBeslutter } = useBeslutter();
 
   useEffect(() => {
     if (!brevMal) return;
@@ -40,13 +40,6 @@ export const BrevSide = () => {
 
   const handleSendTilBeslutter = async () => {
     const respons = await sendTilBeslutter(behandlingId);
-    if (respons.data) {
-      revaliderBehandling();
-    }
-  };
-
-  const handleAngreSendTilBeslutter = async () => {
-    const respons = await angreSendTilBeslutter(behandlingId);
     if (respons.data) {
       revaliderBehandling();
     }
@@ -129,8 +122,6 @@ export const BrevSide = () => {
               >
                 Send til beslutter
               </Button>
-
-              <Button onClick={handleAngreSendTilBeslutter}>Angre send til beslutter</Button>
             </>
           )}
         </VStack>

@@ -1,24 +1,15 @@
 import React from "react";
-import { InfoCard, VStack, Heading, HStack, BodyShort, Skeleton } from "@navikt/ds-react";
+import { InfoCard, VStack, Heading, Skeleton } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { formatterEnumVerdi, formaterIsoDatoTid } from "~/utils/utils";
-
+import { InfoRad } from "./InfoRad";
 
 const rolleDataColor = {
   INNLOGGET_SAKSBEHANDLER: "success",
   ANNEN_SAKSBEHANDLER: "warning",
   IKKE_SATT: "neutral",
 } as const;
-
-const InfoRad = ({ label, verdi }: { label: string; verdi: string }) => (
-  <HStack gap="space-6" align="center" justify="space-between">
-    <BodyShort size={"small"} weight={"semibold"}>
-      {label}
-    </BodyShort>
-    <BodyShort size={"small"}>{verdi}</BodyShort>
-  </HStack>
-);
 
 export const AnsvarligSaksbehandler = () => {
   const { behandling } = useBehandlingContext();
@@ -48,10 +39,22 @@ export const AnsvarligSaksbehandler = () => {
           )}
 
           <VStack gap={"space-6"}>
-            <InfoRad label="Behandlingstatus" verdi={behandling ? formatterEnumVerdi(behandling.status) : "-"} />
-            <InfoRad label="Behandlingresultat" verdi={behandling ? formatterEnumVerdi(behandling.resultat) : "-"} />
-            <InfoRad label="Opprettet" verdi={behandling ? formaterIsoDatoTid(behandling.opprettet) : "-"} />
-            <InfoRad label="Sist endret" verdi={behandling ? formaterIsoDatoTid(behandling.sistEndret) : "-"} />
+            <InfoRad
+              label="Behandlingstatus"
+              verdi={behandling ? formatterEnumVerdi(behandling.status) : "-"}
+            />
+            <InfoRad
+              label="Behandlingresultat"
+              verdi={behandling ? formatterEnumVerdi(behandling.resultat) : "-"}
+            />
+            <InfoRad
+              label="Opprettet"
+              verdi={behandling ? formaterIsoDatoTid(behandling.opprettet) : "-"}
+            />
+            <InfoRad
+              label="Sist endret"
+              verdi={behandling ? formaterIsoDatoTid(behandling.sistEndret) : "-"}
+            />
           </VStack>
         </VStack>
       </InfoCard.Content>
