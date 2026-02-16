@@ -39,7 +39,7 @@ export const Søkefelt: React.FC<SøkefeltProps> = ({
     erGyldigSøkestreng(søk) && (søker || !!søkeresultat || !!feilmelding || !!opprettFeilmelding);
 
   return (
-    <HStack align="center">
+    <HStack align="center" style={{ paddingRight: "1rem" }}>
       <VStack gap="space-1">
         <Search
           label="Søk etter personident"
