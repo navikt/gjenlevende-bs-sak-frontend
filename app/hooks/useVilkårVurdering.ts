@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import type { Vurdering, VilkårType } from "~/types/vilkår";
 
 export interface VilkårVurderingResponse {
@@ -61,6 +62,7 @@ const lagInitialState = (): Record<VilkårType, VilkårState> => {
 const mapVurderingTilSvar = (vurdering: Vurdering): Vurdering => vurdering;
 
 export const useVilkårVurdering = (behandlingId: string): UseVilkårVurdering => {
+  const { revaliderBehandling } = useBehandlingContext();
   const [vilkårState, settVilkårState] = useState<Record<VilkårType, VilkårState>>(lagInitialState);
   const [laster, settLaster] = useState(false);
   const [feilmelding, settFeilmelding] = useState("");
@@ -140,6 +142,7 @@ export const useVilkårVurdering = (behandlingId: string): UseVilkårVurdering =
 
         if (response.data) {
           oppdaterVilkår(vilkårType, { låst: true, lagrer: false });
+          revaliderBehandling();
           return true;
         }
 

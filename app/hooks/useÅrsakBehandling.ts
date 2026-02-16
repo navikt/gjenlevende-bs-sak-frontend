@@ -33,7 +33,8 @@ const tilLocalDateString = (date: Date): string => {
 };
 
 export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling => {
-  const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet } = useBehandlingContext();
+  const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet, revaliderBehandling } =
+    useBehandlingContext();
 
   const [laster, settLaster] = useState(false);
   const [erLagret, settErLagret] = useState(false);
@@ -106,6 +107,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
       if (response.data) {
         settErLagret(true);
+        revaliderBehandling();
         return true;
       }
 
