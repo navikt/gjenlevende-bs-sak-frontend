@@ -119,7 +119,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     } finally {
       settLaster(false);
     }
-  }, [behandlingId, årsakState]);
+  }, [behandlingId, revaliderBehandling, årsakState]);
 
   return {
     kravdato: årsakState?.kravdato,

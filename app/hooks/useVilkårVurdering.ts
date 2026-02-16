@@ -155,7 +155,7 @@ export const useVilkårVurdering = (behandlingId: string): UseVilkårVurdering =
         return false;
       }
     },
-    [behandlingId, vilkårState, oppdaterVilkår]
+    [vilkårState, behandlingId, oppdaterVilkår, revaliderBehandling]
   );
 
   const slettVilkår = useCallback(
