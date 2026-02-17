@@ -75,10 +75,10 @@ export const DokumentListeElement: React.FC<Props> = ({ dokument }) => {
         </Tooltip>
         <div className={styles.dokumentMeta}>
           {dokument.dato && (
-            <Detail textColor="subtle">{formaterDato(dokument.dato)}</Detail>
-          )}
-          {dokument.dato && (
-            <span className={styles.metaSeparator}>&bull;</span>
+            <>
+              <Detail textColor="subtle">{formaterDato(dokument.dato)}</Detail>
+              <span className={styles.metaSeparator}>&bull;</span>
+            </>
           )}
           <Tag variant="moderate" size="xsmall" data-color={meta.tagFarge}>
             {meta.tekst}

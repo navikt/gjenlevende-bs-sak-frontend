@@ -1,5 +1,5 @@
 import React from "react";
-import { BodyShort, Detail, Skeleton, Tag, Tooltip, VStack } from "@navikt/ds-react";
+import { BodyShort, Detail, Skeleton, Tooltip, VStack } from "@navikt/ds-react";
 import {
   PlusCircleIcon,
   PaperplaneIcon,
@@ -21,7 +21,6 @@ interface EndringMeta {
   tekst: string;
   ikon: React.ElementType;
   farge: TagColor;
-  erMilstein: boolean;
 }
 
 const endringMeta: Record<EndringType, EndringMeta> = {
@@ -29,61 +28,51 @@ const endringMeta: Record<EndringType, EndringMeta> = {
     tekst: "Behandling opprettet",
     ikon: PlusCircleIcon,
     farge: "success",
-    erMilstein: true,
   },
   SENDT_TIL_BESLUTTER: {
     tekst: "Sendt til beslutter",
     ikon: PaperplaneIcon,
     farge: "info",
-    erMilstein: true,
   },
   ANGRET_SEND_TIL_BESLUTTER: {
     tekst: "Angret send til beslutter",
     ikon: ArrowUndoIcon,
     farge: "warning",
-    erMilstein: true,
   },
   VILKÅR_VURDERING_OPPRETTET: {
     tekst: "Vilkår opprettet",
     ikon: TasklistIcon,
     farge: "info",
-    erMilstein: false,
   },
   VILKÅR_VURDERING_OPPDATERT: {
     tekst: "Vilkår oppdatert",
     ikon: TasklistIcon,
     farge: "info",
-    erMilstein: false,
   },
   VEDTAK_LAGRET: {
     tekst: "Vedtak lagret",
     ikon: CheckmarkCircleIcon,
     farge: "success",
-    erMilstein: false,
   },
   BREV_PDF_GENERERT: {
     tekst: "Brev PDF generert",
     ikon: DocPencilIcon,
     farge: "neutral",
-    erMilstein: false,
   },
   ÅRSAK_LAGRET: {
     tekst: "Årsak lagret",
     ikon: NotePencilIcon,
     farge: "info",
-    erMilstein: false,
   },
   ÅRSAK_OPPDATERT: {
     tekst: "Årsak oppdatert",
     ikon: NotePencilIcon,
     farge: "info",
-    erMilstein: false,
   },
   BESLUTTER_GODKJENT: {
     tekst: "Beslutter godkjent",
     ikon: CheckmarkCircleIcon,
     farge: "success",
-    erMilstein: true,
   },
 };
 
@@ -134,11 +123,6 @@ const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
             {meta.tekst}
           </BodyShort>
         </div>
-        {meta.erMilstein && (
-          <Tag variant="moderate" size="xsmall" data-color={meta.farge}>
-            {meta.tekst}
-          </Tag>
-        )}
         {endring.detaljer && (
           <Detail textColor="subtle">{endring.detaljer}</Detail>
         )}
