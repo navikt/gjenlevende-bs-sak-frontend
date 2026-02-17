@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Button, Heading, HStack, InlineMessage, VStack } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useBeslutter } from "~/hooks/useBeslutter";
+import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 import { InfoRad } from "./InfoRad";
 
 export const Totrinnskontroll = () => {
@@ -17,6 +18,7 @@ export const Totrinnskontroll = () => {
   const handleAngreSendTilBeslutter = async () => {
     const respons = await angreSendTilBeslutter(behandlingId);
     if (respons.data) {
+      oppdaterEndringshistorikk();
       revaliderBehandling();
     }
   };

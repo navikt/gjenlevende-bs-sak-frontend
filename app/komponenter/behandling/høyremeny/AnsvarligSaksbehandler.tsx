@@ -54,6 +54,7 @@ export const AnsvarligSaksbehandler = () => {
               label="Sist endret"
               verdi={behandling ? formaterIsoDatoTid(behandling.sistEndret) : "-"}
             />
+            <InfoRad label="Endret av" verdi={behandling?.sistEndretAv ?? "-"} />
           </VStack>
         </VStack>
       </InfoCard.Content>

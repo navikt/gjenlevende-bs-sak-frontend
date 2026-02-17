@@ -8,6 +8,7 @@ import { useBrev } from "~/komponenter/brev/useBrev";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
 import { useBeslutter } from "~/hooks/useBeslutter";
+import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 
 export const BrevSide = () => {
   const erLesevisning = useErLesevisning();
@@ -41,6 +42,7 @@ export const BrevSide = () => {
   const handleSendTilBeslutter = async () => {
     const respons = await sendTilBeslutter(behandlingId);
     if (respons.data) {
+      oppdaterEndringshistorikk();
       revaliderBehandling();
     }
   };

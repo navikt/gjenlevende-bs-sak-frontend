@@ -16,6 +16,7 @@ import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
 import { Box } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
+import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
 import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave";
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 
@@ -187,6 +188,7 @@ export default function BehandlingLayout() {
             <Totrinnskontroll />
 
             <AnsvarligSaksbehandler />
+            <SidebarTabs />
           </HøyreMeny>
         </Box>
       </Box>

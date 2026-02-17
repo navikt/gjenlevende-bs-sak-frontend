@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import type { Vurdering, VilkårType } from "~/types/vilkår";
+import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 
 export interface VilkårVurderingResponse {
   id: string | null;
@@ -140,6 +141,7 @@ export const useVilkårVurdering = (behandlingId: string): UseVilkårVurdering =
 
         if (response.data) {
           oppdaterVilkår(vilkårType, { låst: true, lagrer: false });
+          oppdaterEndringshistorikk();
           return true;
         }
 
