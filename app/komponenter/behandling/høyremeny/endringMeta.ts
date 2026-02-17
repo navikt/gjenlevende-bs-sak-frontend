@@ -9,13 +9,12 @@ import {
 } from "@navikt/aksel-icons";
 import { formaterIsoDatoTid } from "~/utils/utils";
 import type { EndringType, BehandlingEndring } from "~/types/endringshistorikk";
-
-type TagColor = "info" | "success" | "warning" | "danger" | "neutral";
+import type { TagFarge } from "~/types/farge";
 
 export interface EndringMeta {
   tekst: string;
   ikon: React.ElementType;
-  farge: TagColor;
+  farge: TagFarge;
 }
 
 export const endringMeta: Record<EndringType, EndringMeta> = {

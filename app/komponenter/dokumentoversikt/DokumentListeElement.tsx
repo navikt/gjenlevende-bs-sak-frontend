@@ -8,9 +8,8 @@ import {
   PaperclipIcon,
 } from "@navikt/aksel-icons";
 import type { Journalposttype } from "~/api/journalføring";
+import type { TagFarge } from "~/types/farge";
 import styles from "./Dokumentliste.module.css";
-
-type TagFarge = "info" | "success" | "warning" | "danger" | "neutral" | "meta-purple" | "meta-lime";
 
 interface JournalposttypeMeta {
   tekst: string;
