@@ -22,15 +22,16 @@ const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
       <div className={styles.endringInnhold}>
         <div className={styles.endringTittel}>
           <Ikon className={`${styles.endringIkon} ${styles[`ikon_${meta.farge}`]}`} aria-hidden />
-          <BodyShort size="small" weight="semibold">
-            {meta.tekst}
-          </BodyShort>
+          {meta.erMilepæl ? (
+            <Tag variant="moderate" size="xsmall" data-color={meta.farge}>
+              {meta.tekst}
+            </Tag>
+          ) : (
+            <BodyShort size="small" weight="semibold">
+              {meta.tekst}
+            </BodyShort>
+          )}
         </div>
-        {meta.erMilepæl && (
-          <Tag variant="moderate" size="xsmall" data-color={meta.farge}>
-            {meta.tekst}
-          </Tag>
-        )}
         {endring.detaljer && <Detail textColor="subtle">{endring.detaljer}</Detail>}
         <Tooltip content={formaterIsoDatoTid(endring.utførtTid)} placement="left">
           <Detail textColor="subtle" className={styles.tidspunkt}>
