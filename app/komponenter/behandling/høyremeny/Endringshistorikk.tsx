@@ -1,107 +1,16 @@
 import React from "react";
 import { BodyShort, Detail, Skeleton, Tooltip, VStack } from "@navikt/ds-react";
-import {
-  PlusCircleIcon,
-  PaperplaneIcon,
-  ArrowUndoIcon,
-  TasklistIcon,
-  CheckmarkCircleIcon,
-  NotePencilIcon,
-} from "@navikt/aksel-icons";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useHentEndringshistorikk } from "~/hooks/useHentEndringshistorikk";
 import { formaterIsoDatoTid } from "~/utils/utils";
-import type { EndringType, BehandlingEndring } from "~/types/endringshistorikk";
+import type { BehandlingEndring } from "~/types/endringshistorikk";
+import {
+  endringMeta,
+  formaterRelativTid,
+  grupperKonsekutiveEndringer,
+  type EndringGruppe,
+} from "./endringMeta";
 import styles from "./Endringshistorikk.module.css";
-
-type TagColor = "info" | "success" | "warning" | "danger" | "neutral";
-
-interface EndringMeta {
-  tekst: string;
-  ikon: React.ElementType;
-  farge: TagColor;
-}
-
-const endringMeta: Record<EndringType, EndringMeta> = {
-  BEHANDLING_OPPRETTET: {
-    tekst: "Behandling opprettet",
-    ikon: PlusCircleIcon,
-    farge: "success",
-  },
-  SENDT_TIL_BESLUTTER: {
-    tekst: "Sendt til beslutter",
-    ikon: PaperplaneIcon,
-    farge: "info",
-  },
-  ANGRET_SEND_TIL_BESLUTTER: {
-    tekst: "Angret send til beslutter",
-    ikon: ArrowUndoIcon,
-    farge: "warning",
-  },
-  VILKÅR_VURDERING_OPPRETTET: {
-    tekst: "Vilkår opprettet",
-    ikon: TasklistIcon,
-    farge: "info",
-  },
-  VILKÅR_VURDERING_OPPDATERT: {
-    tekst: "Vilkår oppdatert",
-    ikon: TasklistIcon,
-    farge: "info",
-  },
-  VEDTAK_LAGRET: {
-    tekst: "Vedtak lagret",
-    ikon: CheckmarkCircleIcon,
-    farge: "success",
-  },
-  ÅRSAK_LAGRET: {
-    tekst: "Årsak lagret",
-    ikon: NotePencilIcon,
-    farge: "info",
-  },
-  ÅRSAK_OPPDATERT: {
-    tekst: "Årsak oppdatert",
-    ikon: NotePencilIcon,
-    farge: "info",
-  },
-  BESLUTTER_GODKJENT: {
-    tekst: "Beslutter godkjent",
-    ikon: CheckmarkCircleIcon,
-    farge: "success",
-  },
-};
-
-const formaterRelativTid = (isoTid: string): string => {
-  const tid = new Date(isoTid);
-  const nå = new Date();
-  const diffSekunder = Math.floor((nå.getTime() - tid.getTime()) / 1000);
-
-  if (diffSekunder < 60) return "Akkurat nå";
-  if (diffSekunder < 3600) return `${Math.floor(diffSekunder / 60)} min. siden`;
-  if (diffSekunder < 86400) return `${Math.floor(diffSekunder / 3600)} t. siden`;
-  if (diffSekunder < 604800) return `${Math.floor(diffSekunder / 86400)} d. siden`;
-  return formaterIsoDatoTid(isoTid);
-};
-
-interface EndringGruppe {
-  utførtAv: string;
-  endringer: BehandlingEndring[];
-}
-
-const grupperKonsekutiveEndringer = (endringer: BehandlingEndring[]): EndringGruppe[] => {
-  const grupper: EndringGruppe[] = [];
-
-  for (const endring of endringer) {
-    const sisteGruppe = grupper[grupper.length - 1];
-
-    if (sisteGruppe && sisteGruppe.utførtAv === endring.utførtAv) {
-      sisteGruppe.endringer.push(endring);
-    } else {
-      grupper.push({ utførtAv: endring.utførtAv, endringer: [endring] });
-    }
-  }
-
-  return grupper;
-};
 
 const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
   const meta = endringMeta[endring.endringType];
