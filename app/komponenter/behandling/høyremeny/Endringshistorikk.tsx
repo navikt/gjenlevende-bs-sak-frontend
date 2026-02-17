@@ -8,6 +8,7 @@ import {
   CheckmarkCircleIcon,
   DocPencilIcon,
   NotePencilIcon,
+  PersonIcon,
 } from "@navikt/aksel-icons";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useHentEndringshistorikk } from "~/hooks/useHentEndringshistorikk";
@@ -49,22 +50,59 @@ const endringTypeIkon = (type: EndringType) => {
   return ikoner[type];
 };
 
-const HistorikkRad = ({ endring }: { endring: BehandlingEndring }) => {
+interface EndringGruppe {
+  utførtAv: string;
+  endringer: BehandlingEndring[];
+}
+
+const grupperKonsekutiveEndringer = (endringer: BehandlingEndring[]): EndringGruppe[] => {
+  const grupper: EndringGruppe[] = [];
+
+  for (const endring of endringer) {
+    const sisteGruppe = grupper[grupper.length - 1];
+
+    if (sisteGruppe && sisteGruppe.utførtAv === endring.utførtAv) {
+      sisteGruppe.endringer.push(endring);
+    } else {
+      grupper.push({ utførtAv: endring.utførtAv, endringer: [endring] });
+    }
+  }
+
+  return grupper;
+};
+
+const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
   const Ikon = endringTypeIkon(endring.endringType);
 
   return (
-    <div className={styles.historikkRad}>
-      <Ikon className={styles.historikkIkon} aria-hidden />
-      <div className={styles.historikkInnhold}>
+    <div className={styles.endringRad}>
+      <Ikon className={styles.endringIkon} aria-hidden />
+      <div className={styles.endringInnhold}>
         <BodyShort size="small" weight="semibold">
           {endringTypeTilTekst(endring.endringType)}
         </BodyShort>
         {endring.detaljer && (
           <Detail textColor="subtle">{endring.detaljer}</Detail>
         )}
-        <Detail textColor="subtle">
-          {formaterIsoDatoTid(endring.utførtTid)} &middot; {endring.utførtAv}
-        </Detail>
+        <Detail textColor="subtle">{formaterIsoDatoTid(endring.utførtTid)}</Detail>
+      </div>
+    </div>
+  );
+};
+
+const GruppeBlokk = ({ gruppe }: { gruppe: EndringGruppe }) => {
+  return (
+    <div className={styles.gruppeBlokk}>
+      <div className={styles.gruppeHeader}>
+        <PersonIcon className={styles.personIkon} aria-hidden />
+        <BodyShort size="small" weight="semibold">
+          {gruppe.utførtAv}
+        </BodyShort>
+      </div>
+      <div className={styles.gruppeEndringer}>
+        {gruppe.endringer.map((endring) => (
+          <EndringRad key={endring.id} endring={endring} />
+        ))}
       </div>
     </div>
   );
@@ -92,10 +130,12 @@ export const Endringshistorikk = () => {
     );
   }
 
+  const grupper = grupperKonsekutiveEndringer(endringshistorikk);
+
   return (
     <div className={styles.historikkListe}>
-      {endringshistorikk.map((endring) => (
-        <HistorikkRad key={endring.id} endring={endring} />
+      {grupper.map((gruppe, index) => (
+        <GruppeBlokk key={index} gruppe={gruppe} />
       ))}
     </div>
   );
