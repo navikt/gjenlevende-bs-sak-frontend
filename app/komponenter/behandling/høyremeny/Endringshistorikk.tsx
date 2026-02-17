@@ -1,5 +1,5 @@
 import React from "react";
-import { BodyShort, Detail, Skeleton, VStack } from "@navikt/ds-react";
+import { BodyShort, Detail, Skeleton, Tag, Tooltip, VStack } from "@navikt/ds-react";
 import {
   PlusCircleIcon,
   PaperplaneIcon,
@@ -8,7 +8,6 @@ import {
   CheckmarkCircleIcon,
   DocPencilIcon,
   NotePencilIcon,
-  PersonIcon,
 } from "@navikt/aksel-icons";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useHentEndringshistorikk } from "~/hooks/useHentEndringshistorikk";
@@ -16,38 +15,88 @@ import { formaterIsoDatoTid } from "~/utils/utils";
 import type { EndringType, BehandlingEndring } from "~/types/endringshistorikk";
 import styles from "./Endringshistorikk.module.css";
 
-const endringTypeTilTekst = (type: EndringType): string => {
-  const tekster: Record<EndringType, string> = {
-    BEHANDLING_OPPRETTET: "Behandling opprettet",
-    SENDT_TIL_BESLUTTER: "Sendt til beslutter",
-    ANGRET_SEND_TIL_BESLUTTER: "Angret send til beslutter",
-    VILKÅR_VURDERING_OPPRETTET: "Vilkår opprettet",
-    VILKÅR_VURDERING_OPPDATERT: "Vilkår oppdatert",
-    VEDTAK_LAGRET: "Vedtak lagret",
-    BREV_MELLOMLAGRET: "Brev mellomlagret",
-    BREV_PDF_GENERERT: "Brev PDF generert",
-    ÅRSAK_LAGRET: "Årsak lagret",
-    ÅRSAK_OPPDATERT: "Årsak oppdatert",
-    BESLUTTER_GODKJENT: "Beslutter godkjent",
-  };
-  return tekster[type];
+type TagColor = "info" | "success" | "warning" | "danger" | "neutral";
+
+interface EndringMeta {
+  tekst: string;
+  ikon: React.ElementType;
+  farge: TagColor;
+  erMilstein: boolean;
+}
+
+const endringMeta: Record<EndringType, EndringMeta> = {
+  BEHANDLING_OPPRETTET: {
+    tekst: "Behandling opprettet",
+    ikon: PlusCircleIcon,
+    farge: "success",
+    erMilstein: true,
+  },
+  SENDT_TIL_BESLUTTER: {
+    tekst: "Sendt til beslutter",
+    ikon: PaperplaneIcon,
+    farge: "info",
+    erMilstein: true,
+  },
+  ANGRET_SEND_TIL_BESLUTTER: {
+    tekst: "Angret send til beslutter",
+    ikon: ArrowUndoIcon,
+    farge: "warning",
+    erMilstein: true,
+  },
+  VILKÅR_VURDERING_OPPRETTET: {
+    tekst: "Vilkår opprettet",
+    ikon: TasklistIcon,
+    farge: "info",
+    erMilstein: false,
+  },
+  VILKÅR_VURDERING_OPPDATERT: {
+    tekst: "Vilkår oppdatert",
+    ikon: TasklistIcon,
+    farge: "info",
+    erMilstein: false,
+  },
+  VEDTAK_LAGRET: {
+    tekst: "Vedtak lagret",
+    ikon: CheckmarkCircleIcon,
+    farge: "success",
+    erMilstein: false,
+  },
+  BREV_PDF_GENERERT: {
+    tekst: "Brev PDF generert",
+    ikon: DocPencilIcon,
+    farge: "neutral",
+    erMilstein: false,
+  },
+  ÅRSAK_LAGRET: {
+    tekst: "Årsak lagret",
+    ikon: NotePencilIcon,
+    farge: "info",
+    erMilstein: false,
+  },
+  ÅRSAK_OPPDATERT: {
+    tekst: "Årsak oppdatert",
+    ikon: NotePencilIcon,
+    farge: "info",
+    erMilstein: false,
+  },
+  BESLUTTER_GODKJENT: {
+    tekst: "Beslutter godkjent",
+    ikon: CheckmarkCircleIcon,
+    farge: "success",
+    erMilstein: true,
+  },
 };
 
-const endringTypeIkon = (type: EndringType) => {
-  const ikoner: Record<EndringType, React.ElementType> = {
-    BEHANDLING_OPPRETTET: PlusCircleIcon,
-    SENDT_TIL_BESLUTTER: PaperplaneIcon,
-    ANGRET_SEND_TIL_BESLUTTER: ArrowUndoIcon,
-    VILKÅR_VURDERING_OPPRETTET: TasklistIcon,
-    VILKÅR_VURDERING_OPPDATERT: TasklistIcon,
-    VEDTAK_LAGRET: CheckmarkCircleIcon,
-    BREV_MELLOMLAGRET: DocPencilIcon,
-    BREV_PDF_GENERERT: DocPencilIcon,
-    ÅRSAK_LAGRET: NotePencilIcon,
-    ÅRSAK_OPPDATERT: NotePencilIcon,
-    BESLUTTER_GODKJENT: CheckmarkCircleIcon,
-  };
-  return ikoner[type];
+const formaterRelativTid = (isoTid: string): string => {
+  const tid = new Date(isoTid);
+  const nå = new Date();
+  const diffSekunder = Math.floor((nå.getTime() - tid.getTime()) / 1000);
+
+  if (diffSekunder < 60) return "Akkurat nå";
+  if (diffSekunder < 3600) return `${Math.floor(diffSekunder / 60)} min. siden`;
+  if (diffSekunder < 86400) return `${Math.floor(diffSekunder / 3600)} t. siden`;
+  if (diffSekunder < 604800) return `${Math.floor(diffSekunder / 86400)} d. siden`;
+  return formaterIsoDatoTid(isoTid);
 };
 
 interface EndringGruppe {
@@ -72,19 +121,32 @@ const grupperKonsekutiveEndringer = (endringer: BehandlingEndring[]): EndringGru
 };
 
 const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
-  const Ikon = endringTypeIkon(endring.endringType);
+  const meta = endringMeta[endring.endringType];
+  const Ikon = meta.ikon;
 
   return (
     <div className={styles.endringRad}>
-      <Ikon className={styles.endringIkon} aria-hidden />
+      <div className={`${styles.tidslinjePunkt} ${styles[`punkt_${meta.farge}`]}`} />
       <div className={styles.endringInnhold}>
-        <BodyShort size="small" weight="semibold">
-          {endringTypeTilTekst(endring.endringType)}
-        </BodyShort>
+        <div className={styles.endringTittel}>
+          <Ikon className={`${styles.endringIkon} ${styles[`ikon_${meta.farge}`]}`} aria-hidden />
+          <BodyShort size="small" weight="semibold">
+            {meta.tekst}
+          </BodyShort>
+        </div>
+        {meta.erMilstein && (
+          <Tag variant="moderate" size="xsmall" data-color={meta.farge}>
+            {meta.tekst}
+          </Tag>
+        )}
         {endring.detaljer && (
           <Detail textColor="subtle">{endring.detaljer}</Detail>
         )}
-        <Detail textColor="subtle">{formaterIsoDatoTid(endring.utførtTid)}</Detail>
+        <Tooltip content={formaterIsoDatoTid(endring.utførtTid)} placement="left">
+          <Detail textColor="subtle" className={styles.tidspunkt}>
+            {formaterRelativTid(endring.utførtTid)}
+          </Detail>
+        </Tooltip>
       </div>
     </div>
   );
@@ -94,7 +156,9 @@ const GruppeBlokk = ({ gruppe }: { gruppe: EndringGruppe }) => {
   return (
     <div className={styles.gruppeBlokk}>
       <div className={styles.gruppeHeader}>
-        <PersonIcon className={styles.personIkon} aria-hidden />
+        <div className={styles.avatar}>
+          {gruppe.utførtAv.slice(0, 2)}
+        </div>
         <BodyShort size="small" weight="semibold">
           {gruppe.utførtAv}
         </BodyShort>
