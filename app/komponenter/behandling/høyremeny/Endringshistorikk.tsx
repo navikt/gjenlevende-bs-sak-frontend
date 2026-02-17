@@ -6,7 +6,6 @@ import {
   ArrowUndoIcon,
   TasklistIcon,
   CheckmarkCircleIcon,
-  DocPencilIcon,
   NotePencilIcon,
 } from "@navikt/aksel-icons";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
@@ -53,11 +52,6 @@ const endringMeta: Record<EndringType, EndringMeta> = {
     tekst: "Vedtak lagret",
     ikon: CheckmarkCircleIcon,
     farge: "success",
-  },
-  BREV_PDF_GENERERT: {
-    tekst: "Brev PDF generert",
-    ikon: DocPencilIcon,
-    farge: "neutral",
   },
   ÅRSAK_LAGRET: {
     tekst: "Årsak lagret",
