@@ -1,15 +1,17 @@
 import React from "react";
 import {
+  Alert,
   BodyShort,
   Button,
   Detail,
-  Heading,
   HStack,
   Loader,
   Popover,
   VStack,
 } from "@navikt/ds-react";
+import { PersonIcon } from "@navikt/aksel-icons";
 import type { Søkeresultat } from "~/hooks/useSøk";
+import styles from "./SøkePopover.module.css";
 
 interface SøkePopoverProps {
   open: boolean;
@@ -35,38 +37,51 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
   opprettFeilmelding,
 }) => {
   const visFeilmelding = feilmelding || opprettFeilmelding;
+  const minBredde = anchorEl?.offsetWidth ? `${anchorEl.offsetWidth}px` : undefined;
 
   return (
-    <Popover open={open} onClose={onClose} anchorEl={anchorEl} placement="bottom" arrow={false}>
-      <Popover.Content>
+    <Popover open={open} onClose={onClose} anchorEl={anchorEl} placement="bottom-start">
+      <Popover.Content style={{ minWidth: minBredde }}>
         {søker && !søkeresultat ? (
-          <HStack gap="space-4" align="center">
+          <HStack gap="space-4" align="center" justify="center" padding="space-2">
             <Loader size="small" />
-            <BodyShort>Søker...</BodyShort>
+            <BodyShort size="small">Søker...</BodyShort>
           </HStack>
         ) : visFeilmelding ? (
-          <VStack gap="space-2">
-            <BodyShort>{visFeilmelding}</BodyShort>
-          </VStack>
+          <Alert variant="warning" size="small" inline>
+            {visFeilmelding}
+          </Alert>
         ) : søkeresultat ? (
           <VStack gap="space-4">
-            <div>
-              <Heading level="2" size="xsmall" spacing>
-                {søkeresultat.navn}
-              </Heading>
-              <Detail>{søkeresultat.personident || søkeresultat.fagsakPersonId}</Detail>
-            </div>
-
+            <HStack gap="space-4" align="center">
+              <PersonIcon className={styles.personIkon} aria-hidden />
+              <div>
+                <BodyShort size="small" weight="semibold">
+                  {søkeresultat.navn}
+                </BodyShort>
+                <Detail textColor="subtle">
+                  {søkeresultat.personident || søkeresultat.fagsakPersonId}
+                </Detail>
+              </div>
+            </HStack>
             {søkeresultat.harFagsak ? (
               <Button
                 size="small"
                 onClick={() => onNavigate(søkeresultat.fagsakPersonId)}
                 disabled={søker}
+                style={{ width: "100%" }}
               >
                 Gå til oversikt
               </Button>
             ) : (
-              <Button size="small" onClick={onOpprettFagsak} disabled={søker} loading={søker}>
+              <Button
+                variant="secondary"
+                size="small"
+                onClick={onOpprettFagsak}
+                disabled={søker}
+                loading={søker}
+                style={{ width: "100%" }}
+              >
                 Opprett fagsak
               </Button>
             )}
