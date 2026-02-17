@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import type { BehandlingSteg, Steg } from "~/komponenter/navbar/BehandlingFaner";
 import type { ÅrsakType } from "~/types/årsak";
 import type { Behandling } from "~/types/behandling";
+import type { AnsvarligSaksbehandlerDto } from "~/types/saksbehandler";
 
 export interface ÅrsakState {
   kravdato: Date;
@@ -20,6 +21,9 @@ export const BehandlingContext = React.createContext<{
   hentÅrsakData: () => Promise<void>;
   årsakDataHentet: boolean;
   revaliderBehandling: () => void;
+  ansvarligSaksbehandler: AnsvarligSaksbehandlerDto | null;
+  lasterAnsvarligSaksbehandler: boolean;
+  hentAnsvarligSaksbehandlerPåNytt: () => void;
 }>({
   behandlingId: "",
   ferdigeSteg: [],
@@ -31,6 +35,9 @@ export const BehandlingContext = React.createContext<{
   hentÅrsakData: async () => {},
   årsakDataHentet: false,
   revaliderBehandling: () => {},
+  ansvarligSaksbehandler: null,
+  lasterAnsvarligSaksbehandler: true,
+  hentAnsvarligSaksbehandlerPåNytt: () => {},
 });
 
 export function useBehandlingContext() {
