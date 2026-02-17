@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiCall } from "~/api/backend";
 import type { AnsvarligSaksbehandlerDto } from "~/types/saksbehandler";
 
@@ -7,46 +7,47 @@ interface AnsvarligSaksbehandlerState {
   laster: boolean;
 }
 
-export function useHentAnsvarligSaksbehandler(
-  behandlingId: string | undefined
-) {
+export function useHentAnsvarligSaksbehandler(behandlingId: string | undefined) {
   const [state, settState] = useState<AnsvarligSaksbehandlerState>({
     ansvarligSaksbehandler: null,
     laster: true,
   });
 
-  useEffect(() => {
-    const hentAnsvarligSaksbehandler = async () => {
-      if (!behandlingId) {
-        settState((prev) => ({ ...prev, laster: false }));
-        return;
+  const hentAnsvarligSaksbehandler = useCallback(async () => {
+    if (!behandlingId) {
+      settState((prev) => ({ ...prev, laster: false }));
+      return;
+    }
+
+    settState((prev) => ({ ...prev, laster: true }));
+
+    const response = await apiCall<AnsvarligSaksbehandlerDto>(
+      `/oppgave/ansvarlig-saksbehandler`,
+      {
+        method: "POST",
+        body: JSON.stringify({ behandlingId }),
       }
+    );
 
-      settState((prev) => ({ ...prev, laster: true }));
-
-      const response = await apiCall<AnsvarligSaksbehandlerDto>(
-        `/oppgave/ansvarlig-saksbehandler`,
-        {
-          method: "POST",
-          body: JSON.stringify({ behandlingId }),
-        }
-      );
-
-      if (response.data) {
-        settState({
-          ansvarligSaksbehandler: response.data,
-          laster: false,
-        });
-      } else {
-        settState({
-          ansvarligSaksbehandler: null,
-          laster: false,
-        });
-      }
-    };
-
-    hentAnsvarligSaksbehandler();
+    if (response.data) {
+      settState({
+        ansvarligSaksbehandler: response.data,
+        laster: false,
+      });
+    } else {
+      settState({
+        ansvarligSaksbehandler: null,
+        laster: false,
+      });
+    }
   }, [behandlingId]);
 
-  return state;
+  useEffect(() => {
+    hentAnsvarligSaksbehandler();
+  }, [hentAnsvarligSaksbehandler]);
+
+  return {
+    ...state,
+    hentPåNytt: hentAnsvarligSaksbehandler,
+  };
 }

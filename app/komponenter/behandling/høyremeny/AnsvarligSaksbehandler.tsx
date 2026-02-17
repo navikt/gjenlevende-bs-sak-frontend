@@ -1,7 +1,6 @@
 import React from "react";
 import { InfoCard, VStack, Heading, Skeleton } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
-import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { formatterEnumVerdi, formaterIsoDatoTid } from "~/utils/utils";
 import { InfoRad } from "./InfoRad";
 
@@ -12,8 +11,8 @@ const rolleDataColor = {
 } as const;
 
 export const AnsvarligSaksbehandler = () => {
-  const { behandling } = useBehandlingContext();
-  const { ansvarligSaksbehandler, laster } = useHentAnsvarligSaksbehandler(behandling?.id);
+  const { behandling, ansvarligSaksbehandler, lasterAnsvarligSaksbehandler } =
+    useBehandlingContext();
 
   const dataColor = ansvarligSaksbehandler
     ? rolleDataColor[ansvarligSaksbehandler.rolle]
@@ -32,7 +31,7 @@ export const AnsvarligSaksbehandler = () => {
       </InfoCard.Header>
       <InfoCard.Content>
         <VStack gap={"space-16"}>
-          {laster ? (
+          {lasterAnsvarligSaksbehandler ? (
             <Skeleton variant="text" width="60%" />
           ) : (
             <Heading size={"xsmall"}>{visningNavn ?? "-"}</Heading>

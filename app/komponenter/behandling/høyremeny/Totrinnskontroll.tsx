@@ -6,12 +6,14 @@ import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 import { InfoRad } from "./InfoRad";
 
 export const Totrinnskontroll = () => {
-  const { behandling, revaliderBehandling, behandlingId } = useBehandlingContext();
+  const { behandling, revaliderBehandling, behandlingId, ansvarligSaksbehandler } =
+    useBehandlingContext();
   const { angreSendTilBeslutter } = useBeslutter();
   // TODO: Fyller inn med relevant info senere.
   const sendtInnAv = "";
   const sendtInnTidspunkt = "";
   const erSendtTilBeslutter = behandling?.status === "FATTER_VEDTAK";
+  const erAnsvarligSaksbehandler = ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
 
   const handleAngreSendTilBeslutter = async () => {
     const respons = await angreSendTilBeslutter(behandlingId);
@@ -41,7 +43,12 @@ export const Totrinnskontroll = () => {
             <InfoRad label={"Sendt inn"} verdi={sendtInnTidspunkt}></InfoRad>
           </VStack>
         </HStack>
-        <Button size="small" variant="secondary" onClick={handleAngreSendTilBeslutter}>
+        <Button
+          size="small"
+          variant="secondary"
+          onClick={handleAngreSendTilBeslutter}
+          disabled={!erAnsvarligSaksbehandler}
+        >
           Angre send til beslutter
         </Button>
       </HStack>

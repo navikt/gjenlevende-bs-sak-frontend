@@ -17,6 +17,8 @@ import { Box } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
 import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
+import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave";
+import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -48,6 +50,12 @@ export default function BehandlingLayout() {
   const [årsakDataHentet, settÅrsakDataHentet] = useState(false);
   const { settErLesevisning } = useLesevisningsContext();
   const revalidator = useRevalidator();
+
+  const {
+    ansvarligSaksbehandler,
+    laster: lasterAnsvarligSaksbehandler,
+    hentPåNytt: hentAnsvarligSaksbehandlerPåNytt,
+  } = useHentAnsvarligSaksbehandler(behandlingId);
 
   const markerStegSomFerdig = useCallback((steg: Steg) => {
     settFerdigeSteg((prev) => (prev.includes(steg) ? prev : [...prev, steg]));
@@ -162,6 +170,9 @@ export default function BehandlingLayout() {
         hentÅrsakData,
         årsakDataHentet,
         revaliderBehandling,
+        ansvarligSaksbehandler,
+        lasterAnsvarligSaksbehandler,
+        hentAnsvarligSaksbehandlerPåNytt,
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
@@ -173,6 +184,7 @@ export default function BehandlingLayout() {
             </Side>
           </Box>
           <HøyreMeny>
+            <TildelOppgave />
             <Totrinnskontroll />
 
             <AnsvarligSaksbehandler />
