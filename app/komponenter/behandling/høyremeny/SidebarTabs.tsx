@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs, Loader, BodyShort } from "@navikt/ds-react";
+import { Tabs, BodyShort, Skeleton, VStack } from "@navikt/ds-react";
 import { Endringshistorikk } from "~/komponenter/behandling/høyremeny/Endringshistorikk";
 import { Dokumentliste } from "~/komponenter/dokumentoversikt/Dokumentliste";
 import { usePersonContext } from "~/contexts/PersonContext";
@@ -11,7 +11,14 @@ const DokumenterTab = () => {
   const { dokumenter, laster } = useHentDokumenter(fagsakPersonId);
 
   if (laster) {
-    return <Loader size="small" title="Henter dokumenter..." />;
+    return (
+      <VStack gap="space-8">
+        <Skeleton variant="text" width="80%" />
+        <Skeleton variant="text" width="60%" />
+        <Skeleton variant="text" width="70%" />
+        <Skeleton variant="text" width="50%" />
+      </VStack>
+    );
   }
 
   if (!dokumenter) {
