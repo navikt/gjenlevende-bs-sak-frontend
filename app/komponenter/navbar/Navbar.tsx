@@ -17,7 +17,7 @@ const LENKER: NavLenke[] = [
 
 export const Navbar = () => {
   return (
-    <nav>
+    <nav className={styles.navbar}>
       <HStack>
         {LENKER.map((lenke) => (
           <NavLink
