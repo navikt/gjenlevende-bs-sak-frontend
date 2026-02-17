@@ -1,6 +1,7 @@
 import {useState} from "react";
 import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 import {apiCall, type ApiResponse} from "~/api/backend";
+import {oppdaterEndringshistorikk} from "~/utils/endringshistorikkEvent";
 
 interface LagreVedtakState {
     oppretter: boolean;
@@ -32,6 +33,7 @@ export function useLagreVedtak() {
         if (!response.data && response.melding) {
             return undefined;
         }
+        oppdaterEndringshistorikk();
         return response.data;
     };
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { ÅrsakType } from "~/types/årsak";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { apiCall, type ApiResponse } from "~/api/backend";
+import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 
 export interface ÅrsakBehandlingRequest {
   kravdato: string;
@@ -106,6 +107,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
       if (response.data) {
         settErLagret(true);
+        oppdaterEndringshistorikk();
         return true;
       }
 

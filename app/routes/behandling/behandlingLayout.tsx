@@ -16,6 +16,7 @@ import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
 import { Box } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
+import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -175,6 +176,7 @@ export default function BehandlingLayout() {
             <Totrinnskontroll />
 
             <AnsvarligSaksbehandler />
+            <SidebarTabs />
           </HøyreMeny>
         </Box>
       </Box>
