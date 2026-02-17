@@ -15,6 +15,7 @@ export interface EndringMeta {
   tekst: string;
   ikon: React.ElementType;
   farge: TagFarge;
+  erMilstein: boolean;
 }
 
 export const endringMeta: Record<EndringType, EndringMeta> = {
@@ -22,46 +23,55 @@ export const endringMeta: Record<EndringType, EndringMeta> = {
     tekst: "Behandling opprettet",
     ikon: PlusCircleIcon,
     farge: "success",
+    erMilstein: true,
   },
   SENDT_TIL_BESLUTTER: {
     tekst: "Sendt til beslutter",
     ikon: PaperplaneIcon,
     farge: "info",
+    erMilstein: true,
   },
   ANGRET_SEND_TIL_BESLUTTER: {
     tekst: "Angret send til beslutter",
     ikon: ArrowUndoIcon,
     farge: "warning",
+    erMilstein: true,
   },
   VILKÅR_VURDERING_OPPRETTET: {
     tekst: "Vilkår opprettet",
     ikon: TasklistIcon,
     farge: "info",
+    erMilstein: false,
   },
   VILKÅR_VURDERING_OPPDATERT: {
     tekst: "Vilkår oppdatert",
     ikon: TasklistIcon,
     farge: "info",
+    erMilstein: false,
   },
   VEDTAK_LAGRET: {
     tekst: "Vedtak lagret",
     ikon: CheckmarkCircleIcon,
     farge: "success",
+    erMilstein: false,
   },
   ÅRSAK_LAGRET: {
     tekst: "Årsak lagret",
     ikon: NotePencilIcon,
     farge: "info",
+    erMilstein: false,
   },
   ÅRSAK_OPPDATERT: {
     tekst: "Årsak oppdatert",
     ikon: NotePencilIcon,
     farge: "info",
+    erMilstein: false,
   },
   BESLUTTER_GODKJENT: {
     tekst: "Beslutter godkjent",
     ikon: CheckmarkCircleIcon,
     farge: "success",
+    erMilstein: true,
   },
 };
 

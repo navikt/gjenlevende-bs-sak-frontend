@@ -1,5 +1,5 @@
 import React from "react";
-import { BodyShort, Detail, Skeleton, Tooltip, VStack } from "@navikt/ds-react";
+import { BodyShort, Detail, Skeleton, Tag, Tooltip, VStack } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useHentEndringshistorikk } from "~/hooks/useHentEndringshistorikk";
 import { formaterIsoDatoTid } from "~/utils/utils";
@@ -26,6 +26,11 @@ const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
             {meta.tekst}
           </BodyShort>
         </div>
+        {meta.erMilstein && (
+          <Tag variant="moderate" size="xsmall" data-color={meta.farge}>
+            {meta.tekst}
+          </Tag>
+        )}
         {endring.detaljer && (
           <Detail textColor="subtle">{endring.detaljer}</Detail>
         )}
