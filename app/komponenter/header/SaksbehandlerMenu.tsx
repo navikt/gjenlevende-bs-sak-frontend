@@ -1,7 +1,9 @@
 import React from "react";
 import { LeaveIcon } from "@navikt/aksel-icons";
-import { BodyShort, Detail, Dropdown, InternalHeader, Spacer } from "@navikt/ds-react";
+import { BodyShort, Detail, Dropdown, InternalHeader, Spacer, Switch } from "@navikt/ds-react";
 import type { Saksbehandler } from "~/server/types";
+import { useTemaContext } from "~/contexts/TemaContext";
+import styles from "./SaksbehandlerMenu.module.css";
 
 interface SaksbehandlerMenuProps {
   saksbehandler: Saksbehandler | null;
@@ -9,6 +11,7 @@ interface SaksbehandlerMenuProps {
 
 export const SaksbehandlerMenu: React.FC<SaksbehandlerMenuProps> = ({ saksbehandler }) => {
   const saksbehandlerNavn = saksbehandler?.navn || "";
+  const { mørktTema, byttTema } = useTemaContext();
 
   return (
     <Dropdown>
@@ -18,7 +21,7 @@ export const SaksbehandlerMenu: React.FC<SaksbehandlerMenuProps> = ({ saksbehand
         description="Enhet: ukjent"
       />
 
-      <Dropdown.Menu>
+      <Dropdown.Menu className={styles.meny}>
         <dl>
           <BodyShort as="dt" size="small">
             {saksbehandlerNavn}
@@ -28,9 +31,18 @@ export const SaksbehandlerMenu: React.FC<SaksbehandlerMenuProps> = ({ saksbehand
         <Dropdown.Menu.Divider />
 
         <Dropdown.Menu.List>
-          <Dropdown.Menu.List.Item as="a" href="/oauth2/logout">
-            Logg ut <Spacer /> <LeaveIcon aria-hidden fontSize="1.5rem" />
-          </Dropdown.Menu.List.Item>
+          <li>
+            <div className={styles.rad}>
+              <Switch size="small" checked={mørktTema} onChange={byttTema}>
+                Mørkt tema
+              </Switch>
+            </div>
+          </li>
+          <li>
+            <a href="/oauth2/logout" className={styles.rad}>
+              Logg ut <Spacer /> <LeaveIcon aria-hidden />
+            </a>
+          </li>
         </Dropdown.Menu.List>
       </Dropdown.Menu>
     </Dropdown>

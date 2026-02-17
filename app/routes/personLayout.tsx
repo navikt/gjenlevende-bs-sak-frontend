@@ -51,10 +51,11 @@ export default function PersonLayout() {
       }}
     >
       <LesevisningsContext.Provider value={{ erLesevisning, settErLesevisning }}>
-        <Personheader />
         {!erPåBehandling ? (
           <>
-            <Navbar />
+            <Personheader>
+              <Navbar />
+            </Personheader>
             <Side>
               <Outlet />
             </Side>

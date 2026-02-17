@@ -1,16 +1,27 @@
-ul {
+.personheader {
   display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  align-items: center;
   border-bottom: solid 1px var(--ax-border-neutral-subtle);
   background-color: var(--ax-bg-default);
-  align-items: center;
+  box-shadow: var(--ax-shadow-dialog);
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-.li {
-  padding: 0.5rem 1rem;
+.personInfo {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 0.5rem 0;
+  background-color: var(--ax-border-neutral-subtle);
 }
