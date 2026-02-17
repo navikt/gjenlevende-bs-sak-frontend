@@ -13,6 +13,7 @@ import Header from "~/komponenter/header/Header";
 import "@navikt/ds-css";
 import "./global.css";
 import { TogglesProvider } from "./contexts/TogglesContext";
+import { TemaProvider } from "./contexts/TemaContext";
 
 export async function loader({ context }: Route.LoaderArgs) {
   return {
@@ -44,8 +45,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header />
-        {children}
+        <TemaProvider>
+          <Header />
+          {children}
+        </TemaProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
