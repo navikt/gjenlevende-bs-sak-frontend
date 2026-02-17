@@ -26,14 +26,12 @@ const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
             {meta.tekst}
           </BodyShort>
         </div>
-        {meta.erMilstein && (
+        {meta.erMilepæl && (
           <Tag variant="moderate" size="xsmall" data-color={meta.farge}>
             {meta.tekst}
           </Tag>
         )}
-        {endring.detaljer && (
-          <Detail textColor="subtle">{endring.detaljer}</Detail>
-        )}
+        {endring.detaljer && <Detail textColor="subtle">{endring.detaljer}</Detail>}
         <Tooltip content={formaterIsoDatoTid(endring.utførtTid)} placement="left">
           <Detail textColor="subtle" className={styles.tidspunkt}>
             {formaterRelativTid(endring.utførtTid)}
@@ -48,9 +46,7 @@ const GruppeBlokk = ({ gruppe }: { gruppe: EndringGruppe }) => {
   return (
     <div className={styles.gruppeBlokk}>
       <div className={styles.gruppeHeader}>
-        <div className={styles.avatar}>
-          {gruppe.utførtAv.slice(0, 2)}
-        </div>
+        <div className={styles.avatar}>{gruppe.utførtAv.slice(0, 2)}</div>
         <BodyShort size="small" weight="semibold">
           {gruppe.utførtAv}
         </BodyShort>
