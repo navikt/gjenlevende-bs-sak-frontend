@@ -14,7 +14,6 @@ import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
 import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
 import { Box } from "@navikt/ds-react";
-import Personheader from "~/komponenter/personheader/Personheader";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
 import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
@@ -166,9 +165,7 @@ export default function BehandlingLayout() {
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-        <Personheader>
-          <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
-        </Personheader>
+        <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
         <Box style={{ display: "flex", flex: 1, minHeight: 0 }}>
           <Box style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
             <Side>

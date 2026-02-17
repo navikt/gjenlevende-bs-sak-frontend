@@ -20,7 +20,7 @@ type BehandlingFanerProps = {
 
 export const BehandlingFaner: React.FC<BehandlingFanerProps> = ({ steg, ferdigeSteg = [] }) => {
   return (
-    <nav>
+    <nav className={styles.navbar}>
       <HStack>
         {steg.map((steg) => {
           const kanStarte = steg.kanStarte ? steg.kanStarte(ferdigeSteg) : true;
