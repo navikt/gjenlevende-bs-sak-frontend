@@ -3,6 +3,7 @@ import type { BehandlingSteg, Steg } from "~/komponenter/navbar/BehandlingFaner"
 import type { ÅrsakType } from "~/types/årsak";
 import type { Behandling } from "~/types/behandling";
 import type { AnsvarligSaksbehandlerDto } from "~/types/saksbehandler";
+import type { TotrinnskontrollResponse } from "~/types/totrinnskontroll";
 
 export interface ÅrsakState {
   kravdato: Date;
@@ -24,6 +25,8 @@ export const BehandlingContext = React.createContext<{
   ansvarligSaksbehandler: AnsvarligSaksbehandlerDto | null;
   lasterAnsvarligSaksbehandler: boolean;
   hentAnsvarligSaksbehandlerPåNytt: () => void;
+  totrinnskontrollStatus: TotrinnskontrollResponse | null;
+  hentTotrinnskontrollStatusPåNytt: () => void;
 }>({
   behandlingId: "",
   ferdigeSteg: [],
@@ -38,6 +41,8 @@ export const BehandlingContext = React.createContext<{
   ansvarligSaksbehandler: null,
   lasterAnsvarligSaksbehandler: true,
   hentAnsvarligSaksbehandlerPåNytt: () => {},
+  totrinnskontrollStatus: null,
+  hentTotrinnskontrollStatusPåNytt: () => {},
 });
 
 export function useBehandlingContext() {

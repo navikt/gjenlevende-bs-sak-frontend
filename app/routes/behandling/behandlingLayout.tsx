@@ -19,6 +19,8 @@ import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnsko
 import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
 import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave";
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
+import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollStatus";
+import { TotrinnskontrollStatus } from "~/types/totrinnskontroll";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -57,6 +59,11 @@ export default function BehandlingLayout() {
     hentPåNytt: hentAnsvarligSaksbehandlerPåNytt,
   } = useHentAnsvarligSaksbehandler(behandlingId);
 
+  const {
+    totrinnskontrollStatus,
+    hentPåNytt: hentTotrinnskontrollStatusPåNytt,
+  } = useHentTotrinnskontrollStatus(behandlingId);
+
   const markerStegSomFerdig = useCallback((steg: Steg) => {
     settFerdigeSteg((prev) => (prev.includes(steg) ? prev : [...prev, steg]));
   }, []);
@@ -78,7 +85,6 @@ export default function BehandlingLayout() {
         if (behandlingResponse.data) {
           settBehandling(behandlingResponse.data);
           const skalHaLesevisning =
-            behandlingResponse.data.status === "FATTER_VEDTAK" ||
             behandlingResponse.data.status === "IVERKSETTER_VEDTAK" ||
             behandlingResponse.data.status === "FERDIGSTILT";
           settErLesevisning(skalHaLesevisning);
@@ -128,6 +134,15 @@ export default function BehandlingLayout() {
     hentData();
   }, [behandlingId, årsakDataHentet, settErLesevisning]);
 
+  useEffect(() => {
+    if (!behandling || !totrinnskontrollStatus) return;
+
+    if (behandling.status === "FATTER_VEDTAK") {
+      const kanFatteVedtak = totrinnskontrollStatus.status === TotrinnskontrollStatus.KAN_FATTE_VEDTAK;
+      settErLesevisning(!kanFatteVedtak);
+    }
+  }, [behandling, totrinnskontrollStatus, settErLesevisning]);
+
   const revaliderBehandling = useCallback(() => {
     settÅrsakDataHentet(false);
     revalidator.revalidate();
@@ -173,6 +188,8 @@ export default function BehandlingLayout() {
         ansvarligSaksbehandler,
         lasterAnsvarligSaksbehandler,
         hentAnsvarligSaksbehandlerPåNytt,
+        totrinnskontrollStatus,
+        hentTotrinnskontrollStatusPåNytt,
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
