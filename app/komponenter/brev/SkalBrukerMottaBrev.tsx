@@ -1,4 +1,4 @@
-import { BodyShort, Radio, RadioGroup, VStack } from "@navikt/ds-react";
+import { Heading, Radio, RadioGroup, VStack } from "@navikt/ds-react";
 import React from "react";
 import { usePersonContext } from "~/contexts/PersonContext";
 import { type Brevmottaker, BrevmottakerRolle, MottakerType } from "~/hooks/useBrevmottaker";
@@ -35,8 +35,10 @@ export function SkalBrukerMottaBrev({ mottakere, leggTilMottaker, fjernMottaker 
   };
 
   return (
-    <VStack gap={"space-4"}>
-      <BodyShort size={"large"}>Skal bruker motta brevet?</BodyShort>
+    <VStack gap={"space-6"}>
+      <Heading level="2" size="xsmall">
+        Skal bruker motta brevet?
+      </Heading>
       <RadioGroup
         legend={"Skal bruker motta brevet?"}
         hideLegend

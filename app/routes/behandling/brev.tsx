@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Heading, Modal, VStack } from "@navikt/ds-react";
+import { Button, Heading, HStack, Modal, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
@@ -24,20 +24,21 @@ export default function Brev() {
 
   return (
     <VStack gap="space-4">
-      <Heading level="1" size="medium">
-        Brevmottaker: {utledBrevmottakere()}
+      <HStack align="center" justify="space-between" paddingInline="space-16">
+        <Heading level="1" size="medium">
+          Brevmottaker: {utledBrevmottakere()}
+        </Heading>
         <Button variant={"tertiary"} onClick={() => settModalÅpen(true)}>
           Legg til/endre brevmottaker
         </Button>
-      </Heading>
+      </HStack>
       <BrevSide />
 
       <Modal
         open={modalÅpen}
         onClose={() => settModalÅpen(false)}
         header={{ heading: "Hvem skal motta brevet?" }}
-        width={"70rem"}
-        style={{ minHeight: "40rem" }}
+        width={"50rem"}
       >
         <BrevmottakerModalInnhold
           mottakere={mottakere}
