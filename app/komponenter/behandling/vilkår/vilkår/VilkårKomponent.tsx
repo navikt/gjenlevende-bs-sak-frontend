@@ -151,6 +151,7 @@ export const VilkårKomponent: React.FC<{
               gap="space-0 space-24"
               direction={{ xs: "column", sm: "row" }}
               wrap={false}
+              style={{ marginTop: "1rem" }}
             >
               <Radio value="JA">Ja</Radio>
               <Radio value="NEI">Nei</Radio>

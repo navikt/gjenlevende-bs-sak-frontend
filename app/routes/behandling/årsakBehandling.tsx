@@ -79,36 +79,38 @@ export default function ArsakBehandling() {
 
   return (
     <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
-      <VStack gap="space-16">
-        <div style={{ maxWidth: "24rem" }}>
-          <DatePicker {...datepickerProps}>
-            <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
-          </DatePicker>
-        </div>
+      <VStack gap="space-24">
+        <VStack gap="space-16">
+          <div style={{ maxWidth: "24rem" }}>
+            <DatePicker {...datepickerProps}>
+              <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
+            </DatePicker>
+          </div>
 
-        <Select
-          label="Årsak til behandling"
-          onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
-          value={årsak}
-          disabled={erLesevisning}
-          style={{ maxWidth: "24rem" }}
-        >
-          <option value="" disabled>
-            Velg årsak
-          </option>
-          {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
-            <option key={verdi} value={verdi}>
-              {label}
+          <Select
+            label="Årsak til behandling"
+            onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
+            value={årsak}
+            disabled={erLesevisning}
+            style={{ maxWidth: "24rem" }}
+          >
+            <option value="" disabled>
+              Velg årsak
             </option>
-          ))}
-        </Select>
+            {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
+              <option key={verdi} value={verdi}>
+                {label}
+              </option>
+            ))}
+          </Select>
 
-        <Textarea
-          label="Beskrivelse av årsak (fylles ut ved behov)"
-          onChange={(e) => oppdaterBeskrivelse(e.target.value)}
-          value={beskrivelse}
-          readOnly={erLesevisning}
-        />
+          <Textarea
+            label="Beskrivelse av årsak (fylles ut ved behov)"
+            onChange={(e) => oppdaterBeskrivelse(e.target.value)}
+            value={beskrivelse}
+            readOnly={erLesevisning}
+          />
+        </VStack>
 
         <div>
           <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>

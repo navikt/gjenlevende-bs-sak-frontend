@@ -63,9 +63,11 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisn
     }
 
     return (
-        <VStack gap="space-12">
-            <BarnetilsynperiodeValg perioder={perioder}
-                                    settPerioder={settPerioder} erLesevisning={erLesevisning}></BarnetilsynperiodeValg>
+        <VStack gap="space-24">
+            <VStack gap="space-16">
+                <BarnetilsynperiodeValg perioder={perioder}
+                                        settPerioder={settPerioder} erLesevisning={erLesevisning}></BarnetilsynperiodeValg>
+            </VStack>
             <Textarea label={'Begrunnelse'} value={begrunnelse}
                       onChange={e => settBegrunnelse(e.target.value)} disabled={erLesevisning}></Textarea>
             <HStack>
