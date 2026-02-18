@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { BrevmottakereListe } from "~/komponenter/brev/BrevmottakereListe";
 import { type Brevmottaker } from "~/hooks/useBrevmottaker";
 import { ManueltSøk } from "~/komponenter/brev/ManueltSøk";
-import { Skillelinje } from "~/komponenter/layout/Skillelinje";
 import { SkalBrukerMottaBrev } from "~/komponenter/brev/SkalBrukerMottaBrev";
+import { Skillelinje } from "~/komponenter/layout/Skillelinje";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 interface Props {
@@ -51,9 +51,9 @@ export default function BrevmottakerModalInnhold({
 
   return (
     <>
-      <Modal.Body style={{ minHeight: "40rem", height: "100%" }}>
-        <HGrid columns={"1fr auto 1fr"} gap={"space-4"}>
-          <VStack gap={"space-4"}>
+      <Modal.Body>
+        <HGrid columns={2} gap="space-24">
+          <VStack gap="space-6">
             <ManueltSøk leggTilMottaker={leggTilMottaker} />
             <Skillelinje />
             <SkalBrukerMottaBrev
@@ -62,13 +62,23 @@ export default function BrevmottakerModalInnhold({
               fjernMottaker={fjernMottaker}
             />
           </VStack>
-          <Skillelinje />
-          <BrevmottakereListe mottakere={midlertidigMottakerliste} fjernMottaker={fjernMottaker} />
+          <VStack
+            gap="space-4"
+            style={{
+              borderLeft: "1px solid var(--ax-border-neutral-subtle)",
+              paddingLeft: "var(--ax-space-8)",
+            }}
+          >
+            <BrevmottakereListe
+              mottakere={midlertidigMottakerliste}
+              fjernMottaker={fjernMottaker}
+            />
+          </VStack>
         </HGrid>
       </Modal.Body>
       <Modal.Footer>
-        <HStack gap={"space-2"} justify={"center"} style={{ marginTop: "1rem" }}>
-          <Button variant={"secondary"} onClick={håndterAvbryt}>
+        <HStack gap="space-4" justify="end">
+          <Button variant="secondary" onClick={håndterAvbryt}>
             Avbryt
           </Button>
           <Button

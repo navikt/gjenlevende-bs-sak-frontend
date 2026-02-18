@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HGrid, Select, VStack } from "@navikt/ds-react";
+import { Box, Button, Heading, HGrid, HStack, Select, VStack } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
 import { PlusIcon } from "@navikt/aksel-icons";
@@ -50,7 +50,8 @@ export const BrevSide = () => {
   return (
     <HGrid gap="space-32" columns={2} width={"100%"}>
       <Box
-        style={{ backgroundColor: "white", alignSelf: "flex-start" }}
+        background="default"
+        style={{ alignSelf: "flex-start" }}
         borderRadius="2"
         padding={"space-16"}
       >
@@ -104,27 +105,24 @@ export const BrevSide = () => {
         </VStack>
       </Box>
       <Box>
-        <VStack gap={"space-4"} align={"center"}>
+        <VStack gap={"space-16"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
           {brevMal && fritekstbolker && (
-            <Button
-              style={{ width: "fit-content" }}
-              onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-              disabled={sender || erLesevisning}
-            >
-              Send pdf til sak{" "}
-            </Button>
-          )}
-
-          {brevMal && fritekstbolker && (
-            <>
+            <HStack gap="space-16" paddingBlock="space-4 space-0">
+              <Button
+                variant="secondary"
+                onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
+                disabled={sender || erLesevisning}
+              >
+                Send pdf til sak
+              </Button>
               <Button
                 onClick={handleSendTilBeslutter}
                 disabled={senderTilBeslutter || erLesevisning}
               >
                 Send til beslutter
               </Button>
-            </>
+            </HStack>
           )}
         </VStack>
       </Box>

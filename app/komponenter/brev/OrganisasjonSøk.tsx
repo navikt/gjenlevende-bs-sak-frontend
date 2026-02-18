@@ -71,10 +71,7 @@ export const OrganisasjonsSøk: React.FC<Props> = ({ leggTilMottaker }) => {
         onChange={(e) => settOrganisasjonsnummer(e.target.value)}
         autoComplete="off"
         error={feilmeldinger.organisasjonsnummer}
-        style={{
-          width: "50%",
-          paddingRight: "1rem",
-        }}
+        style={{ maxWidth: "20rem" }}
       />
       {organisasjonsnummer && (
         <VStack>
