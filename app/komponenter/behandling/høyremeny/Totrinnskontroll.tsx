@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Heading, HStack, InlineMessage, VStack } from "@navikt/ds-react";
+import { Button, InfoCard, InlineMessage, VStack } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useBeslutter } from "~/hooks/useBeslutter";
 import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
@@ -28,30 +28,29 @@ export const Totrinnskontroll = () => {
   }
 
   return (
-    <Box borderColor="neutral" borderWidth="1" borderRadius="12" padding="space-16">
-      <HStack gap={"space-24"}>
-        <HStack gap="space-12" align="center" justify="space-between">
-          <Heading size={"xsmall"}>Totrinnskontroll</Heading>
-
+    <InfoCard data-color="info">
+      <InfoCard.Header>
+        <InfoCard.Title>Totrinnskontroll</InfoCard.Title>
+      </InfoCard.Header>
+      <InfoCard.Content>
+        <VStack gap="space-16">
           <InlineMessage status="info" size="small">
             Vedtaket er sendt til godkjenning
           </InlineMessage>
-
-          <VStack gap={"space-4"}>
-            <InfoRad label={"Sendt inn av"} verdi={sendtInnAv}></InfoRad>
-
-            <InfoRad label={"Sendt inn"} verdi={sendtInnTidspunkt}></InfoRad>
+          <VStack gap="space-4">
+            <InfoRad label="Sendt inn av" verdi={sendtInnAv} />
+            <InfoRad label="Sendt inn" verdi={sendtInnTidspunkt} />
           </VStack>
-        </HStack>
-        <Button
-          size="small"
-          variant="secondary"
-          onClick={handleAngreSendTilBeslutter}
-          disabled={!erAnsvarligSaksbehandler}
-        >
-          Angre send til beslutter
-        </Button>
-      </HStack>
-    </Box>
+          <Button
+            size="small"
+            variant="secondary"
+            onClick={handleAngreSendTilBeslutter}
+            disabled={!erAnsvarligSaksbehandler}
+          >
+            Angre send til beslutter
+          </Button>
+        </VStack>
+      </InfoCard.Content>
+    </InfoCard>
   );
 };

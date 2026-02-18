@@ -21,7 +21,7 @@ export const SaksbehandlerMenu: React.FC<SaksbehandlerMenuProps> = ({ saksbehand
         description="Enhet: ukjent"
       />
 
-      <Dropdown.Menu className={styles.meny}>
+      <Dropdown.Menu className={`${styles.meny} ${mørktTema ? "dark" : "light"}`} data-color="accent">
         <dl>
           <BodyShort as="dt" size="small">
             {saksbehandlerNavn}
