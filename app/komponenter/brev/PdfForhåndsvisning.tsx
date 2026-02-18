@@ -89,8 +89,11 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
   if (typeof window === "undefined") return null; //Sjekk ut
 
   return (
-    <PDFViewer width={"100%"} height="700px" showToolbar={false}>
-      {pdfInnhold}
-    </PDFViewer>
+    {/* A4 sideforhold: 210mm × 297mm = 1:1.414 (1:√2) */}
+    <div style={{ width: "100%", aspectRatio: "1 / 1.414" }}>
+      <PDFViewer width="100%" height="100%" showToolbar={false}>
+        {pdfInnhold}
+      </PDFViewer>
+    </div>
   );
 };
