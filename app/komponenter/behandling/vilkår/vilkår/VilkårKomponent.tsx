@@ -6,6 +6,7 @@ import {
   HStack,
   Radio,
   RadioGroup,
+  Stack,
   Textarea,
   VStack,
 } from "@navikt/ds-react";
@@ -146,8 +147,15 @@ export const VilkårKomponent: React.FC<{
             value={spørsmålSvar}
             readOnly={erLåst}
           >
-            <Radio value="JA">Ja</Radio>
-            <Radio value="NEI">Nei</Radio>
+            <Stack
+              gap="space-0 space-24"
+              direction={{ xs: "column", sm: "row" }}
+              wrap={false}
+              style={{ marginTop: "1rem" }}
+            >
+              <Radio value="JA">Ja</Radio>
+              <Radio value="NEI">Nei</Radio>
+            </Stack>
           </RadioGroup>
 
           <Textarea

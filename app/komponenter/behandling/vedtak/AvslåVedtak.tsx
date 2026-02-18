@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import type { Vedtak } from "~/komponenter/behandling/vedtak/vedtak";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
-import {Button, HStack, Textarea} from "@navikt/ds-react";
+import {Button, HStack, Textarea, VStack} from "@navikt/ds-react";
 import {useParams} from "react-router";
 
 
@@ -22,7 +22,7 @@ export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisning
     }
 
     return (
-        <>
+        <VStack gap="space-12">
             <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLesevisning}
                       onChange={e => settBegrunnelse(e.target.value)}></Textarea>
             <HStack>
@@ -30,6 +30,6 @@ export const AvslåVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisning
                     Lagre vedtak
                 </Button>
             </HStack>
-        </>
+        </VStack>
     )
 };

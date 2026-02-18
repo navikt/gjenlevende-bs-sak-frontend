@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HGrid, HStack, Select, VStack } from "@navikt/ds-react";
+import { Button, Heading, HGrid, HStack, Select, VStack } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
 import { PlusIcon } from "@navikt/aksel-icons";
@@ -48,13 +48,8 @@ export const BrevSide = () => {
   };
 
   return (
-    <HGrid gap="space-32" columns={2} width={"100%"}>
-      <Box
-        background="default"
-        style={{ alignSelf: "flex-start" }}
-        borderRadius="2"
-        padding={"space-16"}
-      >
+    <HGrid gap="space-8" columns={2} width={"100%"}>
+      <div style={{ alignSelf: "flex-start" }}>
         <VStack gap={"space-4"}>
           <Select
             label="Velg dokument"
@@ -92,19 +87,19 @@ export const BrevSide = () => {
                 />
               ))}
               <Button
-                variant={"secondary"}
+                variant={"tertiary"}
                 icon={<PlusIcon title={"Legg til fritekstfelt"} />}
                 onClick={leggTilFritekstbolk}
-                size={"small"}
                 disabled={erLesevisning}
+                style={{ width: "100%" }}
               >
                 Legg til fritekstfelt
               </Button>
             </VStack>
           )}
         </VStack>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <VStack gap={"space-16"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
           {brevMal && fritekstbolker && (
@@ -125,7 +120,7 @@ export const BrevSide = () => {
             </HStack>
           )}
         </VStack>
-      </Box>
+      </div>
     </HGrid>
   );
 };
