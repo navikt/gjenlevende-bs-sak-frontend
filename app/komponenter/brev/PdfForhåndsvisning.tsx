@@ -89,11 +89,17 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
   if (typeof window === "undefined") return null; //Sjekk ut
 
   return (
-    {/* A4 sideforhold: 210mm × 297mm = 1:1.414 (1:√2) */}
-    <div style={{ width: "100%", aspectRatio: "1 / 1.414" }}>
-      <PDFViewer width="100%" height="100%" showToolbar={false}>
-        {pdfInnhold}
-      </PDFViewer>
+    <div
+      // A4 sideforhold: 210mm × 297mm = 1:1.414 (1:√2). Absolutt posisjonering
+      // gir iframen konkrete pikseldimensjoner slik at nettleserens PDF-visning
+      // kan scrolle til flere sider.
+      style={{ width: "100%", aspectRatio: "1 / 1.414", position: "relative" }}
+    >
+      <div style={{ position: "absolute", inset: 0 }}>
+        <PDFViewer width="100%" height="100%" showToolbar={false}>
+          {pdfInnhold}
+        </PDFViewer>
+      </div>
     </div>
   );
 };
