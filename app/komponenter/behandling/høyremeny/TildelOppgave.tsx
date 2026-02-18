@@ -26,6 +26,7 @@ export const TildelOppgave: React.FC = () => {
     ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
 
   const skalVises =
+    behandling?.status !== "FERDIGSTILT" &&
     !erProduksjon &&
     !lasterAnsvarligSaksbehandler &&
     !erInnloggetSaksbehandlerAnsvarlig &&
