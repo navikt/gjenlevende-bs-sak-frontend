@@ -13,7 +13,12 @@ import {
 import styles from "./Endringshistorikk.module.css";
 
 const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
-  const meta = endringMeta[endring.endringType];
+  const meta = endringMeta[endring.endringType] ?? {
+    tekst: endring.endringType,
+    ikon: () => null,
+    farge: "neutral" as const,
+    erMilepæl: false,
+  };
   const Ikon = meta.ikon;
 
   return (
