@@ -34,7 +34,7 @@ export default function Vilkår() {
   };
 
   return (
-    <VStack gap={"space-24"}>
+    <VStack gap={"space-12"}>
       <VilkårInnhold settErVilkårUtfylt={settErVilkårUtfylt} />
 
       <div>

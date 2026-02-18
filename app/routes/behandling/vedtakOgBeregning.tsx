@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import type {Route} from "./+types/vedtakOgBeregning";
-import {VStack, Select, HStack} from '@navikt/ds-react';
+import {Box, VStack, Select, HStack} from '@navikt/ds-react';
 import type {ResultatType} from "~/komponenter/behandling/vedtak/vedtak";
 import {InnvilgeVedtak} from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
 import {useHentVedtak} from "~/hooks/useHentVedtak";
@@ -31,29 +31,30 @@ export default function VedtakOgBeregning() {
     };
 
     return (
-        <VStack gap="space-40 space-96">
-            <HStack>
+        <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+            <VStack gap="space-12">
                 <Select
                     label={'Vedtaksresultat'}
                     value={vedtaksresultat || ''}
                     onChange={(e) => handleVedtaksresultatEndring(e.target.value)}
                     disabled={erLesevisning}
+                    style={{maxWidth: "24rem"}}
                 >
                     <option value=''>Velg</option>
                     <option value='INNVILGET'>Innvilge</option>
                     <option value='AVSLÅTT'>Avslå</option>
                     <option value='OPPHØR'>Opphør</option>
                 </Select>
-            </HStack>
-            {vedtaksresultat === 'INNVILGET' && (
-                <InnvilgeVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></InnvilgeVedtak>
-            )}
-            {vedtaksresultat === 'AVSLÅTT' && (
-                <AvslåVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></AvslåVedtak>
-            )}
-            {vedtaksresultat === 'OPPHØR' && (
-                <OppgørVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></OppgørVedtak>
-            )}
-        </VStack>
+                {vedtaksresultat === 'INNVILGET' && (
+                    <InnvilgeVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></InnvilgeVedtak>
+                )}
+                {vedtaksresultat === 'AVSLÅTT' && (
+                    <AvslåVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></AvslåVedtak>
+                )}
+                {vedtaksresultat === 'OPPHØR' && (
+                    <OppgørVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></OppgørVedtak>
+                )}
+            </VStack>
+        </Box>
     );
 }

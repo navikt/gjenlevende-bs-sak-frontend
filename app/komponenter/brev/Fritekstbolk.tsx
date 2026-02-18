@@ -26,7 +26,7 @@ export const Fritekstbolk = ({
   const erLesevisning = useErLesevisning();
 
   return (
-    <Box borderColor="neutral" borderWidth="1" borderRadius="2" padding="space-4">
+    <Box padding="space-4">
       <VStack gap={"space-2"}>
         <TextField
           label="Deloverskrift"

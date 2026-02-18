@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import type { Vedtak } from "~/komponenter/behandling/vedtak/vedtak";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
-import {Button, HStack, MonthPicker, Textarea, useMonthpicker} from "@navikt/ds-react";
+import {Button, HStack, MonthPicker, Textarea, useMonthpicker, VStack} from "@navikt/ds-react";
 import {useParams} from "react-router";
 import {format} from "date-fns";
 
@@ -27,7 +27,7 @@ export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisnin
     }
 
     return (
-        <>
+        <VStack gap="space-12">
             <MonthPicker {...monthpickerProps}>
                 <MonthPicker.Input
                     {...inputProps}
@@ -42,6 +42,6 @@ export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisnin
                     Lagre vedtak
                 </Button>
             </HStack>
-        </>
+        </VStack>
     )
 };

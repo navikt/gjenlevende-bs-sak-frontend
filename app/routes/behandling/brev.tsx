@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Heading, HStack, Modal, VStack } from "@navikt/ds-react";
+import { Box, Button, Heading, HStack, Modal, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
@@ -23,16 +23,20 @@ export default function Brev() {
     useBrevmottaker(behandlingId);
 
   return (
-    <VStack gap="space-4">
-      <HStack align="center" justify="space-between" paddingInline="space-16">
-        <Heading level="1" size="medium">
-          Brevmottaker: {utledBrevmottakere()}
-        </Heading>
-        <Button variant={"tertiary"} onClick={() => settModalÅpen(true)}>
-          Legg til/endre brevmottaker
-        </Button>
-      </HStack>
-      <BrevSide />
+    <>
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <VStack gap="space-8">
+          <HStack align="center" justify="space-between">
+            <Heading level="1" size="medium">
+              Brevmottaker: {utledBrevmottakere()}
+            </Heading>
+            <Button variant={"tertiary"} onClick={() => settModalÅpen(true)}>
+              Legg til/endre brevmottaker
+            </Button>
+          </HStack>
+          <BrevSide />
+        </VStack>
+      </Box>
 
       <Modal
         open={modalÅpen}
@@ -47,6 +51,6 @@ export default function Brev() {
           sendMottakereTilSak={sendMottakereTilSak}
         />
       </Modal>
-    </VStack>
+    </>
   );
 }

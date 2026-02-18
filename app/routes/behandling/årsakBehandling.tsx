@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import type { Route } from "./+types/årsakBehandling";
 import {
   Alert,
+  Box,
   Button,
   DatePicker,
   Select,
@@ -24,7 +25,6 @@ export function meta(_: Route.MetaArgs) {
 
 const STEG_NAVN = "Årsak behandling";
 const STEG_PATH: StegPath = "arsak-behandling";
-const MAKS_BREDDE = "40rem";
 
 const ÅRSAK_ALTERNATIVER = [
   { verdi: "SØKNAD", label: "Søknad" },
@@ -78,45 +78,50 @@ export default function ArsakBehandling() {
   }, [kravdato]);
 
   return (
-    <VStack gap="space-6" style={{ maxWidth: MAKS_BREDDE }}>
-      <DatePicker {...datepickerProps}>
-        <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
-      </DatePicker>
+    <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+      <VStack gap="space-16">
+        <div style={{ maxWidth: "24rem" }}>
+          <DatePicker {...datepickerProps}>
+            <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
+          </DatePicker>
+        </div>
 
-      <Select
-        label="Årsak til behandling"
-        onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
-        value={årsak}
-        disabled={erLesevisning}
-      >
-        <option value="" disabled>
-          Velg årsak
-        </option>
-        {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
-          <option key={verdi} value={verdi}>
-            {label}
+        <Select
+          label="Årsak til behandling"
+          onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
+          value={årsak}
+          disabled={erLesevisning}
+          style={{ maxWidth: "24rem" }}
+        >
+          <option value="" disabled>
+            Velg årsak
           </option>
-        ))}
-      </Select>
+          {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
+            <option key={verdi} value={verdi}>
+              {label}
+            </option>
+          ))}
+        </Select>
 
-      <Textarea
-        label="Beskrivelse av årsak (fylles ut ved behov)"
-        onChange={(e) => oppdaterBeskrivelse(e.target.value)}
-        value={beskrivelse}
-        readOnly={erLesevisning}
-      />
+        <Textarea
+          label="Beskrivelse av årsak (fylles ut ved behov)"
+          onChange={(e) => oppdaterBeskrivelse(e.target.value)}
+          value={beskrivelse}
+          readOnly={erLesevisning}
+        />
 
-      <div>
-        <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>
-          Lagre
-        </Button>
-      </div>
+        <div>
+          <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>
+            Lagre
+          </Button>
+        </div>
 
-      {feilmelding && (
-        <Alert variant="error" size="small">
-          {feilmelding}
-        </Alert>
-      )}
-    </VStack>
+        {feilmelding && (
+          <Alert variant="error" size="small">
+            {feilmelding}
+          </Alert>
+        )}
+      </VStack>
+    </Box>
   );
 }
