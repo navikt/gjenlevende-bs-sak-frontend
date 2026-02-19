@@ -92,6 +92,8 @@ const SendtTilBeslutter: React.FC<{
   opprettetAv,
   opprettetTid,
 }) => {
+  const { ansvarligSaksbehandler } = useBehandlingContext();
+  const erAnsvarligSaksbehandler = ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
   const [laster, settLaster] = useState(false);
 
   const handleAngreSendTilBeslutter = async () => {
@@ -125,6 +127,7 @@ const SendtTilBeslutter: React.FC<{
           variant="secondary"
           onClick={handleAngreSendTilBeslutter}
           loading={laster}
+          disabled={!erAnsvarligSaksbehandler}
         >
           Angre send til beslutter
         </Button>

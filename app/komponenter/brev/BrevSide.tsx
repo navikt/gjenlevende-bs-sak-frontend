@@ -13,7 +13,7 @@ import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 export const BrevSide = () => {
   const erLesevisning = useErLesevisning();
 
-  const { behandlingId, revaliderBehandling } = useBehandlingContext();
+  const { behandlingId, revaliderBehandling, behandling } = useBehandlingContext();
   const {
     brevMal,
     fritekstbolker,
@@ -27,6 +27,8 @@ export const BrevSide = () => {
     mellomlagreBrev,
     slettFritekstbolk,
   } = useBrev(behandlingId);
+
+  const erSendtTilBeslutter = behandling?.status === "FATTER_VEDTAK";
 
   const { sender: senderTilBeslutter, sendTilBeslutter } = useBeslutter();
 
@@ -113,7 +115,7 @@ export const BrevSide = () => {
               </Button>
               <Button
                 onClick={handleSendTilBeslutter}
-                disabled={senderTilBeslutter || erLesevisning}
+                disabled={senderTilBeslutter || erLesevisning || erSendtTilBeslutter}
               >
                 Send til beslutter
               </Button>
