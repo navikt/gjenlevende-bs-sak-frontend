@@ -1,12 +1,12 @@
 import React, { forwardRef } from "react";
 import {
-  BodyShort,
   Button,
   Heading,
   Loader,
   VStack,
   Table,
   type DataCellProps,
+  Alert,
 } from "@navikt/ds-react";
 import type { Route } from "./+types/behandlingsoversikt";
 import { useHentBehandlinger } from "~/hooks/useHentBehandlinger";
@@ -28,10 +28,15 @@ TableDataCellSmall.displayName = "TableDataCellSmall";
 export default function Behandlingsoversikt() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
   const navigate = useNavigate();
+  const { opprettBehandling, opprettFeilmelding, oppretter } = useOpprettBehandling();
   const { fagsak, fagsakId } = usePersonContext();
   const { behandlinger, laster } = useHentBehandlinger(fagsakId);
 
-  const { opprettBehandling, opprettFeilmelding } = useOpprettBehandling();
+  const behandlingerSortert = behandlinger
+    ? [...behandlinger].sort(
+        (a, b) => new Date(b.opprettet).getTime() - new Date(a.opprettet).getTime()
+      )
+    : [];
 
   if (laster || !behandlinger || !fagsak) {
     return (
@@ -56,7 +61,7 @@ export default function Behandlingsoversikt() {
   };
 
   return (
-    <VStack gap="space-4">
+    <VStack gap="space-24">
       <Heading level="1" size="large">
         Behandlingsoversikt
       </Heading>
@@ -72,7 +77,7 @@ export default function Behandlingsoversikt() {
         </Table.Header>
 
         <Table.Body>
-          {behandlinger.map((behandling) => (
+          {behandlingerSortert.map((behandling) => (
             <Table.Row key={behandling.id}>
               <TableDataCellSmall>{formaterIsoDatoTid(behandling.opprettet)}</TableDataCellSmall>
               <TableDataCellSmall>{behandling.opprettetAv}</TableDataCellSmall>
@@ -88,10 +93,19 @@ export default function Behandlingsoversikt() {
         </Table.Body>
       </Table>
 
-      <div>
-        <Button onClick={startOpprettBehandling}>Lag behandling</Button>
-        <BodyShort>{opprettFeilmelding}</BodyShort>
-      </div>
+      <VStack gap={"space-8"}>
+        <div>
+          <Button onClick={startOpprettBehandling} disabled={oppretter}>
+            Lag behandling
+          </Button>
+        </div>
+
+        {opprettFeilmelding && (
+          <Alert variant="warning" size="small">
+            {opprettFeilmelding}
+          </Alert>
+        )}
+      </VStack>
     </VStack>
   );
 }
