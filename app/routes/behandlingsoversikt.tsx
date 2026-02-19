@@ -5,6 +5,7 @@ import {
   Loader,
   VStack,
   Table,
+  Tag,
   type DataCellProps,
   Alert,
 } from "@navikt/ds-react";
@@ -15,6 +16,8 @@ import { usePersonContext } from "~/contexts/PersonContext";
 import { useOpprettBehandling } from "~/hooks/useOpprettBehandling";
 import { useNavigate } from "react-router";
 import { formaterIsoDatoTid, formatterEnumVerdi } from "~/utils/utils";
+import type { Behandling } from "~/types/behandling";
+import type { TagFarge } from "~/types/farge";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Behandlingsoversikt" }];
@@ -24,6 +27,14 @@ export const TableDataCellSmall = forwardRef<HTMLTableCellElement, DataCellProps
   <Table.DataCell textSize={"small"} {...props} ref={ref} />
 ));
 TableDataCellSmall.displayName = "TableDataCellSmall";
+
+const behandlingStatusTagFarge: Record<Behandling["status"], TagFarge> = {
+  OPPRETTET: "info",
+  UTREDES: "info",
+  FATTER_VEDTAK: "warning",
+  IVERKSETTER_VEDTAK: "meta-lime",
+  FERDIGSTILT: "success",
+};
 
 export default function Behandlingsoversikt() {
   const { fagsakPersonId } = useParams<{ fagsakPersonId: string }>();
@@ -81,11 +92,23 @@ export default function Behandlingsoversikt() {
             <Table.Row key={behandling.id}>
               <TableDataCellSmall>{formaterIsoDatoTid(behandling.opprettet)}</TableDataCellSmall>
               <TableDataCellSmall>{behandling.opprettetAv}</TableDataCellSmall>
-              <TableDataCellSmall>{formatterEnumVerdi(behandling.status)}</TableDataCellSmall>
+              <TableDataCellSmall>
+                <Tag
+                  variant="moderate"
+                  size="xsmall"
+                  data-color={behandlingStatusTagFarge[behandling.status]}
+                >
+                  {formatterEnumVerdi(behandling.status)}
+                </Tag>
+              </TableDataCellSmall>
               <TableDataCellSmall>{formatterEnumVerdi(behandling.resultat)}</TableDataCellSmall>
               <TableDataCellSmall>
-                <Button size={"small"} onClick={() => gåTilBehandling(behandling.id)}>
-                  Gå til behandling
+                <Button
+                  size={"small"}
+                  variant={"secondary"}
+                  onClick={() => gåTilBehandling(behandling.id)}
+                >
+                  Åpne behandling
                 </Button>
               </TableDataCellSmall>
             </Table.Row>
