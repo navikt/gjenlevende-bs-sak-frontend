@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import type {Barnetilsynperiode} from "~/komponenter/behandling/vedtak/vedtak";
 import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
-import {useNavigate, useParams} from "react-router";
+import {useParams} from "react-router";
 import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {
     Alert,
@@ -13,15 +13,16 @@ import {
 import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderForVedtak";
 import {BarnetilsynperiodeValg} from "~/komponenter/behandling/vedtak/BarnetilsynperiodeValg";
 import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/BeregningBarnetilsynTabell";
-import {useBehandlingSteg} from "~/hooks/useBehandlingSteg";
-import {useMarkerStegFerdige} from "~/hooks/useMarkerStegFerdige";
 
-export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisning: boolean}> = ({lagretVedtak, erLesevisning}) => {
+interface InnvilgeVedtakProps {
+    lagretVedtak: Vedtak | null;
+    erLesevisning: boolean;
+    låst: boolean;
+    onLagreSuksess: () => void;
+}
+
+export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erLesevisning, låst, onLagreSuksess}) => {
     const {behandlingId} = useParams<{ behandlingId: string }>();
-    const {finnNesteSteg} = useBehandlingSteg();
-    const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean>(false);
-
-    useMarkerStegFerdige("Vilkår", erVilkårUtfylt === true);
 
     const tomBarnetilsynperiode: Barnetilsynperiode = {
         behandlingId: behandlingId ?? '',
@@ -43,7 +44,7 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisn
     const [perioder, settPerioder] = useState<Barnetilsynperiode[]>(lagretPerioder);
     const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
 
-    const navigate = useNavigate();
+    const erLåst = erLesevisning || låst;
 
     async function handleLagreVedtak() {
         if (!behandlingId) return;
@@ -54,11 +55,7 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisn
         };
         const response = await lagreVedtak(behandlingId, Vedtak);
         if (response?.status === 'OK') {
-            settErVilkårUtfylt(true);
-            const nesteSteg = finnNesteSteg("vedtak-og-beregning");
-            if (nesteSteg) {
-                navigate(`../${nesteSteg.path}`, {relative: "path"});
-            }
+            onLagreSuksess();
         }
     }
 
@@ -66,12 +63,12 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisn
         <VStack gap="space-24">
             <VStack gap="space-16">
                 <BarnetilsynperiodeValg perioder={perioder}
-                                        settPerioder={settPerioder} erLesevisning={erLesevisning}></BarnetilsynperiodeValg>
+                                        settPerioder={settPerioder} erLesevisning={erLåst}></BarnetilsynperiodeValg>
             </VStack>
             <Textarea label={'Begrunnelse'} value={begrunnelse}
-                      onChange={e => settBegrunnelse(e.target.value)} disabled={erLesevisning}></Textarea>
+                      onChange={e => settBegrunnelse(e.target.value)} disabled={erLåst}></Textarea>
             <HStack>
-                <Button variant="secondary" onClick={() => hentBeløpsperioder(behandlingId, perioder)} disabled={erLesevisning}>
+                <Button variant="secondary" onClick={() => hentBeløpsperioder(behandlingId, perioder)} disabled={erLåst}>
                     Beregn
                 </Button>
             </HStack>
@@ -81,11 +78,13 @@ export const InnvilgeVedtak: React.FC<{ lagretVedtak: Vedtak | null , erLesevisn
             {beløpsperioder && (
                 <BeregningBarnetilsynTabell beløpsperioder={beløpsperioder}></BeregningBarnetilsynTabell>
             )}
-            <HStack>
-                <Button onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
-                    Lagre vedtak
-                </Button>
-            </HStack>
+            {!låst && (
+                <HStack>
+                    <Button onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
+                        Lagre vedtak
+                    </Button>
+                </HStack>
+            )}
             {opprettFeilmelding && (
                 <Alert variant="warning">{opprettFeilmelding}</Alert>
             )}

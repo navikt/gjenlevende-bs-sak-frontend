@@ -23,10 +23,13 @@ interface UseÅrsakBehandling {
   laster: boolean;
   feilmelding: string;
   erLagret: boolean;
+  låst: boolean;
   oppdaterKravdato: (dato: Date | undefined) => void;
   oppdaterÅrsak: (årsak: ÅrsakType) => void;
   oppdaterBeskrivelse: (beskrivelse: string) => void;
-  lagreOgNavigerVidere: () => Promise<boolean>;
+  lagre: () => Promise<boolean>;
+  settLåst: (val: boolean) => void;
+  tilbakestill: () => void;
 }
 
 const tilLocalDateString = (date: Date): string => {
@@ -38,6 +41,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
   const [laster, settLaster] = useState(false);
   const [erLagret, settErLagret] = useState(false);
+  const [låst, settLåst] = useState(false);
   const [feilmelding, settFeilmelding] = useState("");
 
   useEffect(() => {
@@ -58,6 +62,13 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
     hentData();
   }, [behandlingId, hentÅrsakData, årsakDataHentet]);
+
+  useEffect(() => {
+    if (årsakDataHentet && årsakState?.kravdato && årsakState?.årsak) {
+      settLåst(true);
+      settErLagret(true);
+    }
+  }, [årsakDataHentet]);
 
   const oppdaterKravdato = useCallback(
     (dato: Date | undefined) => {
@@ -80,7 +91,13 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     [oppdaterÅrsakState]
   );
 
-  const lagreOgNavigerVidere = useCallback(async (): Promise<boolean> => {
+  const tilbakestill = useCallback(() => {
+    oppdaterÅrsakState({ kravdato: undefined, årsak: "" as ÅrsakType, beskrivelse: "" });
+    settLåst(false);
+    settErLagret(false);
+  }, [oppdaterÅrsakState]);
+
+  const lagre = useCallback(async (): Promise<boolean> => {
     const lagreÅrsakBehandling = (
       behandlingId: string,
       request: ÅrsakBehandlingRequest
@@ -128,9 +145,12 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     laster,
     feilmelding,
     erLagret,
+    låst,
     oppdaterKravdato,
     oppdaterÅrsak,
     oppdaterBeskrivelse,
-    lagreOgNavigerVidere,
+    lagre,
+    settLåst,
+    tilbakestill,
   };
 };

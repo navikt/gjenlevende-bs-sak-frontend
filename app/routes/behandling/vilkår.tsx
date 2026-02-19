@@ -37,7 +37,7 @@ export default function Vilkår() {
     <VStack gap={"space-24"}>
       <VilkårInnhold settErVilkårUtfylt={settErVilkårUtfylt} />
 
-      <div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <Button onClick={handleNesteKlikk} disabled={!harFyltUtAlt}>
           Neste
         </Button>

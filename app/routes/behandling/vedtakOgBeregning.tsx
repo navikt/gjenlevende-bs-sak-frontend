@@ -1,27 +1,41 @@
 import React, { useState, useEffect } from "react";
 import type { Route } from "./+types/vedtakOgBeregning";
-import { Box, VStack, Select } from "@navikt/ds-react";
+import { Box, Button, HStack, VStack, Select } from "@navikt/ds-react";
+import { PencilIcon, TrashIcon } from "@navikt/aksel-icons";
 import type { ResultatType } from "~/komponenter/behandling/vedtak/vedtak";
 import { InnvilgeVedtak } from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
 import { useHentVedtak } from "~/hooks/useHentVedtak";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { AvslåVedtak } from "~/komponenter/behandling/vedtak/AvslåVedtak";
 import { OppgørVedtak } from "~/komponenter/behandling/vedtak/OpphørVedtak";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
+import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
+import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Vedtak og beregning" }];
 }
 
+const STEG_PATH: StegPath = "vedtak-og-beregning";
+
 export default function VedtakOgBeregning() {
   const [vedtaksresultat, settVedtaksResultat] = useState<ResultatType | undefined>(undefined);
+  const [låst, settLåst] = useState(false);
+  const [erLagret, settErLagret] = useState(false);
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const { vedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
+  const navigate = useNavigate();
+  const { finnNesteSteg } = useBehandlingSteg();
+
+  useMarkerStegFerdige("Vedtak og beregning", erLagret);
 
   useEffect(() => {
     if (vedtak?.resultatType) {
       settVedtaksResultat(vedtak.resultatType);
+      settLåst(true);
+      settErLagret(true);
     }
   }, [vedtak]);
 
@@ -30,31 +44,92 @@ export default function VedtakOgBeregning() {
     settVedtaksResultat(resultat);
   };
 
+  const handleLagreSuksess = () => {
+    settLåst(true);
+    settErLagret(true);
+  };
+
+  const handleSlett = () => {
+    settVedtaksResultat(undefined);
+    settLåst(false);
+    settErLagret(false);
+  };
+
+  const navigerTilNeste = () => {
+    const nesteSteg = finnNesteSteg(STEG_PATH);
+    if (nesteSteg) {
+      navigate(`../${nesteSteg.path}`, { relative: "path" });
+    }
+  };
+
   return (
-    <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
-      <VStack gap="space-12">
-        <Select
-          label={"Vedtaksresultat"}
-          value={vedtaksresultat || ""}
-          onChange={(e) => handleVedtaksresultatEndring(e.target.value)}
-          disabled={erLesevisning}
-          style={{ maxWidth: "24rem" }}
-        >
-          <option value="">Velg</option>
-          <option value="INNVILGET">Innvilge</option>
-          <option value="AVSLÅTT">Avslå</option>
-          <option value="OPPHØR">Opphør</option>
-        </Select>
-        {vedtaksresultat === "INNVILGET" && (
-          <InnvilgeVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></InnvilgeVedtak>
-        )}
-        {vedtaksresultat === "AVSLÅTT" && (
-          <AvslåVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></AvslåVedtak>
-        )}
-        {vedtaksresultat === "OPPHØR" && (
-          <OppgørVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></OppgørVedtak>
-        )}
-      </VStack>
-    </Box>
+    <VStack gap="space-24">
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <VStack gap="space-12" style={{ position: "relative" }}>
+          {låst && !erLesevisning && (
+            <HStack gap="space-2" style={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
+              <Button
+                variant="tertiary"
+                size="small"
+                icon={<PencilIcon title="Rediger" />}
+                onClick={() => settLåst(false)}
+              >
+                Rediger
+              </Button>
+              <Button
+                variant="tertiary"
+                size="small"
+                icon={<TrashIcon title="Slett" fontSize="1.5rem" />}
+                onClick={handleSlett}
+              >
+                Slett
+              </Button>
+            </HStack>
+          )}
+          <Select
+            label={"Vedtaksresultat"}
+            value={vedtaksresultat || ""}
+            onChange={(e) => handleVedtaksresultatEndring(e.target.value)}
+            disabled={erLesevisning || låst}
+            style={{ maxWidth: "24rem" }}
+          >
+            <option value="">Velg</option>
+            <option value="INNVILGET">Innvilge</option>
+            <option value="AVSLÅTT">Avslå</option>
+            <option value="OPPHØR">Opphør</option>
+          </Select>
+          {vedtaksresultat === "INNVILGET" && (
+            <InnvilgeVedtak
+              lagretVedtak={vedtak}
+              erLesevisning={erLesevisning}
+              låst={låst}
+              onLagreSuksess={handleLagreSuksess}
+            />
+          )}
+          {vedtaksresultat === "AVSLÅTT" && (
+            <AvslåVedtak
+              lagretVedtak={vedtak}
+              erLesevisning={erLesevisning}
+              låst={låst}
+              onLagreSuksess={handleLagreSuksess}
+            />
+          )}
+          {vedtaksresultat === "OPPHØR" && (
+            <OppgørVedtak
+              lagretVedtak={vedtak}
+              erLesevisning={erLesevisning}
+              låst={låst}
+              onLagreSuksess={handleLagreSuksess}
+            />
+          )}
+        </VStack>
+      </Box>
+
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button onClick={navigerTilNeste} disabled={!erLagret}>
+          Neste
+        </Button>
+      </div>
+    </VStack>
   );
 }
