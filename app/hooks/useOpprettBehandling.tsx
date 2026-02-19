@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
 
+interface OpprettBehandlingResponse {
+  behandlingId: string;
+}
+
 interface OpprettBehandling {
   opprettBehandling: (fagsakId: string) => Promise<string | undefined>;
   oppretter: boolean;
@@ -12,7 +16,9 @@ export const useOpprettBehandling = (): OpprettBehandling => {
   const [opprettFeilmelding, settOpprettFeilmelding] = useState<string | null>(null);
 
   const opprettBehandling = async (fagsakId: string): Promise<string | undefined> => {
-    const opprettBehandlingApi = (fagsakId: string): Promise<ApiResponse<string>> => {
+    const opprettBehandlingApi = (
+      fagsakId: string
+    ): Promise<ApiResponse<OpprettBehandlingResponse>> => {
       return apiCall(`/behandling/opprett`, {
         method: "POST",
         body: JSON.stringify({ fagsakId }),
@@ -31,7 +37,7 @@ export const useOpprettBehandling = (): OpprettBehandling => {
     }
 
     settOppretter(false);
-    return response.data;
+    return response.data?.behandlingId;
   };
 
   return {
