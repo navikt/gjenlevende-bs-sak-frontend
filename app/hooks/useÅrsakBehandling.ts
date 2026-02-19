@@ -68,7 +68,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
       settLåst(true);
       settErLagret(true);
     }
-  }, [årsakDataHentet]);
+  }, [årsakDataHentet, årsakState?.kravdato, årsakState?.årsak]);
 
   const oppdaterKravdato = useCallback(
     (dato: Date | undefined) => {
