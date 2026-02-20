@@ -9,25 +9,19 @@ export function useBehandlingSteg() {
     throw new Error("useBehandlingSteg må brukes innenfor BehandlingContext med behandlingSteg");
   }
 
-  const finnNesteSteg = (nåværendeStegPath: StegPath) => {
+  const finnSteg = (nåværendeStegPath: StegPath, retning: number) => {
     const nåværendeIndex = stegListe.findIndex((steg) => steg.path === nåværendeStegPath);
+    const målIndex = nåværendeIndex + retning;
 
-    if (nåværendeIndex === -1 || nåværendeIndex === stegListe.length - 1) {
+    if (nåværendeIndex === -1 || målIndex < 0 || målIndex >= stegListe.length) {
       return null;
     }
 
-    return stegListe[nåværendeIndex + 1];
+    return stegListe[målIndex];
   };
 
-  const finnForrigeSteg = (nåværendeStegPath: StegPath) => {
-    const nåværendeIndex = stegListe.findIndex((steg) => steg.path === nåværendeStegPath);
-
-    if (nåværendeIndex <= 0) {
-      return null;
-    }
-
-    return stegListe[nåværendeIndex - 1];
-  };
+  const finnNesteSteg = (path: StegPath) => finnSteg(path, 1);
+  const finnForrigeSteg = (path: StegPath) => finnSteg(path, -1);
 
   return {
     stegListe,

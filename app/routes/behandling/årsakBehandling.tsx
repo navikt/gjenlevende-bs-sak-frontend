@@ -5,22 +5,20 @@ import {
   Box,
   Button,
   DatePicker,
-  HStack,
   Loader,
   Select,
   Textarea,
   useDatepicker,
   VStack,
 } from "@navikt/ds-react";
-import { PencilIcon, TrashIcon } from "@navikt/aksel-icons";
-import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
-import { useNavigate } from "react-router";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useArsakBehandling } from "~/hooks/useÅrsakBehandling";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
 import type { ÅrsakType } from "~/types/årsak";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { RedigerOgSlettKnapper } from "~/komponenter/behandling/RedigerOgSlettKnapper";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Årsak behandling" }];
@@ -39,8 +37,6 @@ export default function ArsakBehandling() {
   const erLesevisning = useErLesevisning();
 
   const { behandlingId, årsakDataHentet } = useBehandlingContext();
-  const navigate = useNavigate();
-  const { finnNesteSteg } = useBehandlingSteg();
 
   const {
     kravdato,
@@ -75,13 +71,6 @@ export default function ArsakBehandling() {
     }
   };
 
-  const navigerTilNeste = () => {
-    const nesteSteg = finnNesteSteg(STEG_PATH);
-    if (nesteSteg) {
-      navigate(`../${nesteSteg.path}`, { relative: "path" });
-    }
-  };
-
   useEffect(() => {
     setSelected(kravdato);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,24 +89,10 @@ export default function ArsakBehandling() {
       <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
         <VStack gap="space-24" style={{ position: "relative" }}>
           {låst && !erLesevisning && (
-            <HStack gap="space-2" style={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
-              <Button
-                variant="tertiary"
-                size="small"
-                icon={<PencilIcon title="Rediger" />}
-                onClick={() => settLåst(false)}
-              >
-                Rediger
-              </Button>
-              <Button
-                variant="tertiary"
-                size="small"
-                icon={<TrashIcon title="Slett" fontSize="1.5rem" />}
-                onClick={tilbakestill}
-              >
-                Slett
-              </Button>
-            </HStack>
+            <RedigerOgSlettKnapper
+              onRediger={() => settLåst(false)}
+              onSlett={tilbakestill}
+            />
           )}
 
           <VStack gap="space-16">
@@ -168,11 +143,7 @@ export default function ArsakBehandling() {
         </VStack>
       </Box>
 
-      <HStack justify="end">
-        <Button onClick={navigerTilNeste} disabled={!erLagret}>
-          Neste
-        </Button>
-      </HStack>
+      <StegNavigering stegPath={STEG_PATH} nesteDisabled={!erLagret} />
     </VStack>
   );
 }

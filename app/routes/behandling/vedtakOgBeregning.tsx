@@ -1,17 +1,17 @@
 import React, { useState, useRef } from "react";
 import type { Route } from "./+types/vedtakOgBeregning";
-import { Box, Button, HStack, Loader, VStack, Select } from "@navikt/ds-react";
-import { PencilIcon, TrashIcon } from "@navikt/aksel-icons";
+import { Box, Loader, VStack, Select } from "@navikt/ds-react";
 import type { ResultatType } from "~/komponenter/behandling/vedtak/vedtak";
 import { InnvilgeVedtak } from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
 import { useHentVedtak } from "~/hooks/useHentVedtak";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { AvslåVedtak } from "~/komponenter/behandling/vedtak/AvslåVedtak";
 import { OppgørVedtak } from "~/komponenter/behandling/vedtak/OpphørVedtak";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
-import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { RedigerOgSlettKnapper } from "~/komponenter/behandling/RedigerOgSlettKnapper";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Vedtak og beregning" }];
@@ -27,8 +27,6 @@ export default function VedtakOgBeregning() {
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const { vedtak, laster: lasterVedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
-  const navigate = useNavigate();
-  const { finnNesteSteg, finnForrigeSteg } = useBehandlingSteg();
 
   useMarkerStegFerdige("Vedtak og beregning", erLagret);
 
@@ -59,20 +57,6 @@ export default function VedtakOgBeregning() {
     settErSlettet(true);
   };
 
-  const navigerTilNeste = () => {
-    const nesteSteg = finnNesteSteg(STEG_PATH);
-    if (nesteSteg) {
-      navigate(`../${nesteSteg.path}`, { relative: "path" });
-    }
-  };
-
-  const navigerTilForrige = () => {
-    const forrigeSteg = finnForrigeSteg(STEG_PATH);
-    if (forrigeSteg) {
-      navigate(`../${forrigeSteg.path}`, { relative: "path" });
-    }
-  };
-
   if (lasterVedtak) {
     return (
       <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
@@ -86,24 +70,10 @@ export default function VedtakOgBeregning() {
       <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
         <VStack gap="space-12" style={{ position: "relative" }}>
           {låst && !erLesevisning && (
-            <HStack gap="space-2" style={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
-              <Button
-                variant="tertiary"
-                size="small"
-                icon={<PencilIcon title="Rediger" />}
-                onClick={() => settLåst(false)}
-              >
-                Rediger
-              </Button>
-              <Button
-                variant="tertiary"
-                size="small"
-                icon={<TrashIcon title="Slett" fontSize="1.5rem" />}
-                onClick={handleSlett}
-              >
-                Slett
-              </Button>
-            </HStack>
+            <RedigerOgSlettKnapper
+              onRediger={() => settLåst(false)}
+              onSlett={handleSlett}
+            />
           )}
           <Select
             label={"Vedtaksresultat"}
@@ -144,14 +114,7 @@ export default function VedtakOgBeregning() {
         </VStack>
       </Box>
 
-      <HStack justify="space-between">
-        <Button variant="tertiary" onClick={navigerTilForrige}>
-          Tilbake
-        </Button>
-        <Button onClick={navigerTilNeste} disabled={!erLagret}>
-          Neste
-        </Button>
-      </HStack>
+      <StegNavigering stegPath={STEG_PATH} nesteDisabled={!erLagret} />
     </VStack>
   );
 }

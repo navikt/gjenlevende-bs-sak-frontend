@@ -5,9 +5,8 @@ import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
 import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
-import { useNavigate } from "react-router";
-import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -26,15 +25,6 @@ export default function Brev() {
   const { behandlingId } = useBehandlingContext();
   const { mottakere, settMottakere, utledBrevmottakere, sendMottakereTilSak } =
     useBrevmottaker(behandlingId);
-  const navigate = useNavigate();
-  const { finnForrigeSteg } = useBehandlingSteg();
-
-  const navigerTilForrige = () => {
-    const forrigeSteg = finnForrigeSteg(STEG_PATH);
-    if (forrigeSteg) {
-      navigate(`../${forrigeSteg.path}`, { relative: "path" });
-    }
-  };
 
   return (
     <VStack gap="space-24">
@@ -66,11 +56,7 @@ export default function Brev() {
         />
       </Modal>
 
-      <HStack justify="start">
-        <Button variant="tertiary" onClick={navigerTilForrige}>
-          Tilbake
-        </Button>
-      </HStack>
+      <StegNavigering stegPath={STEG_PATH} />
     </VStack>
   );
 }
