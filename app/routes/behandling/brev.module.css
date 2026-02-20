@@ -12,6 +12,27 @@
 .fokusringPadding {
   padding: var(--ax-space-8);
   margin: calc(-1 * var(--ax-space-8));
+  margin-bottom: 0;
+}
+
+.venstreKolonne {
+  padding-bottom: 2rem;
+  mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent);
+  scrollbar-color: auto transparent;
+}
+
+.venstreKolonne::-webkit-scrollbar {
+  width: 6px;
+}
+
+.venstreKolonne::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.venstreKolonne::-webkit-scrollbar-thumb {
+  background-color: var(--ax-border-neutral-subtle);
+  border-radius: 3px;
 }
 
 .innholdGrid {

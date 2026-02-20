@@ -80,89 +80,84 @@ export default function Brev() {
         overflow="hidden"
         className={styles.brevBoks}
       >
-        <VStack gap="space-24" minHeight="0" flexGrow="1">
-          <HStack align="center" justify="space-between">
+        <HGrid
+          columns="5fr 7fr"
+          gap="space-24"
+          minHeight="0"
+          flexGrow="1"
+          className={styles.innholdGrid}
+        >
+          {/* Venstre kolonne */}
+          <VStack
+            gap="space-24"
+            overflow="auto"
+            minHeight="0"
+            flexGrow="1"
+            className={`${styles.fokusringPadding} ${styles.venstreKolonne}`}
+          >
             <Heading level="1" size="small">
               Brevmottaker: {utledBrevmottakere()}
             </Heading>
-            <Button variant="tertiary" onClick={() => settModalÅpen(true)}>
-              Legg til/endre brevmottaker
-            </Button>
-          </HStack>
-
-          <HGrid
-            columns="5fr 7fr"
-            gap="space-24"
-            minHeight="0"
-            flexGrow="1"
-            className={styles.innholdGrid}
-          >
-            {/* Venstre kolonne */}
-            <VStack
-              gap="space-16"
-              overflow="auto"
-              minHeight="0"
-              flexGrow="1"
-              className={styles.fokusringPadding}
+            <div>
+              <Button variant="secondary" size={"small"} onClick={() => settModalÅpen(true)}>
+                Legg til/endre brevmottaker
+              </Button>
+            </div>
+            <Select
+              label="Velg dokument"
+              value={brevMal?.tittel ?? ""}
+              onChange={(e) => velgBrevmal(e.target.value)}
+              size="medium"
+              disabled={erLesevisning}
             >
-              <Select
-                label="Velg dokument"
-                value={brevMal?.tittel ?? ""}
-                onChange={(e) => velgBrevmal(e.target.value)}
-                size="medium"
-                disabled={erLesevisning}
-              >
-                <option value="" disabled>
-                  Ikke valgt
+              <option value="" disabled>
+                Ikke valgt
+              </option>
+              {brevmaler.map((mal) => (
+                <option key={mal.tittel} value={mal.tittel}>
+                  {mal.tittel}
                 </option>
-                {brevmaler.map((mal) => (
-                  <option key={mal.tittel} value={mal.tittel}>
-                    {mal.tittel}
-                  </option>
+              ))}
+            </Select>
+
+            {brevMal && (
+              <>
+                <Heading level="3" size="xsmall">
+                  Fritekstområde
+                </Heading>
+                {fritekstbolker.map((fritekstfelt, index) => (
+                  <Fritekstbolk
+                    key={index}
+                    underoverskrift={fritekstfelt.underoverskrift}
+                    innhold={fritekstfelt.innhold}
+                    handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
+                    handleFlyttOpp={() => flyttBolkOpp(index)}
+                    handleFlyttNed={() => flyttBolkNed(index)}
+                    handleSlett={() => slettFritekstbolk(index)}
+                    fritekstfeltListe={fritekstbolker}
+                  />
                 ))}
-              </Select>
+                <Button
+                  variant="tertiary"
+                  icon={<PlusIcon title="Legg til fritekstfelt" />}
+                  onClick={leggTilFritekstbolk}
+                  disabled={erLesevisning}
+                >
+                  Legg til fritekstfelt
+                </Button>
+              </>
+            )}
+          </VStack>
 
-              {brevMal && (
-                <>
-                  <Heading level="3" size="xsmall">
-                    Fritekstområde
-                  </Heading>
-                  {fritekstbolker.map((fritekstfelt, index) => (
-                    <Fritekstbolk
-                      key={index}
-                      underoverskrift={fritekstfelt.underoverskrift}
-                      innhold={fritekstfelt.innhold}
-                      handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
-                      handleFlyttOpp={() => flyttBolkOpp(index)}
-                      handleFlyttNed={() => flyttBolkNed(index)}
-                      handleSlett={() => slettFritekstbolk(index)}
-                      fritekstfeltListe={fritekstbolker}
-                    />
-                  ))}
-                  <Button
-                    variant="tertiary"
-                    icon={<PlusIcon title="Legg til fritekstfelt" />}
-                    onClick={leggTilFritekstbolk}
-                    disabled={erLesevisning}
-                  >
-                    Legg til fritekstfelt
-                  </Button>
-                </>
-              )}
-            </VStack>
-
-            {/* Høyre kolonne */}
-            <Box overflow="hidden" borderRadius="2" background="neutral-soft" minHeight="0">
-              {brevMal ? (
-                <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
-              ) : (
-                <div className={styles.pdfTomtilstand}>
-                  Velg et dokument for å se forhåndsvisning
-                </div>
-              )}
-            </Box>
-          </HGrid>
-        </VStack>
+          {/* Høyre kolonne */}
+          <Box overflow="hidden" borderRadius="2" background="neutral-soft" minHeight="0">
+            {brevMal ? (
+              <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
+            ) : (
+              <div className={styles.pdfTomtilstand}>Velg et dokument for å se forhåndsvisning</div>
+            )}
+          </Box>
+        </HGrid>
       </Box>
 
       <Modal
