@@ -5,6 +5,8 @@ import { BrevSide } from "~/komponenter/brev/BrevSide";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
 import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -16,6 +18,8 @@ export function meta(_args: Route.MetaArgs) {
   ];
 }
 
+const STEG_PATH: StegPath = "brev";
+
 export default function Brev() {
   const [modalÅpen, settModalÅpen] = useState(false);
   const { behandlingId } = useBehandlingContext();
@@ -23,7 +27,7 @@ export default function Brev() {
     useBrevmottaker(behandlingId);
 
   return (
-    <>
+    <VStack gap="space-24">
       <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
         <VStack gap="space-8">
           <HStack align="center" justify="space-between">
@@ -51,6 +55,8 @@ export default function Brev() {
           sendMottakereTilSak={sendMottakereTilSak}
         />
       </Modal>
-    </>
+
+      <StegNavigering stegPath={STEG_PATH} />
+    </VStack>
   );
 }

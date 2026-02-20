@@ -5,8 +5,14 @@ import {Button, HStack, MonthPicker, Textarea, useMonthpicker, VStack} from "@na
 import {useParams} from "react-router";
 import {format} from "date-fns";
 
+interface OpphørVedtakProps {
+    lagretVedtak: Vedtak | null;
+    erLesevisning: boolean;
+    låst: boolean;
+    onLagreSuksess: () => void;
+}
 
-export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisning: boolean }> = ({lagretVedtak, erLesevisning}) => {
+export const OppgørVedtak: React.FC<OpphørVedtakProps> = ({lagretVedtak, erLesevisning, låst, onLagreSuksess}) => {
     const {lagreVedtak} = useLagreVedtak();
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {monthpickerProps, inputProps, selectedMonth} = useMonthpicker({
@@ -15,7 +21,9 @@ export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisnin
 
     const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
 
-    function handleLagreVedtak() {
+    const erLåst = erLesevisning || låst;
+
+    async function handleLagreVedtak() {
         if (!behandlingId || !selectedMonth) return;
         const Vedtak = {
             resultatType: 'OPPHØR' as const,
@@ -23,25 +31,30 @@ export const OppgørVedtak: React.FC<{ lagretVedtak: Vedtak | null, erLesevisnin
             barnetilsynperioder: [],
             opphørFom: format(selectedMonth, 'yyyy-MM')
         };
-        lagreVedtak(behandlingId, Vedtak);
+        const response = await lagreVedtak(behandlingId, Vedtak);
+        if (response) {
+            onLagreSuksess();
+        }
     }
 
     return (
-        <VStack gap="space-12">
+        <VStack gap="space-24">
             <MonthPicker {...monthpickerProps}>
                 <MonthPicker.Input
                     {...inputProps}
                     label="Velg måned"
-                    disabled={erLesevisning}
+                    disabled={erLåst}
                 />
             </MonthPicker>
-            <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLesevisning}
+            <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLåst}
                       onChange={e => settBegrunnelse(e.target.value)}></Textarea>
-            <HStack>
-                <Button size="medium" onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
-                    Lagre vedtak
-                </Button>
-            </HStack>
+            {!låst && (
+                <HStack>
+                    <Button size="medium" onClick={() => handleLagreVedtak()} disabled={erLesevisning}>
+                        Lagre vedtak
+                    </Button>
+                </HStack>
+            )}
         </VStack>
     )
 };

@@ -5,19 +5,20 @@ import {
   Box,
   Button,
   DatePicker,
+  Loader,
   Select,
   Textarea,
   useDatepicker,
   VStack,
 } from "@navikt/ds-react";
-import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
-import { useNavigate } from "react-router";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useArsakBehandling } from "~/hooks/useÅrsakBehandling";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
 import type { ÅrsakType } from "~/types/årsak";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { RedigerOgSlettKnapper } from "~/komponenter/behandling/RedigerOgSlettKnapper";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Årsak behandling" }];
@@ -35,9 +36,7 @@ const ÅRSAK_ALTERNATIVER = [
 export default function ArsakBehandling() {
   const erLesevisning = useErLesevisning();
 
-  const { behandlingId } = useBehandlingContext();
-  const navigate = useNavigate();
-  const { finnNesteSteg } = useBehandlingSteg();
+  const { behandlingId, årsakDataHentet } = useBehandlingContext();
 
   const {
     kravdato,
@@ -46,10 +45,13 @@ export default function ArsakBehandling() {
     laster,
     feilmelding,
     erLagret,
+    låst,
     oppdaterKravdato,
     oppdaterÅrsak,
     oppdaterBeskrivelse,
-    lagreOgNavigerVidere,
+    lagre,
+    settLåst,
+    tilbakestill,
   } = useArsakBehandling(behandlingId);
 
   const { datepickerProps, inputProps, setSelected } = useDatepicker({
@@ -59,16 +61,13 @@ export default function ArsakBehandling() {
 
   useMarkerStegFerdige(STEG_NAVN, erLagret);
 
+  const erLåst = låst || erLesevisning;
   const kanLagre = kravdato !== undefined && årsak !== "";
 
   const håndterLagring = async () => {
-    const suksess = await lagreOgNavigerVidere();
-
+    const suksess = await lagre();
     if (suksess) {
-      const nesteSteg = finnNesteSteg(STEG_PATH);
-      if (nesteSteg) {
-        navigate(`../${nesteSteg.path}`, { relative: "path" });
-      }
+      settLåst(true);
     }
   };
 
@@ -77,53 +76,74 @@ export default function ArsakBehandling() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kravdato]);
 
+  if (!årsakDataHentet) {
+    return (
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <Loader size="medium" />
+      </Box>
+    );
+  }
+
   return (
-    <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
-      <VStack gap="space-24">
-        <VStack gap="space-16">
-          <div style={{ maxWidth: "24rem" }}>
-            <DatePicker {...datepickerProps}>
-              <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLesevisning} />
-            </DatePicker>
-          </div>
+    <VStack gap="space-24">
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <VStack gap="space-24" style={{ position: "relative" }}>
+          {låst && !erLesevisning && (
+            <RedigerOgSlettKnapper
+              onRediger={() => settLåst(false)}
+              onSlett={tilbakestill}
+            />
+          )}
 
-          <Select
-            label="Årsak til behandling"
-            onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
-            value={årsak}
-            disabled={erLesevisning}
-            style={{ maxWidth: "24rem" }}
-          >
-            <option value="" disabled>
-              Velg årsak
-            </option>
-            {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
-              <option key={verdi} value={verdi}>
-                {label}
+          <VStack gap="space-16">
+            <div style={{ maxWidth: "24rem" }}>
+              <DatePicker {...datepickerProps}>
+                <DatePicker.Input {...inputProps} label="Kravdato" readOnly={erLåst} />
+              </DatePicker>
+            </div>
+
+            <Select
+              label="Årsak til behandling"
+              onChange={(e) => oppdaterÅrsak(e.target.value as ÅrsakType)}
+              value={årsak}
+              disabled={erLåst}
+              style={{ maxWidth: "24rem" }}
+            >
+              <option value="" disabled>
+                Velg årsak
               </option>
-            ))}
-          </Select>
+              {ÅRSAK_ALTERNATIVER.map(({ verdi, label }) => (
+                <option key={verdi} value={verdi}>
+                  {label}
+                </option>
+              ))}
+            </Select>
 
-          <Textarea
-            label="Beskrivelse av årsak (fylles ut ved behov)"
-            onChange={(e) => oppdaterBeskrivelse(e.target.value)}
-            value={beskrivelse}
-            readOnly={erLesevisning}
-          />
+            <Textarea
+              label="Beskrivelse av årsak (fylles ut ved behov)"
+              onChange={(e) => oppdaterBeskrivelse(e.target.value)}
+              value={beskrivelse}
+              readOnly={erLåst}
+            />
+          </VStack>
+
+          {!låst && (
+            <div>
+              <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>
+                Lagre
+              </Button>
+            </div>
+          )}
+
+          {feilmelding && (
+            <Alert variant="error" size="small">
+              {feilmelding}
+            </Alert>
+          )}
         </VStack>
+      </Box>
 
-        <div>
-          <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>
-            Lagre
-          </Button>
-        </div>
-
-        {feilmelding && (
-          <Alert variant="error" size="small">
-            {feilmelding}
-          </Alert>
-        )}
-      </VStack>
-    </Box>
+      <StegNavigering stegPath={STEG_PATH} nesteDisabled={!erLagret} />
+    </VStack>
   );
 }

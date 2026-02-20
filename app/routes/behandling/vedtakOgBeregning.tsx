@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import type { Route } from "./+types/vedtakOgBeregning";
-import { Box, VStack, Select } from "@navikt/ds-react";
+import { Box, Loader, VStack, Select } from "@navikt/ds-react";
 import type { ResultatType } from "~/komponenter/behandling/vedtak/vedtak";
 import { InnvilgeVedtak } from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
 import { useHentVedtak } from "~/hooks/useHentVedtak";
@@ -8,53 +8,113 @@ import { useParams } from "react-router";
 import { AvslåVedtak } from "~/komponenter/behandling/vedtak/AvslåVedtak";
 import { OppgørVedtak } from "~/komponenter/behandling/vedtak/OpphørVedtak";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
+import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { RedigerOgSlettKnapper } from "~/komponenter/behandling/RedigerOgSlettKnapper";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Vedtak og beregning" }];
 }
 
+const STEG_PATH: StegPath = "vedtak-og-beregning";
+
 export default function VedtakOgBeregning() {
   const [vedtaksresultat, settVedtaksResultat] = useState<ResultatType | undefined>(undefined);
+  const [låst, settLåst] = useState(false);
+  const [erLagret, settErLagret] = useState(false);
+  const [erSlettet, settErSlettet] = useState(false);
   const { behandlingId } = useParams<{ behandlingId: string }>();
-  const { vedtak } = useHentVedtak(behandlingId);
+  const { vedtak, laster: lasterVedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
 
-  useEffect(() => {
-    if (vedtak?.resultatType) {
-      settVedtaksResultat(vedtak.resultatType);
-    }
-  }, [vedtak]);
+  useMarkerStegFerdige("Vedtak og beregning", erLagret);
+
+  const harSjekketInitiellLås = useRef(false);
+
+  if (vedtak?.resultatType && !harSjekketInitiellLås.current) {
+    harSjekketInitiellLås.current = true;
+    settVedtaksResultat(vedtak.resultatType);
+    settLåst(true);
+    settErLagret(true);
+  }
 
   const handleVedtaksresultatEndring = (value: string) => {
     const resultat = value === "" ? undefined : (value as ResultatType);
     settVedtaksResultat(resultat);
   };
 
+  const handleLagreSuksess = () => {
+    settLåst(true);
+    settErLagret(true);
+    settErSlettet(false);
+  };
+
+  const handleSlett = () => {
+    settVedtaksResultat(undefined);
+    settLåst(false);
+    settErLagret(false);
+    settErSlettet(true);
+  };
+
+  if (lasterVedtak) {
+    return (
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <Loader size="medium" />
+      </Box>
+    );
+  }
+
   return (
-    <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
-      <VStack gap="space-12">
-        <Select
-          label={"Vedtaksresultat"}
-          value={vedtaksresultat || ""}
-          onChange={(e) => handleVedtaksresultatEndring(e.target.value)}
-          disabled={erLesevisning}
-          style={{ maxWidth: "24rem" }}
-        >
-          <option value="">Velg</option>
-          <option value="INNVILGET">Innvilge</option>
-          <option value="AVSLÅTT">Avslå</option>
-          <option value="OPPHØR">Opphør</option>
-        </Select>
-        {vedtaksresultat === "INNVILGET" && (
-          <InnvilgeVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></InnvilgeVedtak>
-        )}
-        {vedtaksresultat === "AVSLÅTT" && (
-          <AvslåVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></AvslåVedtak>
-        )}
-        {vedtaksresultat === "OPPHØR" && (
-          <OppgørVedtak lagretVedtak={vedtak} erLesevisning={erLesevisning}></OppgørVedtak>
-        )}
-      </VStack>
-    </Box>
+    <VStack gap="space-24">
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <VStack gap="space-12" style={{ position: "relative" }}>
+          {låst && !erLesevisning && (
+            <RedigerOgSlettKnapper
+              onRediger={() => settLåst(false)}
+              onSlett={handleSlett}
+            />
+          )}
+          <Select
+            label={"Vedtaksresultat"}
+            value={vedtaksresultat || ""}
+            onChange={(e) => handleVedtaksresultatEndring(e.target.value)}
+            disabled={erLesevisning || låst}
+            style={{ maxWidth: "24rem" }}
+          >
+            <option value="">Velg</option>
+            <option value="INNVILGET">Innvilge</option>
+            <option value="AVSLÅTT">Avslå</option>
+            <option value="OPPHØR">Opphør</option>
+          </Select>
+          {vedtaksresultat === "INNVILGET" && (
+            <InnvilgeVedtak
+              lagretVedtak={erSlettet ? null : vedtak}
+              erLesevisning={erLesevisning}
+              låst={låst}
+              onLagreSuksess={handleLagreSuksess}
+            />
+          )}
+          {vedtaksresultat === "AVSLÅTT" && (
+            <AvslåVedtak
+              lagretVedtak={erSlettet ? null : vedtak}
+              erLesevisning={erLesevisning}
+              låst={låst}
+              onLagreSuksess={handleLagreSuksess}
+            />
+          )}
+          {vedtaksresultat === "OPPHØR" && (
+            <OppgørVedtak
+              lagretVedtak={erSlettet ? null : vedtak}
+              erLesevisning={erLesevisning}
+              låst={låst}
+              onLagreSuksess={handleLagreSuksess}
+            />
+          )}
+        </VStack>
+      </Box>
+
+      <StegNavigering stegPath={STEG_PATH} nesteDisabled={!erLagret} />
+    </VStack>
   );
 }
