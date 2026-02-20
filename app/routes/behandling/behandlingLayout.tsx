@@ -42,10 +42,6 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
     path: "brev",
     navn: "Brev",
   },
-  {
-    path: "brev-v2",
-    navn: "Brev V2",
-  },
 ];
 
 export default function BehandlingLayout() {

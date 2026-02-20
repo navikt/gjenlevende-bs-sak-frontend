@@ -9,7 +9,6 @@ export default [
       route("vilkar", "routes/behandling/vilkår.tsx"),
       route("vedtak-og-beregning", "routes/behandling/vedtakOgBeregning.tsx"),
       route("brev", "routes/behandling/brev.tsx"),
-      route("brev-v2", "routes/behandling/brevV2.tsx"),
     ]),
     route("personoversikt", "routes/personoversikt.tsx"),
     route("infotrygd-historikk", "routes/infotrygdHistorikk.tsx"),

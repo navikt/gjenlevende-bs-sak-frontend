@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Heading, HStack, Modal, VStack } from "@navikt/ds-react";
+import { Box, Button, Heading, HGrid, HStack, Modal, Select, VStack } from "@navikt/ds-react";
+import { PlusIcon } from "@navikt/aksel-icons";
 import type { Route } from "./+types/brev";
-import { BrevSide } from "~/komponenter/brev/BrevSide";
+import { brevmaler } from "~/komponenter/brev/brevmaler";
+import { useBrev } from "~/komponenter/brev/useBrev";
+import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
+import { PdfForhåndsvisning } from "~/komponenter/brev/PdfForhåndsvisning";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
 import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
-import { useBehandlingContext } from "~/contexts/BehandlingContext";
-import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 import { useStegNavigering } from "~/hooks/useStegNavigering";
-import { useBrev } from "~/komponenter/brev/useBrev";
 import { useBeslutter } from "~/hooks/useBeslutter";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
 import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import styles from "./brev.module.css";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -67,27 +71,100 @@ export default function Brev() {
   };
 
   return (
-    <VStack gap="space-24">
-      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
-        <VStack gap="space-8">
+    <VStack className={styles.side} gap="space-24">
+      <Box
+        shadow="dialog"
+        background="neutral-soft"
+        padding="space-24"
+        borderRadius="4"
+        overflow="hidden"
+        className={styles.brevBoks}
+      >
+        <VStack gap="space-24" minHeight="0" flexGrow="1">
           <HStack align="center" justify="space-between">
-            <Heading level="1" size="medium">
+            <Heading level="1" size="small">
               Brevmottaker: {utledBrevmottakere()}
             </Heading>
             <Button variant="tertiary" onClick={() => settModalÅpen(true)}>
               Legg til/endre brevmottaker
             </Button>
           </HStack>
-          <BrevSide
-            brevMal={brevMal}
-            fritekstbolker={fritekstbolker}
-            velgBrevmal={velgBrevmal}
-            leggTilFritekstbolk={leggTilFritekstbolk}
-            flyttBolkOpp={flyttBolkOpp}
-            flyttBolkNed={flyttBolkNed}
-            oppdaterFelt={oppdaterFelt}
-            slettFritekstbolk={slettFritekstbolk}
-          />
+
+          <HGrid
+            columns="5fr 7fr"
+            gap="space-24"
+            minHeight="0"
+            flexGrow="1"
+            className={styles.innholdGrid}
+          >
+            {/* Venstre kolonne */}
+            <VStack gap="space-16" minHeight="0" className={styles.fokusringPadding}>
+              <Select
+                label="Velg dokument"
+                value={brevMal?.tittel ?? ""}
+                onChange={(e) => velgBrevmal(e.target.value)}
+                size="medium"
+                disabled={erLesevisning}
+              >
+                <option value="" disabled>
+                  Ikke valgt
+                </option>
+                {brevmaler.map((mal) => (
+                  <option key={mal.tittel} value={mal.tittel}>
+                    {mal.tittel}
+                  </option>
+                ))}
+              </Select>
+
+              {brevMal && (
+                <VStack gap="space-16" minHeight="0" flexGrow="1">
+                  <Heading level="3" size="xsmall">
+                    Fritekstområde
+                  </Heading>
+
+                  <VStack
+                    gap="space-16"
+                    overflow="auto"
+                    minHeight="0"
+                    flexGrow="1"
+                    className={styles.fokusringPadding}
+                  >
+                    {fritekstbolker.map((fritekstfelt, index) => (
+                      <Fritekstbolk
+                        key={index}
+                        underoverskrift={fritekstfelt.underoverskrift}
+                        innhold={fritekstfelt.innhold}
+                        handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
+                        handleFlyttOpp={() => flyttBolkOpp(index)}
+                        handleFlyttNed={() => flyttBolkNed(index)}
+                        handleSlett={() => slettFritekstbolk(index)}
+                        fritekstfeltListe={fritekstbolker}
+                      />
+                    ))}
+                    <Button
+                      variant="tertiary"
+                      icon={<PlusIcon title="Legg til fritekstfelt" />}
+                      onClick={leggTilFritekstbolk}
+                      disabled={erLesevisning}
+                    >
+                      Legg til fritekstfelt
+                    </Button>
+                  </VStack>
+                </VStack>
+              )}
+            </VStack>
+
+            {/* Høyre kolonne */}
+            <Box overflow="hidden" borderRadius="2" background="neutral-soft" minHeight="0">
+              {brevMal ? (
+                <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
+              ) : (
+                <div className={styles.pdfTomtilstand}>
+                  Velg et dokument for å se forhåndsvisning
+                </div>
+              )}
+            </Box>
+          </HGrid>
         </VStack>
       </Box>
 
@@ -105,7 +182,7 @@ export default function Brev() {
         />
       </Modal>
 
-      <HStack justify="space-between">
+      <HStack justify="space-between" flexShrink="0">
         {harForrigeSteg && (
           <Button variant="secondary" onClick={navigerTilForrige}>
             Tilbake
