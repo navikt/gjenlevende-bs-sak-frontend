@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import type { Route } from "./+types/vedtakOgBeregning";
-import { Box, Button, HStack, VStack, Select } from "@navikt/ds-react";
+import { Box, Button, HStack, Loader, VStack, Select } from "@navikt/ds-react";
 import { PencilIcon, TrashIcon } from "@navikt/aksel-icons";
 import type { ResultatType } from "~/komponenter/behandling/vedtak/vedtak";
 import { InnvilgeVedtak } from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
@@ -24,20 +24,21 @@ export default function VedtakOgBeregning() {
   const [låst, settLåst] = useState(false);
   const [erLagret, settErLagret] = useState(false);
   const { behandlingId } = useParams<{ behandlingId: string }>();
-  const { vedtak } = useHentVedtak(behandlingId);
+  const { vedtak, laster: lasterVedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
 
   useMarkerStegFerdige("Vedtak og beregning", erLagret);
 
-  useEffect(() => {
-    if (vedtak?.resultatType) {
-      settVedtaksResultat(vedtak.resultatType);
-      settLåst(true);
-      settErLagret(true);
-    }
-  }, [vedtak]);
+  const harSjekketInitiellLås = useRef(false);
+
+  if (vedtak?.resultatType && !harSjekketInitiellLås.current) {
+    harSjekketInitiellLås.current = true;
+    settVedtaksResultat(vedtak.resultatType);
+    settLåst(true);
+    settErLagret(true);
+  }
 
   const handleVedtaksresultatEndring = (value: string) => {
     const resultat = value === "" ? undefined : (value as ResultatType);
@@ -61,6 +62,14 @@ export default function VedtakOgBeregning() {
       navigate(`../${nesteSteg.path}`, { relative: "path" });
     }
   };
+
+  if (lasterVedtak) {
+    return (
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <Loader size="medium" />
+      </Box>
+    );
+  }
 
   return (
     <VStack gap="space-24">

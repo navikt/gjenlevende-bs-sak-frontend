@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { ÅrsakType } from "~/types/årsak";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { apiCall, type ApiResponse } from "~/api/backend";
@@ -39,10 +39,22 @@ const tilLocalDateString = (date: Date): string => {
 export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling => {
   const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet } = useBehandlingContext();
 
+  const harEksisterendeData = årsakDataHentet && !!årsakState?.kravdato && !!årsakState?.årsak;
+
   const [laster, settLaster] = useState(false);
-  const [erLagret, settErLagret] = useState(false);
-  const [låst, settLåst] = useState(false);
+  const [erLagret, settErLagret] = useState(harEksisterendeData);
+  const [låst, settLåst] = useState(harEksisterendeData);
   const [feilmelding, settFeilmelding] = useState("");
+
+  const harSjekketInitiellLås = useRef(harEksisterendeData);
+
+  if (årsakDataHentet && !harSjekketInitiellLås.current) {
+    harSjekketInitiellLås.current = true;
+    if (årsakState?.kravdato && årsakState?.årsak) {
+      settLåst(true);
+      settErLagret(true);
+    }
+  }
 
   useEffect(() => {
     if (!behandlingId || årsakDataHentet) return;
@@ -62,13 +74,6 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
 
     hentData();
   }, [behandlingId, hentÅrsakData, årsakDataHentet]);
-
-  useEffect(() => {
-    if (årsakDataHentet && årsakState?.kravdato && årsakState?.årsak) {
-      settLåst(true);
-      settErLagret(true);
-    }
-  }, [årsakDataHentet, årsakState?.kravdato, årsakState?.årsak]);
 
   const oppdaterKravdato = useCallback(
     (dato: Date | undefined) => {

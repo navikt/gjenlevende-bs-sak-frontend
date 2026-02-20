@@ -6,6 +6,7 @@ import {
   Button,
   DatePicker,
   HStack,
+  Loader,
   Select,
   Textarea,
   useDatepicker,
@@ -37,7 +38,7 @@ const ÅRSAK_ALTERNATIVER = [
 export default function ArsakBehandling() {
   const erLesevisning = useErLesevisning();
 
-  const { behandlingId } = useBehandlingContext();
+  const { behandlingId, årsakDataHentet } = useBehandlingContext();
   const navigate = useNavigate();
   const { finnNesteSteg } = useBehandlingSteg();
 
@@ -85,6 +86,14 @@ export default function ArsakBehandling() {
     setSelected(kravdato);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kravdato]);
+
+  if (!årsakDataHentet) {
+    return (
+      <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
+        <Loader size="medium" />
+      </Box>
+    );
+  }
 
   return (
     <VStack gap="space-24">
