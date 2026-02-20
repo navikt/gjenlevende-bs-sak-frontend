@@ -28,7 +28,7 @@ export default function VedtakOgBeregning() {
   const { vedtak, laster: lasterVedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
   const navigate = useNavigate();
-  const { finnNesteSteg } = useBehandlingSteg();
+  const { finnNesteSteg, finnForrigeSteg } = useBehandlingSteg();
 
   useMarkerStegFerdige("Vedtak og beregning", erLagret);
 
@@ -63,6 +63,13 @@ export default function VedtakOgBeregning() {
     const nesteSteg = finnNesteSteg(STEG_PATH);
     if (nesteSteg) {
       navigate(`../${nesteSteg.path}`, { relative: "path" });
+    }
+  };
+
+  const navigerTilForrige = () => {
+    const forrigeSteg = finnForrigeSteg(STEG_PATH);
+    if (forrigeSteg) {
+      navigate(`../${forrigeSteg.path}`, { relative: "path" });
     }
   };
 
@@ -137,11 +144,14 @@ export default function VedtakOgBeregning() {
         </VStack>
       </Box>
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <HStack justify="space-between">
+        <Button variant="tertiary" onClick={navigerTilForrige}>
+          Tilbake
+        </Button>
         <Button onClick={navigerTilNeste} disabled={!erLagret}>
           Neste
         </Button>
-      </div>
+      </HStack>
     </VStack>
   );
 }

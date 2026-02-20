@@ -19,9 +19,20 @@ export function useBehandlingSteg() {
     return stegListe[nåværendeIndex + 1];
   };
 
+  const finnForrigeSteg = (nåværendeStegPath: StegPath) => {
+    const nåværendeIndex = stegListe.findIndex((steg) => steg.path === nåværendeStegPath);
+
+    if (nåværendeIndex <= 0) {
+      return null;
+    }
+
+    return stegListe[nåværendeIndex - 1];
+  };
+
   return {
     stegListe,
     ferdigeSteg,
     finnNesteSteg,
+    finnForrigeSteg,
   };
 }

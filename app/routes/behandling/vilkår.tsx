@@ -1,28 +1,37 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { Button, VStack } from "@navikt/ds-react";
+import { Button, HStack, VStack } from "@navikt/ds-react";
 import { useBehandlingSteg } from "~/hooks/useBehandlingSteg";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import { VilkårInnhold } from "~/komponenter/behandling/vilkår/VilkårInnhold";
 import type { Route } from "./+types/vilkår";
+import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Vilkår" }];
 }
 
+const STEG_PATH: StegPath = "vilkar";
+
 export default function Vilkår() {
-  // const { behandlingId } = useBehandlingContext();
   const [erVilkårUtfylt, settErVilkårUtfylt] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { finnNesteSteg } = useBehandlingSteg();
+  const { finnNesteSteg, finnForrigeSteg } = useBehandlingSteg();
 
   useMarkerStegFerdige("Vilkår", erVilkårUtfylt === true);
   const harFyltUtAlt = erVilkårUtfylt;
 
   const navigerTilNeste = () => {
-    const nesteSteg = finnNesteSteg("vilkar");
+    const nesteSteg = finnNesteSteg(STEG_PATH);
     if (nesteSteg) {
       navigate(`../${nesteSteg.path}`, { relative: "path" });
+    }
+  };
+
+  const navigerTilForrige = () => {
+    const forrigeSteg = finnForrigeSteg(STEG_PATH);
+    if (forrigeSteg) {
+      navigate(`../${forrigeSteg.path}`, { relative: "path" });
     }
   };
 
@@ -37,11 +46,14 @@ export default function Vilkår() {
     <VStack gap={"space-24"}>
       <VilkårInnhold settErVilkårUtfylt={settErVilkårUtfylt} />
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <HStack justify="space-between">
+        <Button variant="tertiary" onClick={navigerTilForrige}>
+          Tilbake
+        </Button>
         <Button onClick={handleNesteKlikk} disabled={!harFyltUtAlt}>
           Neste
         </Button>
-      </div>
+      </HStack>
     </VStack>
   );
 }

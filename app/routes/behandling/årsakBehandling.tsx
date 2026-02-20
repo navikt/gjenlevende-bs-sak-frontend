@@ -168,11 +168,11 @@ export default function ArsakBehandling() {
         </VStack>
       </Box>
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <HStack justify="end">
         <Button onClick={navigerTilNeste} disabled={!erLagret}>
           Neste
         </Button>
-      </div>
+      </HStack>
     </VStack>
   );
 }
