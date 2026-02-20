@@ -6,53 +6,59 @@ import cssStyles from "./PdfForhåndsvisning.module.css";
 
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
-    paddingBottom: 60,
-    fontSize: 12,
+    paddingTop: 52,
+    paddingBottom: 72,
+    paddingHorizontal: 62,
+    fontSize: 11,
     fontFamily: "Helvetica",
+    color: "#1a1a1a",
   },
   header: {
     flexDirection: "column",
-    paddingBottom: 16,
+    marginBottom: 28,
   },
   logo: {
-    width: 100,
-    height: 50,
+    width: 80,
+    height: 40,
     objectFit: "contain",
   },
   dato: {
-    fontSize: 9,
-    color: "#555",
-    marginTop: 4,
+    fontSize: 11,
+    color: "#333",
+    marginTop: 6,
   },
   tittel: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 24,
   },
   brukerInfo: {
-    marginBottom: 16,
-    padding: 8,
-    fontSize: 11,
+    marginBottom: 28,
+    lineHeight: 1.4,
   },
-  fritekstbolk: {
-    marginBottom: 12,
+  seksjon: {
+    marginBottom: 14,
   },
   underoverskrift: {
+    fontSize: 13,
     fontWeight: "bold",
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  avsnitt: {
+    lineHeight: 0.95,
     marginBottom: 4,
   },
-  innhold: {
-    lineHeight: 1.5,
-  },
-  avslutning: {
+  separator: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#999",
     marginTop: 8,
-    marginBottom: 8,
+    marginBottom: 16,
   },
   pageNumber: {
     position: "absolute",
-    fontSize: 9,
-    bottom: 24,
+    fontSize: 8,
+    bottom: 28,
     left: 0,
     right: 0,
     textAlign: "center",
@@ -65,6 +71,23 @@ interface Props {
   fritekstbolker: Tekstbolk[];
 }
 
+const TekstAvsnitt = ({ tekst }: { tekst: string }) => {
+  const avsnitt = tekst
+    .split("\n")
+    .map((a) => a.trim())
+    .filter((a) => a.length > 0);
+
+  return (
+    <>
+      {avsnitt.map((a, i) => (
+        <Text key={i} style={styles.avsnitt} orphans={3} widows={3}>
+          {a}
+        </Text>
+      ))}
+    </>
+  );
+};
+
 const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
   const NAV_LOGO_PATH = "/Nav-logo-red-228x63.png";
 
@@ -74,7 +97,9 @@ const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
         <Page size="A4" style={styles.page} wrap>
           <View style={styles.header}>
             <Image src={NAV_LOGO_PATH} style={styles.logo} />
-            <Text style={styles.dato}>Dato: {new Date().toLocaleDateString("nb-NO")}</Text>
+            <Text style={styles.dato}>
+              Dato: {new Date().toLocaleDateString("nb-NO", { day: "2-digit", month: "2-digit", year: "numeric" })}
+            </Text>
           </View>
 
           <Text style={styles.tittel}>{brevmal.tittel}</Text>
@@ -85,20 +110,26 @@ const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
           </View>
 
           {fritekstbolker.map((fritekstbolk, index) => (
-            <View key={index} style={styles.fritekstbolk} wrap={false} minPresenceAhead={40}>
-              {fritekstbolk.underoverskrift && (
-                <Text style={styles.underoverskrift}>{fritekstbolk.underoverskrift}</Text>
+            <View key={index} style={styles.seksjon}>
+              {fritekstbolk.underoverskrift?.trim() && (
+                <Text style={styles.underoverskrift} minPresenceAhead={20}>
+                  {fritekstbolk.underoverskrift}
+                </Text>
               )}
-              <Text style={styles.innhold}>{fritekstbolk.innhold}</Text>
+              <TekstAvsnitt tekst={fritekstbolk.innhold} />
             </View>
           ))}
 
+          {brevmal.fastTekstAvslutning && brevmal.fastTekstAvslutning.length > 0 && (
+            <View style={styles.separator} />
+          )}
+
           {brevmal.fastTekstAvslutning?.map((fastTekst, index) => (
-            <View key={index} style={styles.avslutning} wrap={false}>
-              {fastTekst.underoverskrift && (
+            <View key={index} style={styles.seksjon} wrap={false}>
+              {fastTekst.underoverskrift?.trim() && (
                 <Text style={styles.underoverskrift}>{fastTekst.underoverskrift}</Text>
               )}
-              <Text style={styles.innhold}>{fastTekst.innhold}</Text>
+              <TekstAvsnitt tekst={fastTekst.innhold} />
             </View>
           ))}
 
