@@ -19,16 +19,12 @@ export const StegNavigering: React.FC<StegNavigeringProps> = ({
 
   const handleNeste = onNeste ?? navigerTilNeste;
 
-  const justify = harForrigeSteg && harNesteSteg
-    ? "space-between"
-    : harNesteSteg
-      ? "end"
-      : "start";
+  const justify = harForrigeSteg && harNesteSteg ? "space-between" : harNesteSteg ? "end" : "start";
 
   return (
     <HStack justify={justify}>
       {harForrigeSteg && (
-        <Button variant="tertiary" onClick={navigerTilForrige}>
+        <Button variant="secondary" onClick={navigerTilForrige}>
           Tilbake
         </Button>
       )}
