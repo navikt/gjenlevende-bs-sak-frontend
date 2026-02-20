@@ -98,7 +98,13 @@ export default function Brev() {
             className={styles.innholdGrid}
           >
             {/* Venstre kolonne */}
-            <VStack gap="space-16" minHeight="0" className={styles.fokusringPadding}>
+            <VStack
+              gap="space-16"
+              overflow="auto"
+              minHeight="0"
+              flexGrow="1"
+              className={styles.fokusringPadding}
+            >
               <Select
                 label="Velg dokument"
                 value={brevMal?.tittel ?? ""}
@@ -117,40 +123,31 @@ export default function Brev() {
               </Select>
 
               {brevMal && (
-                <VStack gap="space-16" minHeight="0" flexGrow="1">
+                <>
                   <Heading level="3" size="xsmall">
                     Fritekstområde
                   </Heading>
-
-                  <VStack
-                    gap="space-16"
-                    overflow="auto"
-                    minHeight="0"
-                    flexGrow="1"
-                    className={styles.fokusringPadding}
+                  {fritekstbolker.map((fritekstfelt, index) => (
+                    <Fritekstbolk
+                      key={index}
+                      underoverskrift={fritekstfelt.underoverskrift}
+                      innhold={fritekstfelt.innhold}
+                      handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
+                      handleFlyttOpp={() => flyttBolkOpp(index)}
+                      handleFlyttNed={() => flyttBolkNed(index)}
+                      handleSlett={() => slettFritekstbolk(index)}
+                      fritekstfeltListe={fritekstbolker}
+                    />
+                  ))}
+                  <Button
+                    variant="tertiary"
+                    icon={<PlusIcon title="Legg til fritekstfelt" />}
+                    onClick={leggTilFritekstbolk}
+                    disabled={erLesevisning}
                   >
-                    {fritekstbolker.map((fritekstfelt, index) => (
-                      <Fritekstbolk
-                        key={index}
-                        underoverskrift={fritekstfelt.underoverskrift}
-                        innhold={fritekstfelt.innhold}
-                        handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
-                        handleFlyttOpp={() => flyttBolkOpp(index)}
-                        handleFlyttNed={() => flyttBolkNed(index)}
-                        handleSlett={() => slettFritekstbolk(index)}
-                        fritekstfeltListe={fritekstbolker}
-                      />
-                    ))}
-                    <Button
-                      variant="tertiary"
-                      icon={<PlusIcon title="Legg til fritekstfelt" />}
-                      onClick={leggTilFritekstbolk}
-                      disabled={erLesevisning}
-                    >
-                      Legg til fritekstfelt
-                    </Button>
-                  </VStack>
-                </VStack>
+                    Legg til fritekstfelt
+                  </Button>
+                </>
               )}
             </VStack>
 
