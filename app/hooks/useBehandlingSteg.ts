@@ -9,9 +9,9 @@ export function useBehandlingSteg() {
     throw new Error("useBehandlingSteg må brukes innenfor BehandlingContext med behandlingSteg");
   }
 
-  const finnSteg = (nåværendeStegPath: StegPath, retning: number) => {
+  const finnSteg = (nåværendeStegPath: StegPath, indexRetning: number) => {
     const nåværendeIndex = stegListe.findIndex((steg) => steg.path === nåværendeStegPath);
-    const targetIndex = nåværendeIndex + retning;
+    const targetIndex = nåværendeIndex + indexRetning;
 
     if (nåværendeIndex === -1 || targetIndex < 0 || targetIndex >= stegListe.length) {
       return null;
