@@ -11,13 +11,13 @@ export function useBehandlingSteg() {
 
   const finnSteg = (nåværendeStegPath: StegPath, retning: number) => {
     const nåværendeIndex = stegListe.findIndex((steg) => steg.path === nåværendeStegPath);
-    const målIndex = nåværendeIndex + retning;
+    const targetIndex = nåværendeIndex + retning;
 
-    if (nåværendeIndex === -1 || målIndex < 0 || målIndex >= stegListe.length) {
+    if (nåværendeIndex === -1 || targetIndex < 0 || targetIndex >= stegListe.length) {
       return null;
     }
 
-    return stegListe[målIndex];
+    return stegListe[targetIndex];
   };
 
   const finnNesteSteg = (path: StegPath) => finnSteg(path, 1);
