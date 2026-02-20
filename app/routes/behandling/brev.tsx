@@ -195,7 +195,7 @@ export default function Brev() {
               onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
               disabled={sender || erLesevisning}
             >
-              Send pdf til sak
+              Send PDF til sak
             </Button>
             <Button
               onClick={handleSendTilBeslutter}
