@@ -23,6 +23,7 @@ export default function VedtakOgBeregning() {
   const [vedtaksresultat, settVedtaksResultat] = useState<ResultatType | undefined>(undefined);
   const [låst, settLåst] = useState(false);
   const [erLagret, settErLagret] = useState(false);
+  const [erSlettet, settErSlettet] = useState(false);
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const { vedtak, laster: lasterVedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
@@ -48,12 +49,14 @@ export default function VedtakOgBeregning() {
   const handleLagreSuksess = () => {
     settLåst(true);
     settErLagret(true);
+    settErSlettet(false);
   };
 
   const handleSlett = () => {
     settVedtaksResultat(undefined);
     settLåst(false);
     settErLagret(false);
+    settErSlettet(true);
   };
 
   const navigerTilNeste = () => {
@@ -109,7 +112,7 @@ export default function VedtakOgBeregning() {
           </Select>
           {vedtaksresultat === "INNVILGET" && (
             <InnvilgeVedtak
-              lagretVedtak={vedtak}
+              lagretVedtak={erSlettet ? null : vedtak}
               erLesevisning={erLesevisning}
               låst={låst}
               onLagreSuksess={handleLagreSuksess}
@@ -117,7 +120,7 @@ export default function VedtakOgBeregning() {
           )}
           {vedtaksresultat === "AVSLÅTT" && (
             <AvslåVedtak
-              lagretVedtak={vedtak}
+              lagretVedtak={erSlettet ? null : vedtak}
               erLesevisning={erLesevisning}
               låst={låst}
               onLagreSuksess={handleLagreSuksess}
@@ -125,7 +128,7 @@ export default function VedtakOgBeregning() {
           )}
           {vedtaksresultat === "OPPHØR" && (
             <OppgørVedtak
-              lagretVedtak={vedtak}
+              lagretVedtak={erSlettet ? null : vedtak}
               erLesevisning={erLesevisning}
               låst={låst}
               onLagreSuksess={handleLagreSuksess}
