@@ -38,13 +38,11 @@ export function useHentVedtak(behandlingId: string | undefined) {
 
             const response = await hentVedtakForBehandling(behandlingId);
 
-            if (response.data) {
-                settState((prev) => ({
-                    ...prev,
-                    vedtak: response.data ?? null,
-                    laster: false,
-                }));
-            }
+            settState((prev) => ({
+                ...prev,
+                vedtak: response.data ?? null,
+                laster: false,
+            }));
         };
 
         hentVedtak();
