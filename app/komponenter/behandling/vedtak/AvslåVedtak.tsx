@@ -33,7 +33,7 @@ export const AvslåVedtak: React.FC<AvslåVedtakProps> = ({lagretVedtak, erLesev
     }
 
     return (
-        <VStack gap="space-12">
+        <VStack gap="space-24">
             <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLåst}
                       onChange={e => settBegrunnelse(e.target.value)}></Textarea>
             {!låst && (

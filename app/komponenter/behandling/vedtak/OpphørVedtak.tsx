@@ -38,7 +38,7 @@ export const OppgørVedtak: React.FC<OpphørVedtakProps> = ({lagretVedtak, erLes
     }
 
     return (
-        <VStack gap="space-12">
+        <VStack gap="space-24">
             <MonthPicker {...monthpickerProps}>
                 <MonthPicker.Input
                     {...inputProps}
