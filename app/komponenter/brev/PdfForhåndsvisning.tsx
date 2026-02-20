@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   avsnitt: {
     lineHeight: 0.95,
-    marginBottom: 4,
+    marginBottom: 10,
   },
   separator: {
     borderBottomWidth: 0.5,
