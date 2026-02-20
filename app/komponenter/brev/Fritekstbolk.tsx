@@ -26,7 +26,7 @@ export const Fritekstbolk = ({
   const erLesevisning = useErLesevisning();
 
   return (
-    <VStack gap="space-2">
+    <VStack gap="space-8">
       <TextField
         label="Deloverskrift"
         value={underoverskrift}
