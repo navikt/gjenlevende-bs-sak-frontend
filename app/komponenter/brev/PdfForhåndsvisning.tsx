@@ -1,7 +1,8 @@
 import { Document, Image, Page, StyleSheet, Text, usePDF, View } from "@react-pdf/renderer";
 import React, { useEffect, useMemo, useState } from "react";
 import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
-import { Loader } from "@navikt/ds-react";
+import { Alert, Loader, VStack } from "@navikt/ds-react";
+import cssStyles from "./PdfForhåndsvisning.module.css";
 
 const styles = StyleSheet.create({
   page: {
@@ -140,14 +141,14 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
 
   if (instance.loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+      <VStack align="center" justify="center" height="100%">
         <Loader size="xlarge" title="Genererer PDF..." />
-      </div>
+      </VStack>
     );
   }
 
   if (instance.error) {
-    return <div>Feil ved generering av PDF: {instance.error}</div>;
+    return <Alert variant="error">Feil ved generering av PDF: {instance.error}</Alert>;
   }
 
   const iframeUrl = instance.url ? `${instance.url}#toolbar=0&navpanes=0&view=FitH` : undefined;
@@ -156,14 +157,7 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
     <iframe
       src={iframeUrl}
       title="PDF forhåndsvisning"
-      style={{
-        width: "100%",
-        height: "100%",
-        border: "none",
-        borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-        backgroundColor: "#f5f5f5",
-      }}
+      className={cssStyles.pdfIframe}
     />
   );
 };
