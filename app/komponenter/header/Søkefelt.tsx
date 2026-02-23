@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { HStack, Search, VStack } from "@navikt/ds-react";
+import { Search } from "@navikt/ds-react";
 import { SøkePopover } from "./SøkePopover";
 import { erGyldigSøkestreng } from "~/utils/utils";
 import type { Søkeresultat } from "~/hooks/useSøk";
+import styles from "./Søkefelt.module.css";
 
 interface SøkefeltProps {
   søk: string;
@@ -39,31 +40,29 @@ export const Søkefelt: React.FC<SøkefeltProps> = ({
     erGyldigSøkestreng(søk) && (søker || !!søkeresultat || !!feilmelding || !!opprettFeilmelding);
 
   return (
-    <HStack align="center" style={{ paddingRight: "1rem" }}>
-      <VStack gap="space-1">
-        <Search
-          label="Søk etter personident"
-          size="small"
-          variant="simple"
-          placeholder="ident eller fagsak"
-          onChange={onSøkChange}
-          onKeyDown={handleKeyDown}
-          value={søk}
-          aria-busy={søker}
-          ref={setAnchor}
-        />
-        <SøkePopover
-          open={skalÅpneSøkePopover}
-          onClose={onTilbakestillSøk}
-          anchorEl={anchor}
-          søker={søker}
-          feilmelding={feilmelding}
-          søkeresultat={søkeresultat}
-          onNavigate={onNavigate}
-          onOpprettFagsak={onOpprettFagsak}
-          opprettFeilmelding={opprettFeilmelding}
-        />
-      </VStack>
-    </HStack>
+    <div className={styles.søkefeltContainer} ref={setAnchor}>
+      <Search
+        label="Søk etter personident"
+        size="small"
+        variant="simple"
+        placeholder="ident eller fagsak"
+        onChange={onSøkChange}
+        onKeyDown={handleKeyDown}
+        onClear={onTilbakestillSøk}
+        value={søk}
+        aria-busy={søker}
+      />
+      <SøkePopover
+        open={skalÅpneSøkePopover}
+        onClose={onTilbakestillSøk}
+        anchorEl={anchor}
+        søker={søker}
+        feilmelding={feilmelding}
+        søkeresultat={søkeresultat}
+        onNavigate={onNavigate}
+        onOpprettFagsak={onOpprettFagsak}
+        opprettFeilmelding={opprettFeilmelding}
+      />
+    </div>
   );
 };

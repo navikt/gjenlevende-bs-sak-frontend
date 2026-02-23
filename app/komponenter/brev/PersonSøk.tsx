@@ -63,10 +63,7 @@ export function PersonSøk({ leggTilMottaker }: Props) {
         onChange={(e) => settPersonident(e.target.value)}
         autoComplete="off"
         error={feilmeldinger.personident}
-        style={{
-          width: "50%",
-          paddingRight: "1rem",
-        }}
+        style={{ maxWidth: "20rem" }}
       />
       {personident && (
         <VStack>

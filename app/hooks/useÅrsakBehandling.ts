@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { ÅrsakType } from "~/types/årsak";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { apiCall, type ApiResponse } from "~/api/backend";
@@ -23,10 +23,13 @@ interface UseÅrsakBehandling {
   laster: boolean;
   feilmelding: string;
   erLagret: boolean;
+  låst: boolean;
   oppdaterKravdato: (dato: Date | undefined) => void;
   oppdaterÅrsak: (årsak: ÅrsakType) => void;
   oppdaterBeskrivelse: (beskrivelse: string) => void;
-  lagreOgNavigerVidere: () => Promise<boolean>;
+  lagre: () => Promise<boolean>;
+  settLåst: (val: boolean) => void;
+  tilbakestill: () => void;
 }
 
 const tilLocalDateString = (date: Date): string => {
@@ -36,9 +39,22 @@ const tilLocalDateString = (date: Date): string => {
 export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling => {
   const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet } = useBehandlingContext();
 
+  const harEksisterendeData = årsakDataHentet && !!årsakState?.kravdato && !!årsakState?.årsak;
+
   const [laster, settLaster] = useState(false);
-  const [erLagret, settErLagret] = useState(false);
+  const [erLagret, settErLagret] = useState(harEksisterendeData);
+  const [låst, settLåst] = useState(harEksisterendeData);
   const [feilmelding, settFeilmelding] = useState("");
+
+  const harSjekketInitiellLås = useRef(harEksisterendeData);
+
+  if (årsakDataHentet && !harSjekketInitiellLås.current) {
+    harSjekketInitiellLås.current = true;
+    if (årsakState?.kravdato && årsakState?.årsak) {
+      settLåst(true);
+      settErLagret(true);
+    }
+  }
 
   useEffect(() => {
     if (!behandlingId || årsakDataHentet) return;
@@ -80,7 +96,13 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     [oppdaterÅrsakState]
   );
 
-  const lagreOgNavigerVidere = useCallback(async (): Promise<boolean> => {
+  const tilbakestill = useCallback(() => {
+    oppdaterÅrsakState({ kravdato: undefined, årsak: "" as ÅrsakType, beskrivelse: "" });
+    settLåst(false);
+    settErLagret(false);
+  }, [oppdaterÅrsakState]);
+
+  const lagre = useCallback(async (): Promise<boolean> => {
     const lagreÅrsakBehandling = (
       behandlingId: string,
       request: ÅrsakBehandlingRequest
@@ -128,9 +150,12 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     laster,
     feilmelding,
     erLagret,
+    låst,
     oppdaterKravdato,
     oppdaterÅrsak,
     oppdaterBeskrivelse,
-    lagreOgNavigerVidere,
+    lagre,
+    settLåst,
+    tilbakestill,
   };
 };

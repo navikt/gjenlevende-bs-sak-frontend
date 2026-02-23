@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HGrid, Select, VStack } from "@navikt/ds-react";
+import { Button, Heading, HGrid, HStack, Select, VStack } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
 import { PlusIcon } from "@navikt/aksel-icons";
@@ -13,7 +13,7 @@ import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 export const BrevSide = () => {
   const erLesevisning = useErLesevisning();
 
-  const { behandlingId, revaliderBehandling } = useBehandlingContext();
+  const { behandlingId, revaliderBehandling, behandling } = useBehandlingContext();
   const {
     brevMal,
     fritekstbolker,
@@ -27,6 +27,8 @@ export const BrevSide = () => {
     mellomlagreBrev,
     slettFritekstbolk,
   } = useBrev(behandlingId);
+
+  const erSendtTilBeslutter = behandling?.status === "FATTER_VEDTAK";
 
   const { sender: senderTilBeslutter, sendTilBeslutter } = useBeslutter();
 
@@ -48,12 +50,8 @@ export const BrevSide = () => {
   };
 
   return (
-    <HGrid gap="space-32" columns={2} width={"100%"}>
-      <Box
-        style={{ backgroundColor: "white", alignSelf: "flex-start" }}
-        borderRadius="2"
-        padding={"space-16"}
-      >
+    <HGrid gap="space-8" columns={2} width={"100%"}>
+      <div style={{ alignSelf: "flex-start" }}>
         <VStack gap={"space-4"}>
           <Select
             label="Velg dokument"
@@ -91,43 +89,40 @@ export const BrevSide = () => {
                 />
               ))}
               <Button
-                variant={"secondary"}
+                variant={"tertiary"}
                 icon={<PlusIcon title={"Legg til fritekstfelt"} />}
                 onClick={leggTilFritekstbolk}
-                size={"small"}
                 disabled={erLesevisning}
+                style={{ width: "100%" }}
               >
                 Legg til fritekstfelt
               </Button>
             </VStack>
           )}
         </VStack>
-      </Box>
-      <Box>
-        <VStack gap={"space-4"} align={"center"}>
+      </div>
+      <div>
+        <VStack gap={"space-16"} align={"center"}>
           <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
           {brevMal && fritekstbolker && (
-            <Button
-              style={{ width: "fit-content" }}
-              onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-              disabled={sender || erLesevisning}
-            >
-              Send pdf til sak{" "}
-            </Button>
-          )}
-
-          {brevMal && fritekstbolker && (
-            <>
+            <HStack gap="space-16" paddingBlock="space-4 space-0">
+              <Button
+                variant="secondary"
+                onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
+                disabled={sender || erLesevisning}
+              >
+                Send pdf til sak
+              </Button>
               <Button
                 onClick={handleSendTilBeslutter}
-                disabled={senderTilBeslutter || erLesevisning}
+                disabled={senderTilBeslutter || erLesevisning || erSendtTilBeslutter}
               >
                 Send til beslutter
               </Button>
-            </>
+            </HStack>
           )}
         </VStack>
-      </Box>
+      </div>
     </HGrid>
   );
 };
