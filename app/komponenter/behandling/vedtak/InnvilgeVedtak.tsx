@@ -29,14 +29,14 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {behandling} = useBehandlingContext()
 
-    const tomBarnetilsynperiode: Barnetilsynperiode = useMemo(() => ({
+    const tomBarnetilsynperiode: Barnetilsynperiode = {
         datoFra: '',
         datoTil: '',
         utgifter: 0,
         barn: [],
         periodetype: undefined,
         aktivitetstype: undefined,
-    }), [behandlingId]);
+    }
 
     const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker();
 
@@ -99,7 +99,6 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     return (
         <VStack gap="space-24">
-            <VStack gap="space-16">
                 {behandling?.forrigeBehandlingId && (<MonthPicker {...monthpickerProps}>
                     <MonthPicker.Input
                         {...inputProps}
@@ -112,7 +111,6 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     <BarnetilsynperiodeValg perioder={perioder}
                                             settPerioder={settPerioder}
                                             erLesevisning={erLåst}></BarnetilsynperiodeValg>
-            </VStack>
                     <Textarea label={'Begrunnelse'} value={begrunnelse}
                               onChange={e => settBegrunnelse(e.target.value)} disabled={erLåst}></Textarea>
                     <HStack>
