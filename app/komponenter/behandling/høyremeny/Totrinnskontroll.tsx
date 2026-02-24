@@ -171,7 +171,8 @@ const FatterVedtak: React.FC<{
 
   const erGodkjent = totrinnsresultat === Totrinnsresultat.GODKJENT;
   const erUnderkjent = totrinnsresultat === Totrinnsresultat.UNDERKJENT;
-  const erUtfylt = erGodkjent || (erUnderkjent && årsakUnderkjent !== null && begrunnelse.trim() !== "");
+  const erUtfylt =
+    erGodkjent || (erUnderkjent && årsakUnderkjent !== null && begrunnelse.trim() !== "");
 
   const handleFullfør = async () => {
     settFeilmelding(null);
@@ -271,7 +272,7 @@ const TotrinnskontrollUnderkjent: React.FC<{
           <InfoRad label="Underkjent" verdi={formaterRelativTid(totrinnskontroll.opprettetTid)} />
           {totrinnskontroll.årsakUnderkjent && (
             <InfoRad
-              label="Årsak"
+              label="Årsak underkjent"
               verdi={årsakUnderkjentTekst[totrinnskontroll.årsakUnderkjent]}
             />
           )}
