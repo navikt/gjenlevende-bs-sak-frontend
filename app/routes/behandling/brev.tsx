@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Box, Button, Heading, HGrid, HStack, Modal, Select, VStack } from "@navikt/ds-react";
-import { PlusIcon } from "@navikt/aksel-icons";
+import React, { useEffect } from "react";
+import { Box, HGrid, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
-import { brevmaler } from "~/komponenter/brev/brevmaler";
 import { useBrev } from "~/komponenter/brev/useBrev";
-import { Fritekstbolk } from "~/komponenter/brev/Fritekstbolk";
-import { PdfForhåndsvisning } from "~/komponenter/brev/PdfForhåndsvisning";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
-import BrevmottakerModalInnhold from "~/komponenter/brev/BrevMottakerModal";
 import { useStegNavigering } from "~/hooks/useStegNavigering";
 import { useBeslutter } from "~/hooks/useBeslutter";
-import { useErLesevisning } from "~/hooks/useErLesevisning";
 import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
+import { BrevRedigering } from "~/komponenter/brev/BrevRedigering";
+import { BrevForhåndsvisning } from "~/komponenter/brev/BrevForhåndsvisning";
+import { BrevHandlinger } from "~/komponenter/brev/BrevHandlinger";
 import styles from "./brev.module.css";
 
 export function meta(_args: Route.MetaArgs) {
@@ -29,8 +26,6 @@ export function meta(_args: Route.MetaArgs) {
 const STEG_PATH: StegPath = "brev";
 
 export default function Brev() {
-  const erLesevisning = useErLesevisning();
-  const [modalÅpen, settModalÅpen] = useState(false);
   const { behandlingId, revaliderBehandling, behandling } = useBehandlingContext();
   const { mottakere, settMottakere, utledBrevmottakere, sendMottakereTilSak } =
     useBrevmottaker(behandlingId);
@@ -87,117 +82,37 @@ export default function Brev() {
           flexGrow="1"
           className={styles.innholdGrid}
         >
-          {/* Venstre kolonne */}
-          <VStack
-            gap="space-24"
-            overflow="auto"
-            minHeight="0"
-            flexGrow="1"
+          <BrevRedigering
+            brevMal={brevMal}
+            fritekstbolker={fritekstbolker}
+            velgBrevmal={velgBrevmal}
+            oppdaterFelt={oppdaterFelt}
+            flyttBolkOpp={flyttBolkOpp}
+            flyttBolkNed={flyttBolkNed}
+            slettFritekstbolk={slettFritekstbolk}
+            leggTilFritekstbolk={leggTilFritekstbolk}
+            mottakere={mottakere}
+            settMottakere={settMottakere}
+            utledBrevmottakere={utledBrevmottakere}
+            sendMottakereTilSak={sendMottakereTilSak}
             className={`${styles.fokusringPadding} ${styles.venstreKolonne}`}
-          >
-            <Heading level="1" size="small">
-              Brevmottaker: {utledBrevmottakere()}
-            </Heading>
-            <div>
-              <Button variant="secondary" size={"small"} onClick={() => settModalÅpen(true)}>
-                Legg til/endre brevmottaker
-              </Button>
-            </div>
-            <Select
-              label="Velg dokument"
-              value={brevMal?.tittel ?? ""}
-              onChange={(e) => velgBrevmal(e.target.value)}
-              size="medium"
-              disabled={erLesevisning}
-            >
-              <option value="" disabled>
-                Ikke valgt
-              </option>
-              {brevmaler.map((mal) => (
-                <option key={mal.tittel} value={mal.tittel}>
-                  {mal.tittel}
-                </option>
-              ))}
-            </Select>
-
-            {brevMal && (
-              <>
-                <Heading level="3" size="xsmall">
-                  Fritekstområde
-                </Heading>
-                {fritekstbolker.map((fritekstfelt, index) => (
-                  <Fritekstbolk
-                    key={index}
-                    underoverskrift={fritekstfelt.underoverskrift}
-                    innhold={fritekstfelt.innhold}
-                    handleOppdaterFelt={(partial) => oppdaterFelt(index, partial)}
-                    handleFlyttOpp={() => flyttBolkOpp(index)}
-                    handleFlyttNed={() => flyttBolkNed(index)}
-                    handleSlett={() => slettFritekstbolk(index)}
-                    fritekstfeltListe={fritekstbolker}
-                  />
-                ))}
-                <Button
-                  variant="tertiary"
-                  icon={<PlusIcon title="Legg til fritekstfelt" />}
-                  onClick={leggTilFritekstbolk}
-                  disabled={erLesevisning}
-                >
-                  Legg til fritekstfelt
-                </Button>
-              </>
-            )}
-          </VStack>
-
-          {/* Høyre kolonne */}
-          <Box overflow="hidden" borderRadius="2" background="neutral-soft" minHeight="0">
-            {brevMal ? (
-              <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
-            ) : (
-              <VStack align="center" justify="center" height="100%" />
-            )}
-          </Box>
+          />
+          <BrevForhåndsvisning brevMal={brevMal} fritekstbolker={fritekstbolker} />
         </HGrid>
       </Box>
 
-      <Modal
-        open={modalÅpen}
-        onClose={() => settModalÅpen(false)}
-        header={{ heading: "Hvem skal motta brevet?" }}
-        width={"50rem"}
-      >
-        <BrevmottakerModalInnhold
-          mottakere={mottakere}
-          settMottakere={settMottakere}
-          lukkModal={() => settModalÅpen(false)}
-          sendMottakereTilSak={sendMottakereTilSak}
-        />
-      </Modal>
-
-      <HStack justify="space-between" flexShrink="0">
-        {harForrigeSteg && (
-          <Button variant="secondary" onClick={navigerTilForrige}>
-            Tilbake
-          </Button>
-        )}
-        {brevMal && (
-          <HStack gap="space-24">
-            <Button
-              variant="secondary"
-              onClick={() => sendPdfTilSak(behandlingId, brevMal, fritekstbolker)}
-              disabled={sender || erLesevisning}
-            >
-              Send PDF til sak
-            </Button>
-            <Button
-              onClick={handleSendTilBeslutter}
-              disabled={senderTilBeslutter || erLesevisning || erSendtTilBeslutter}
-            >
-              Send til beslutter
-            </Button>
-          </HStack>
-        )}
-      </HStack>
+      <BrevHandlinger
+        brevMal={brevMal}
+        fritekstbolker={fritekstbolker}
+        behandlingId={behandlingId}
+        sender={sender}
+        sendPdfTilSak={sendPdfTilSak}
+        senderTilBeslutter={senderTilBeslutter}
+        handleSendTilBeslutter={handleSendTilBeslutter}
+        erSendtTilBeslutter={erSendtTilBeslutter}
+        harForrigeSteg={harForrigeSteg}
+        navigerTilForrige={navigerTilForrige}
+      />
     </VStack>
   );
 }
