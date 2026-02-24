@@ -49,7 +49,7 @@ export function BrevRedigering({
           Brevmottaker: {utledBrevmottakere()}
         </Heading>
         <div>
-          <Button variant="secondary" size="small" onClick={() => settModalÅpen(true)}>
+          <Button variant="secondary" size="small" onClick={() => settModalÅpen(true)} disabled={erLesevisning}>
             Legg til/endre brevmottaker
           </Button>
         </div>

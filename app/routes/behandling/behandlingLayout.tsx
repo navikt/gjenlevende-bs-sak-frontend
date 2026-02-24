@@ -20,7 +20,6 @@ import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
 import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave";
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollStatus";
-import { TotrinnskontrollStatus } from "~/types/totrinnskontroll";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -138,8 +137,7 @@ export default function BehandlingLayout() {
     if (!behandling || !totrinnskontrollStatus) return;
 
     if (behandling.status === "FATTER_VEDTAK") {
-      const kanFatteVedtak = totrinnskontrollStatus.status === TotrinnskontrollStatus.KAN_FATTE_VEDTAK;
-      settErLesevisning(!kanFatteVedtak);
+      settErLesevisning(true);
     }
   }, [behandling, totrinnskontrollStatus, settErLesevisning]);
 
