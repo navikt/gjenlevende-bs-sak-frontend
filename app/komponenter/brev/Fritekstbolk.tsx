@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Textarea, TextField, VStack } from "@navikt/ds-react";
+import { Button, HStack, Textarea, TextField, VStack } from "@navikt/ds-react";
 import React from "react";
 import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from "@navikt/aksel-icons";
 import type { Tekstbolk } from "~/komponenter/brev/typer";
@@ -26,50 +26,49 @@ export const Fritekstbolk = ({
   const erLesevisning = useErLesevisning();
 
   return (
-    <Box padding="space-4">
-      <VStack gap={"space-2"}>
-        <TextField
-          label="Deloverskrift"
-          value={underoverskrift}
-          onChange={(e) => handleOppdaterFelt({ underoverskrift: e.target.value })}
-          size={"small"}
-          readOnly={erLesevisning}
-        />
-        <Textarea
-          label="Innhold"
-          value={innhold}
-          onChange={(e) => handleOppdaterFelt({ innhold: e.target.value })}
-          size={"small"}
-          readOnly={erLesevisning}
-        />
-        {fritekstfeltListe.length > 1 && (
-          <HStack justify={"space-between"}>
-            <HStack>
-              <Button
-                variant={"tertiary"}
-                icon={<ArrowUpIcon />}
-                onClick={handleFlyttOpp}
-                size={"small"}
-                disabled={erLesevisning}
-              />
-              <Button
-                variant={"tertiary"}
-                icon={<ArrowDownIcon />}
-                onClick={handleFlyttNed}
-                size={"small"}
-                disabled={erLesevisning}
-              />
-            </HStack>
+    <VStack gap="space-16">
+      <TextField
+        label="Deloverskrift"
+        value={underoverskrift}
+        onChange={(e) => handleOppdaterFelt({ underoverskrift: e.target.value })}
+        size="small"
+        readOnly={erLesevisning}
+      />
+      <Textarea
+        label="Innhold"
+        value={innhold}
+        onChange={(e) => handleOppdaterFelt({ innhold: e.target.value })}
+        size="small"
+        minRows={3}
+        readOnly={erLesevisning}
+      />
+      {fritekstfeltListe.length > 1 && (
+        <HStack justify="space-between">
+          <HStack>
             <Button
-              variant={"tertiary"}
-              icon={<TrashIcon />}
-              onClick={handleSlett}
-              size={"small"}
+              variant="tertiary"
+              icon={<ArrowUpIcon />}
+              onClick={handleFlyttOpp}
+              size="small"
+              disabled={erLesevisning}
+            />
+            <Button
+              variant="tertiary"
+              icon={<ArrowDownIcon />}
+              onClick={handleFlyttNed}
+              size="small"
               disabled={erLesevisning}
             />
           </HStack>
-        )}
-      </VStack>
-    </Box>
+          <Button
+            variant="tertiary"
+            icon={<TrashIcon />}
+            onClick={handleSlett}
+            size="small"
+            disabled={erLesevisning}
+          />
+        </HStack>
+      )}
+    </VStack>
   );
 };
