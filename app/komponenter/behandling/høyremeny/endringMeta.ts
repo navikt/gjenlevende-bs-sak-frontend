@@ -6,6 +6,7 @@ import {
   TasklistIcon,
   CheckmarkCircleIcon,
   NotePencilIcon,
+  XMarkOctagonIcon,
 } from "@navikt/aksel-icons";
 import { formaterIsoDatoTid } from "~/utils/utils";
 import type { EndringType, BehandlingEndring } from "~/types/endringshistorikk";
@@ -71,6 +72,12 @@ export const endringMeta: Record<EndringType, EndringMeta> = {
     tekst: "Beslutter godkjent",
     ikon: CheckmarkCircleIcon,
     farge: "success",
+    erMilepæl: true,
+  },
+  BESLUTTER_UNDERKJENT: {
+    tekst: "Beslutter underkjent",
+    ikon: XMarkOctagonIcon,
+    farge: "warning",
     erMilepæl: true,
   },
 };

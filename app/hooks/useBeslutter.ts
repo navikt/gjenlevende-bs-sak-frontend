@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
+import type { ÅrsakUnderkjent } from "~/types/totrinnskontroll";
 
 interface BeslutteVedtakDto {
   godkjent: boolean;
+  årsakUnderkjent?: ÅrsakUnderkjent;
+  begrunnelse?: string;
 }
 
 export const useBeslutter = () => {
