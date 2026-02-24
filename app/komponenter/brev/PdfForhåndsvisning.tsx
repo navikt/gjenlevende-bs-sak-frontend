@@ -1,16 +1,8 @@
-import { Document, Font, Image, Page, StyleSheet, Text, usePDF, View } from "@react-pdf/renderer";
+import { Document, Image, Page, StyleSheet, Text, usePDF, View } from "@react-pdf/renderer";
 import React, { useEffect, useMemo, useState } from "react";
-import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
 import { Alert, Loader, VStack } from "@navikt/ds-react";
+import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
 import cssStyles from "./PdfForhåndsvisning.module.css";
-
-Font.register({
-  family: "Source Sans 3",
-  fonts: [
-    { src: "/fonts/SourceSans3-Regular.ttf" },
-    { src: "/fonts/SourceSans3-Bold.ttf", fontWeight: "bold" },
-  ],
-});
 
 const styles = StyleSheet.create({
   page: {
@@ -18,9 +10,8 @@ const styles = StyleSheet.create({
     paddingBottom: 74,
     paddingHorizontal: 64,
     fontSize: 11,
-    fontFamily: "Source Sans 3",
+    lineHeight: 16 / 11,
     color: "#000000",
-    lineHeight: 1.4,
   },
   header: {
     marginBottom: 48,
@@ -30,47 +21,54 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     objectFit: "contain",
   },
-  infoBlokk: {
+  infoblokk: {
     marginBottom: 26,
   },
-  fnrDatoRad: {
+  infoRad: {
+    flexDirection: "row",
+  },
+  infoEtikett: {
+    width: 110,
+  },
+  datoRad: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  dato: {
-    fontSize: 11,
-    color: "#000000",
-  },
   tittel: {
     fontSize: 16,
+    lineHeight: 20 / 16,
     fontWeight: "bold",
-    marginBottom: 0,
-    lineHeight: 1.25,
     letterSpacing: 0.3,
-  },
-  brukerInfo: {
-    lineHeight: 1.4,
+    marginBottom: 26,
   },
   seksjon: {
     marginBottom: 0,
   },
-  underoverskrift: {
+  overskrift: {
     fontSize: 13,
+    lineHeight: 16 / 13,
     fontWeight: "bold",
-    marginTop: 26,
-    marginBottom: 8,
-    lineHeight: 1.23,
     letterSpacing: 0.25,
+    marginTop: 26,
+    marginBottom: 6,
+  },
+  underoverskrift: {
+    fontSize: 12,
+    lineHeight: 16 / 12,
+    fontWeight: "bold",
+    letterSpacing: 0.2,
+    marginTop: 26,
+    marginBottom: 6,
   },
   avsnitt: {
-    lineHeight: 1.4,
     marginBottom: 0,
   },
-  pageNumber: {
+  sidenummer: {
     position: "absolute",
-    fontSize: 9,
     bottom: 26,
-    right: 0,
+    left: 64,
+    right: 64,
+    fontSize: 9,
     textAlign: "right",
     color: "#000000",
   },
@@ -90,7 +88,12 @@ const TekstAvsnitt = ({ tekst }: { tekst: string }) => {
   return (
     <>
       {avsnitt.map((a, i) => (
-        <Text key={i} style={i > 0 ? [styles.avsnitt, { marginTop: 16 }] : styles.avsnitt} orphans={3} widows={3}>
+        <Text
+          key={i}
+          style={i > 0 ? [styles.avsnitt, { marginTop: 16 }] : styles.avsnitt}
+          orphans={3}
+          widows={3}
+        >
           {a}
         </Text>
       ))}
@@ -109,12 +112,22 @@ const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
             <Image src={NAV_LOGO_PATH} style={styles.logo} />
           </View>
 
-          <View style={styles.infoBlokk}>
-            <Text style={styles.brukerInfo}>Navn: {brevmal.informasjonOmBruker.navn}</Text>
-            <View style={styles.fnrDatoRad}>
-              <Text style={styles.brukerInfo}>Fnr: {brevmal.informasjonOmBruker.fnr}</Text>
-              <Text style={styles.dato}>
-                {new Date().toLocaleDateString("nb-NO", { day: "2-digit", month: "2-digit", year: "numeric" })}
+          <View style={styles.infoblokk}>
+            <View style={styles.infoRad}>
+              <Text style={styles.infoEtikett}>Navn:</Text>
+              <Text>{brevmal.informasjonOmBruker.navn}</Text>
+            </View>
+            <View style={styles.datoRad}>
+              <View style={styles.infoRad}>
+                <Text style={styles.infoEtikett}>Fødselsnummer:</Text>
+                <Text>{brevmal.informasjonOmBruker.fnr}</Text>
+              </View>
+              <Text>
+                {new Date().toLocaleDateString("nb-NO", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
               </Text>
             </View>
           </View>
@@ -124,9 +137,12 @@ const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
           {fritekstbolker.map((fritekstbolk, index) => {
             const harOverskrift = !!fritekstbolk.underoverskrift?.trim();
             return (
-              <View key={index} style={harOverskrift ? styles.seksjon : [styles.seksjon, { marginTop: 26 }]}>
+              <View
+                key={index}
+                style={harOverskrift ? styles.seksjon : [styles.seksjon, { marginTop: 26 }]}
+              >
                 {harOverskrift && (
-                  <Text style={styles.underoverskrift} minPresenceAhead={20}>
+                  <Text style={styles.overskrift} minPresenceAhead={20}>
                     {fritekstbolk.underoverskrift}
                   </Text>
                 )}
@@ -138,7 +154,11 @@ const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
           {brevmal.fastTekstAvslutning?.map((fastTekst, index) => {
             const harOverskrift = !!fastTekst.underoverskrift?.trim();
             return (
-              <View key={index} style={harOverskrift ? styles.seksjon : [styles.seksjon, { marginTop: 26 }]} wrap={false}>
+              <View
+                key={index}
+                style={harOverskrift ? styles.seksjon : [styles.seksjon, { marginTop: 26 }]}
+                wrap={false}
+              >
                 {harOverskrift && (
                   <Text style={styles.underoverskrift}>{fastTekst.underoverskrift}</Text>
                 )}
@@ -148,7 +168,7 @@ const BrevDokument = ({ brevmal, fritekstbolker }: Props) => {
           })}
 
           <Text
-            style={styles.pageNumber}
+            style={styles.sidenummer}
             render={({ pageNumber, totalPages }) => `Side ${pageNumber} av ${totalPages}`}
             fixed
           />
@@ -176,15 +196,11 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
     [debouncedBrevmal, debouncedFritekstbolker]
   );
 
-  const [instance, oppdaterInstans] = usePDF({ document: dokument });
-
-  useEffect(() => {
-    oppdaterInstans(dokument);
-  }, [dokument, oppdaterInstans]);
+  const [instans] = usePDF({ document: dokument });
 
   if (typeof window === "undefined") return null;
 
-  if (instance.loading) {
+  if (instans.loading) {
     return (
       <VStack align="center" justify="center" height="100%">
         <Loader size="xlarge" title="Genererer PDF..." />
@@ -192,17 +208,11 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
     );
   }
 
-  if (instance.error) {
-    return <Alert variant="error">Feil ved generering av PDF: {String(instance.error)}</Alert>;
+  if (instans.error) {
+    return <Alert variant="error">Feil ved generering av PDF: {String(instans.error)}</Alert>;
   }
 
-  const iframeUrl = instance.url ? `${instance.url}#toolbar=0&navpanes=0&view=FitH` : undefined;
+  const url = instans.url ? `${instans.url}#toolbar=0&navpanes=0&view=FitH` : undefined;
 
-  return (
-    <iframe
-      src={iframeUrl}
-      title="PDF forhåndsvisning"
-      className={cssStyles.pdfIframe}
-    />
-  );
+  return <iframe src={url} className={cssStyles.pdfIframe} title="Forhåndsvisning av brev" />;
 };

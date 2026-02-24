@@ -154,7 +154,7 @@ export default function Brev() {
             {brevMal ? (
               <PdfForhåndsvisning brevmal={brevMal} fritekstbolker={fritekstbolker} />
             ) : (
-              <div className={styles.pdfTomtilstand}>Velg et dokument for å se forhåndsvisning</div>
+              <VStack align="center" justify="center" height="100%" />
             )}
           </Box>
         </HGrid>
