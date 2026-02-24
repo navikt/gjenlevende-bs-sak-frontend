@@ -21,6 +21,7 @@ import {
   ÅrsakUnderkjent,
   årsakUnderkjentTekst,
 } from "~/types/totrinnskontroll";
+import { formaterRelativTid } from "./endringMeta";
 
 enum Totrinnsresultat {
   IKKE_VALGT = "IKKE_VALGT",
@@ -267,7 +268,7 @@ const TotrinnskontrollUnderkjent: React.FC<{
         </InlineMessage>
         <VStack gap="space-4">
           <InfoRad label="Underkjent av" verdi={totrinnskontroll.opprettetAv} />
-          <InfoRad label="Underkjent" verdi={totrinnskontroll.opprettetTid} />
+          <InfoRad label="Underkjent" verdi={formaterRelativTid(totrinnskontroll.opprettetTid)} />
           {totrinnskontroll.årsakUnderkjent && (
             <InfoRad
               label="Årsak"
