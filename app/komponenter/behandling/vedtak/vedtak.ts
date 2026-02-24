@@ -22,7 +22,6 @@ export interface Vedtak {
 }
 
 export interface Barnetilsynperiode {
-    behandlingId: string;
     datoFra: string;
     datoTil: string;
     utgifter: number;
