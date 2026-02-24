@@ -73,26 +73,29 @@ export const useBrev = (behandlingId?: string) => {
     }
   };
 
-  const mellomlagreBrev = async (
-    behandlingId: string,
-    brevmal: Brevmal,
-    fritekstbolker: Tekstbolk[]
-  ): Promise<ApiResponse<unknown>> => {
-    try {
-      return apiCall(`/brev/mellomlagre/${behandlingId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          brevmal,
-          fritekstbolker,
-        }),
-      });
-    } catch (error) {
-      throw new Error("Feil ved mellomlagring av brev: " + error);
-    }
-  };
+  const mellomlagreBrev = useCallback(
+    async (
+      behandlingId: string,
+      brevmal: Brevmal,
+      fritekstbolker: Tekstbolk[]
+    ): Promise<ApiResponse> => {
+      try {
+        return apiCall(`/brev/mellomlagre/${behandlingId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            brevmal,
+            fritekstbolker,
+          }),
+        });
+      } catch (error) {
+        throw new Error("Feil ved mellomlagring av brev: " + error);
+      }
+    },
+    []
+  );
 
   const hentMellomlagretBrev = useCallback(() => {
     if (!behandlingId) return;

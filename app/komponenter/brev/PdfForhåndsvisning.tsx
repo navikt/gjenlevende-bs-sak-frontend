@@ -127,7 +127,11 @@ export const PdfForhåndsvisning = ({ brevmal, fritekstbolker }: Props) => {
     [debouncedBrevmal, debouncedFritekstbolker]
   );
 
-  const [instans] = usePDF({ document: dokument });
+  const [instans, oppdaterInstans] = usePDF({ document: dokument });
+
+  useEffect(() => {
+    oppdaterInstans(dokument);
+  }, [dokument, oppdaterInstans]);
 
   if (typeof window === "undefined") return null;
 
