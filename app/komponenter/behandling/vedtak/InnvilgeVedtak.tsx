@@ -25,7 +25,6 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     const {behandlingId} = useParams<{ behandlingId: string }>();
 
     const tomBarnetilsynperiode: Barnetilsynperiode = {
-        behandlingId: behandlingId ?? '',
         datoFra: '',
         datoTil: '',
         utgifter: 0,

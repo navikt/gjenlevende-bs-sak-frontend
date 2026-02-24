@@ -63,7 +63,6 @@ export const BarnetilsynperiodeValg: React.FC<{
     settPerioder((prev) => [
       ...prev,
       {
-        behandlingId,
         datoFra: "",
         datoTil: "",
         utgifter: 0,
