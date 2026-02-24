@@ -7,7 +7,8 @@ export type EndringType =
   | "VEDTAK_LAGRET"
   | "ÅRSAK_LAGRET"
   | "ÅRSAK_OPPDATERT"
-  | "BESLUTTER_GODKJENT";
+  | "BESLUTTER_GODKJENT"
+  | "BESLUTTER_UNDERKJENT";
 
 export interface BehandlingEndring {
   id: string;
