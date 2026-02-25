@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect} from "react";
 import type {Barnetilsynperiode} from "~/komponenter/behandling/vedtak/vedtak";
 import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 import {useParams} from "react-router";
@@ -25,18 +25,18 @@ interface InnvilgeVedtakProps {
     onLagreSuksess: () => void;
 }
 
+const tomBarnetilsynperiode: Barnetilsynperiode = {
+    datoFra: '',
+    datoTil: '',
+    utgifter: 0,
+    barn: [],
+    periodetype: undefined,
+    aktivitetstype: undefined,
+};
+
 export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erLesevisning, låst, onLagreSuksess}) => {
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {behandling} = useBehandlingContext()
-
-    const tomBarnetilsynperiode: Barnetilsynperiode = {
-        datoFra: '',
-        datoTil: '',
-        utgifter: 0,
-        barn: [],
-        periodetype: undefined,
-        aktivitetstype: undefined,
-    }
 
     const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker();
 
@@ -78,9 +78,10 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
         };
 
         if (behandling?.forrigeBehandlingId && selectedMonth && historiskVedtak) {
-            settPerioder(hentVedtakHistorikkFraMåned(selectedMonth, historiskVedtak));
+            const nyePerioder = hentVedtakHistorikkFraMåned(selectedMonth, historiskVedtak);
+            settPerioder(prev => JSON.stringify(prev) !== JSON.stringify(nyePerioder) ? nyePerioder : prev);
         }
-    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId, tomBarnetilsynperiode]);
+    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId]);
 
     const erLåst = erLesevisning || låst;
 
