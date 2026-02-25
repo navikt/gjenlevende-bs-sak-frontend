@@ -1,7 +1,7 @@
 import React from "react";
 import { InfoCard, VStack, Heading, Skeleton } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
-import { formaterRelativTid, formatterEnumVerdi } from "~/utils/utils";
+import { formaterIsoDatoTid, formatterEnumVerdi } from "~/utils/utils";
 import { InfoRad } from "./InfoRad";
 
 const rolleDataColor = {
@@ -48,11 +48,11 @@ export const AnsvarligSaksbehandler = () => {
             />
             <InfoRad
               label="Opprettet"
-              verdi={behandling ? formaterRelativTid(behandling.opprettet) : "-"}
+              verdi={behandling ? formaterIsoDatoTid(behandling.opprettet) : "-"}
             />
             <InfoRad
               label="Sist endret"
-              verdi={behandling ? formaterRelativTid(behandling.sistEndret) : "-"}
+              verdi={behandling ? formaterIsoDatoTid(behandling.sistEndret) : "-"}
             />
             <InfoRad label="Endret av" verdi={behandling?.sistEndretAv ?? "-"} />
           </VStack>
