@@ -1,8 +1,5 @@
 .sidebarTabs {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
+  flex-shrink: 0;
 }
 
 .sidebarTabs :global(.aksel-tabs__tab) {
@@ -11,8 +8,5 @@
 }
 
 .tabPanel {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
   padding-top: 0.5rem;
 }
