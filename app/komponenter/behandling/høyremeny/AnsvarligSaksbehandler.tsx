@@ -1,7 +1,7 @@
 import React from "react";
 import { InfoCard, VStack, Heading, Skeleton } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
-import { formatterEnumVerdi, formaterIsoDatoTid } from "~/utils/utils";
+import { formaterIsoDatoTid, formatterEnumVerdi } from "~/utils/utils";
 import { InfoRad } from "./InfoRad";
 
 const rolleDataColor = {

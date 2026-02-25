@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { apiCall, type ApiResponse } from "~/api/backend";
+import type { ÅrsakUnderkjent } from "~/types/totrinnskontroll";
 
 interface BeslutteVedtakDto {
   godkjent: boolean;
+  årsakUnderkjent?: ÅrsakUnderkjent;
+  begrunnelse?: string;
 }
 
 export const useBeslutter = () => {
@@ -33,10 +36,14 @@ export const useBeslutter = () => {
   const besluttVedtak = (behandlingId: string, beslutteVedtakDto: BeslutteVedtakDto) =>
     kallBeslutterEndepunkt("beslutt-vedtak", behandlingId, beslutteVedtakDto);
 
+  const hoppOverTotrinnskontroll = (behandlingId: string) =>
+    kallBeslutterEndepunkt("hopp-over-totrinnskontroll", behandlingId);
+
   return {
     sender,
     sendTilBeslutter,
     angreSendTilBeslutter,
     besluttVedtak,
+    hoppOverTotrinnskontroll,
   };
 };

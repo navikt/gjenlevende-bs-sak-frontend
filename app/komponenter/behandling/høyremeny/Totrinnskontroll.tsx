@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import {
   Alert,
+  BodyLong,
+  BodyShort,
   Box,
   Button,
   Heading,
   InlineMessage,
   Radio,
   RadioGroup,
+  Textarea,
   VStack,
 } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useBeslutter } from "~/hooks/useBeslutter";
 import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 import { InfoRad } from "./InfoRad";
-import { TotrinnskontrollStatus } from "~/types/totrinnskontroll";
+import {
+  TotrinnskontrollStatus,
+  ÅrsakUnderkjent,
+  årsakUnderkjentTekst,
+} from "~/types/totrinnskontroll";
+import { formaterRelativTid } from "~/utils/utils";
 
 enum Totrinnsresultat {
   IKKE_VALGT = "IKKE_VALGT",
@@ -140,7 +148,7 @@ const FatterVedtak: React.FC<{
   behandlingId: string;
   besluttVedtak: (
     behandlingId: string,
-    data: { godkjent: boolean }
+    data: { godkjent: boolean; årsakUnderkjent?: ÅrsakUnderkjent; begrunnelse?: string }
   ) => Promise<{ data?: unknown; feilmelding?: string }>;
   sender: boolean;
   revaliderBehandling: () => void;
@@ -157,14 +165,23 @@ const FatterVedtak: React.FC<{
   const [totrinnsresultat, settTotrinnsresultat] = useState<Totrinnsresultat>(
     Totrinnsresultat.IKKE_VALGT
   );
+  const [årsakUnderkjent, settÅrsakUnderkjent] = useState<ÅrsakUnderkjent | null>(null);
+  const [begrunnelse, settBegrunnelse] = useState("");
   const [feilmelding, settFeilmelding] = useState<string | null>(null);
 
-  const erUtfylt = totrinnsresultat !== Totrinnsresultat.IKKE_VALGT;
+  const erGodkjent = totrinnsresultat === Totrinnsresultat.GODKJENT;
+  const erUnderkjent = totrinnsresultat === Totrinnsresultat.UNDERKJENT;
+  const erUtfylt =
+    erGodkjent || (erUnderkjent && årsakUnderkjent !== null && begrunnelse.trim() !== "");
 
   const handleFullfør = async () => {
     settFeilmelding(null);
     const respons = await besluttVedtak(behandlingId, {
-      godkjent: totrinnsresultat === Totrinnsresultat.GODKJENT,
+      godkjent: erGodkjent,
+      ...(erUnderkjent && {
+        årsakUnderkjent: årsakUnderkjent!,
+        begrunnelse: begrunnelse.trim(),
+      }),
     });
 
     if (respons.data) {
@@ -191,8 +208,31 @@ const FatterVedtak: React.FC<{
           <Radio value={Totrinnsresultat.UNDERKJENT}>Underkjenn</Radio>
         </RadioGroup>
 
-        {erUtfylt && (
-          <Button size="small" onClick={handleFullfør} loading={sender}>
+        {erUnderkjent && (
+          <>
+            <RadioGroup
+              legend="Årsak"
+              value={årsakUnderkjent ?? ""}
+              onChange={(val) => settÅrsakUnderkjent(val as ÅrsakUnderkjent)}
+              size="small"
+            >
+              {Object.values(ÅrsakUnderkjent).map((årsak) => (
+                <Radio key={årsak} value={årsak}>
+                  {årsakUnderkjentTekst[årsak]}
+                </Radio>
+              ))}
+            </RadioGroup>
+            <Textarea
+              label="Begrunnelse"
+              value={begrunnelse}
+              onChange={(e) => settBegrunnelse(e.target.value)}
+              size="small"
+            />
+          </>
+        )}
+
+        {(erGodkjent || erUnderkjent) && (
+          <Button size="small" onClick={handleFullfør} loading={sender} disabled={!erUtfylt}>
             Fullfør
           </Button>
         )}
@@ -213,6 +253,8 @@ const TotrinnskontrollUnderkjent: React.FC<{
     totrinnskontroll: {
       opprettetAv: string;
       opprettetTid: string;
+      årsakUnderkjent?: ÅrsakUnderkjent;
+      begrunnelse?: string;
     };
   };
 }> = ({ totrinnskontrollStatus }) => {
@@ -227,8 +269,22 @@ const TotrinnskontrollUnderkjent: React.FC<{
         </InlineMessage>
         <VStack gap="space-4">
           <InfoRad label="Underkjent av" verdi={totrinnskontroll.opprettetAv} />
-          <InfoRad label="Underkjent" verdi={totrinnskontroll.opprettetTid} />
+          <InfoRad label="Underkjent" verdi={formaterRelativTid(totrinnskontroll.opprettetTid)} />
+          {totrinnskontroll.årsakUnderkjent && (
+            <InfoRad
+              label="Årsak underkjent"
+              verdi={årsakUnderkjentTekst[totrinnskontroll.årsakUnderkjent]}
+            />
+          )}
         </VStack>
+        {totrinnskontroll.begrunnelse && (
+          <VStack gap="space-2">
+            <BodyShort size="small" weight="semibold">
+              Begrunnelse
+            </BodyShort>
+            <BodyLong size="small">{totrinnskontroll.begrunnelse}</BodyLong>
+          </VStack>
+        )}
       </VStack>
     </Box>
   );

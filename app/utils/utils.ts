@@ -1,4 +1,4 @@
-import {format, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import type { Navn } from "~/api/backend";
 
 export const formaterNavn = (navn: Navn): string => {
@@ -18,46 +18,68 @@ export const erGyldigSøkestreng = (søkestreng: string): boolean => {
 };
 
 export const formaterIsoDatoTid = (dato: string): string => {
-    return format(parseISO(dato), "dd.MM.yyyy 'kl'.HH:mm");
+  return format(parseISO(dato), "dd.MM.yyyy 'kl'.HH:mm");
 };
 
-const replaceUnderscoreWithSpace = (str: string): string => str.split('_').join(' ');
+const replaceUnderscoreWithSpace = (str: string): string => str.split("_").join(" ");
 
 export const toTitleCase = (str: string): string =>
-    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase());
+  str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase());
 
 export const formatterEnumVerdi = (str: string): string =>
-    replaceUnderscoreWithSpace(toTitleCase(str));
+  replaceUnderscoreWithSpace(toTitleCase(str));
 
 export const månedStringTilYearMonth = (value: string | undefined): string => {
-    if (!value?.trim()) return '';
+  if (!value?.trim()) return "";
 
-    const månederStrings = [
-        'januar', 'februar', 'mars', 'april', 'mai', 'juni',
-        'juli', 'august', 'september', 'oktober', 'november', 'desember'
-    ];
+  const månederStrings = [
+    "januar",
+    "februar",
+    "mars",
+    "april",
+    "mai",
+    "juni",
+    "juli",
+    "august",
+    "september",
+    "oktober",
+    "november",
+    "desember",
+  ];
 
-    const [månedNavn, årString] = value.trim().split(' ');
-    const måned = månederStrings.indexOf(månedNavn?.toLowerCase());
-    const year = Number(årString);
+  const [månedNavn, årString] = value.trim().split(" ");
+  const måned = månederStrings.indexOf(månedNavn?.toLowerCase());
+  const year = Number(årString);
 
-    if (måned >= 0 && year >= 1000 && year <= 9999) {
-        const mm = String(måned + 1).padStart(2, '0');
-        return `${year}-${mm}`;
-    }
+  if (måned >= 0 && year >= 1000 && year <= 9999) {
+    const mm = String(måned + 1).padStart(2, "0");
+    return `${year}-${mm}`;
+  }
 
-    return '';
+  return "";
 };
 
 export const formaterYearMonthStringTilNorskDato = (dateString: string | undefined): string => {
-    if (!dateString?.trim()) return '';
+  if (!dateString?.trim()) return "";
 
-    try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return '';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-        return date.toLocaleString('nb-NO', { month: 'long', year: 'numeric' });
-    } catch {
-        return '';
-    }
+    return date.toLocaleString("nb-NO", { month: "long", year: "numeric" });
+  } catch {
+    return "";
+  }
+};
+
+export const formaterRelativTid = (isoTid: string): string => {
+  const tid = new Date(isoTid);
+  const nå = new Date();
+  const diffSekunder = Math.floor((nå.getTime() - tid.getTime()) / 1000);
+
+  if (diffSekunder < 60) return "Akkurat nå";
+  if (diffSekunder < 3600) return `${Math.floor(diffSekunder / 60)} min. siden`;
+  if (diffSekunder < 86400) return `${Math.floor(diffSekunder / 3600)} t. siden`;
+  if (diffSekunder < 604800) return `${Math.floor(diffSekunder / 86400)} d. siden`;
+  return formaterIsoDatoTid(isoTid);
 };

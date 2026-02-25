@@ -6,8 +6,8 @@ import {
   TasklistIcon,
   CheckmarkCircleIcon,
   NotePencilIcon,
+  XMarkOctagonIcon,
 } from "@navikt/aksel-icons";
-import { formaterIsoDatoTid } from "~/utils/utils";
 import type { EndringType, BehandlingEndring } from "~/types/endringshistorikk";
 import type { TagFarge } from "~/types/farge";
 
@@ -73,18 +73,12 @@ export const endringMeta: Record<EndringType, EndringMeta> = {
     farge: "success",
     erMilepæl: true,
   },
-};
-
-export const formaterRelativTid = (isoTid: string): string => {
-  const tid = new Date(isoTid);
-  const nå = new Date();
-  const diffSekunder = Math.floor((nå.getTime() - tid.getTime()) / 1000);
-
-  if (diffSekunder < 60) return "Akkurat nå";
-  if (diffSekunder < 3600) return `${Math.floor(diffSekunder / 60)} min. siden`;
-  if (diffSekunder < 86400) return `${Math.floor(diffSekunder / 3600)} t. siden`;
-  if (diffSekunder < 604800) return `${Math.floor(diffSekunder / 86400)} d. siden`;
-  return formaterIsoDatoTid(isoTid);
+  BESLUTTER_UNDERKJENT: {
+    tekst: "Beslutter underkjent",
+    ikon: XMarkOctagonIcon,
+    farge: "warning",
+    erMilepæl: true,
+  },
 };
 
 export interface EndringGruppe {
