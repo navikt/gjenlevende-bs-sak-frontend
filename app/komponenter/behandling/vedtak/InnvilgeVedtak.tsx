@@ -38,14 +38,17 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {behandling} = useBehandlingContext()
 
-    const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker();
-
     const lagretPerioder = lagretVedtak?.barnetilsynperioder && lagretVedtak.barnetilsynperioder.length > 0
         ? lagretVedtak.barnetilsynperioder
         : [tomBarnetilsynperiode];
 
     const {lagreVedtak, opprettFeilmelding} = useLagreVedtak();
     const {beløpsperioder, hentBeløpsperioder, beregnFeilmelding} = useHentBeløpsPerioderForVedtak();
+
+    const førsteBarnetilsynsperiodeLageretVedtak: string | undefined = lagretVedtak?.barnetilsynperioder.at(0)?.datoFra
+    const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker({
+        defaultSelected: førsteBarnetilsynsperiodeLageretVedtak ? new Date(førsteBarnetilsynsperiodeLageretVedtak) : undefined
+    });
 
     const formatertValgtMåned = selectedMonth ? format(selectedMonth, 'yyyy-MM') : null;
     const {vedtak: historiskVedtak} = useHentVedtakHistorikk(
@@ -77,11 +80,11 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
             return filteredPerioder.length > 0 ? filteredPerioder : [tomBarnetilsynperiode];
         };
 
-        if (behandling?.forrigeBehandlingId && selectedMonth && historiskVedtak) {
+        if (behandling?.forrigeBehandlingId && selectedMonth && historiskVedtak && !lagretVedtak) {
             const nyePerioder = hentVedtakHistorikkFraMåned(selectedMonth, historiskVedtak);
             settPerioder(prev => JSON.stringify(prev) !== JSON.stringify(nyePerioder) ? nyePerioder : prev);
         }
-    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId]);
+    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId, lagretVedtak]);
 
     const erLåst = erLesevisning || låst;
 
@@ -103,11 +106,12 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                 {behandling?.forrigeBehandlingId && (<MonthPicker {...monthpickerProps}>
                     <MonthPicker.Input
                         {...inputProps}
+                        disabled={erLåst}
                         label="Revurderes fra og med"
                     />
                 </MonthPicker>
             )}
-            {(!behandling?.forrigeBehandlingId || selectedMonth) && (
+            {(!behandling?.forrigeBehandlingId || selectedMonth || lagretVedtak) && (
                 <>
                     <BarnetilsynperiodeValg perioder={perioder}
                                             settPerioder={settPerioder}

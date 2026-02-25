@@ -39,19 +39,11 @@ export function useHentVedtakHistorikk(behandlingId: string | undefined, fra: st
 
             const response = await hentVedtakForBehandling(behandlingId, fra);
 
-            if (response.data) {
-                settState((prev) => ({
-                    ...prev,
-                    vedtak: response.data ?? null,
-                    laster: false,
-                }));
-            } else {
-                settState((prev) => ({
-                    ...prev,
-                    vedtak: null,
-                    laster: false,
-                }));
-            }
+            settState((prev) => ({
+                ...prev,
+                vedtak: response.data ?? null,
+                laster: false,
+            }));
         };
 
         hentVedtakHistorikk();

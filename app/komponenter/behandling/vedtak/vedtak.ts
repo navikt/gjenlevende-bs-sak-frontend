@@ -8,6 +8,7 @@ export enum Periodetype {
 export enum AktivitetstypeBarnetilsyn {
     I_ARBEID = 'I_ARBEID',
     FORBIGÅENDE_SYKDOM = 'FORBIGÅENDE_SYKDOM',
+    IKKE_RELEVANT = 'IKKE_RELEVANT',
 }
 
 export interface Vedtak {

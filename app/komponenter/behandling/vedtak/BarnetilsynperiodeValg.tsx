@@ -1,21 +1,9 @@
 import React from "react";
-import {
-  AktivitetstypeBarnetilsyn,
-  type Barnetilsynperiode,
-  Periodetype,
-} from "~/komponenter/behandling/vedtak/vedtak";
-import {
-  Button,
-  HStack,
-  MonthPicker,
-  Select,
-  Table,
-  TextField,
-  UNSAFE_Combobox,
-} from "@navikt/ds-react";
-import { formaterYearMonthStringTilNorskDato, månedStringTilYearMonth } from "~/utils/utils";
-import { TrashIcon } from "@navikt/aksel-icons";
-import { useParams } from "react-router";
+import {AktivitetstypeBarnetilsyn, type Barnetilsynperiode, Periodetype,} from "~/komponenter/behandling/vedtak/vedtak";
+import {Button, HStack, MonthPicker, Select, Table, TextField, UNSAFE_Combobox,} from "@navikt/ds-react";
+import {formaterYearMonthStringTilNorskDato, månedStringTilYearMonth} from "~/utils/utils";
+import {TrashIcon} from "@navikt/aksel-icons";
+import {useParams} from "react-router";
 
 export const BarnetilsynperiodeValg: React.FC<{
   perioder: Barnetilsynperiode[];
@@ -41,7 +29,21 @@ export const BarnetilsynperiodeValg: React.FC<{
     felt: keyof Barnetilsynperiode,
     value: string | number | string[]
   ) {
-    settPerioder((prev) => prev.map((p, i) => (i === index ? { ...p, [felt]: value } : p)));
+    settPerioder((prev) =>
+      prev.map((p, i) => {
+        if (i !== index) return p;
+        if (felt === "periodetype" && value === Periodetype.INGEN_STØNAD) {
+          return {
+            ...p,
+            periodetype: value,
+            barn: [],
+            utgifter: 0,
+            aktivitetstype: AktivitetstypeBarnetilsyn.IKKE_RELEVANT,
+          };
+        }
+        return { ...p, [felt]: value };
+      })
+    );
   }
 
   function handleBarnChange(index: number, option: string, isSelected: boolean) {
