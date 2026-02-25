@@ -1,5 +1,6 @@
 export const ToggleNavn = {
   TestToggle: "gjenlevende_frontend__test_setup",
+  HoppOverTotrinnskontroll: "gjenlevende-bs-sak-hopp-over-totrinnskontroll",
 } as const;
 
 type ToggleNøkkel = keyof typeof ToggleNavn;

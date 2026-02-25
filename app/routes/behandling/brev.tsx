@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, HGrid, VStack } from "@navikt/ds-react";
 import type { Route } from "./+types/brev";
 import { useBrev } from "~/komponenter/brev/useBrev";
@@ -6,11 +6,14 @@ import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useBrevmottaker } from "~/hooks/useBrevmottaker";
 import { useStegNavigering } from "~/hooks/useStegNavigering";
 import { useBeslutter } from "~/hooks/useBeslutter";
+import { useToggles } from "~/hooks/useToggles";
+import { ToggleNavn } from "~/types/toggles";
 import { oppdaterEndringshistorikk } from "~/utils/endringshistorikkEvent";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 import { BrevRedigering } from "~/komponenter/brev/BrevRedigering";
 import { BrevForhåndsvisning } from "~/komponenter/brev/BrevForhåndsvisning";
 import { BrevHandlinger } from "~/komponenter/brev/BrevHandlinger";
+import { HoppOverTotrinnskontrollModal } from "~/komponenter/brev/HoppOverTotrinnskontrollModal";
 import styles from "./brev.module.css";
 
 export function meta(_args: Route.MetaArgs) {
@@ -45,8 +48,11 @@ export default function Brev() {
   } = useBrev(behandlingId);
 
   const erSendtTilBeslutter = behandling?.status === "FATTER_VEDTAK";
-  const { sender: senderTilBeslutter, sendTilBeslutter } = useBeslutter();
+  const { sender: senderTilBeslutter, sendTilBeslutter, hoppOverTotrinnskontroll } = useBeslutter();
   const { navigerTilForrige, harForrigeSteg } = useStegNavigering(STEG_PATH);
+  const { toggles } = useToggles();
+  const erHoppOverTotrinnskontrollAktiv = toggles[ToggleNavn.HoppOverTotrinnskontroll] ?? false;
+  const hoppOverModalRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (!brevMal) return;
@@ -62,6 +68,22 @@ export default function Brev() {
     if (respons.data) {
       oppdaterEndringshistorikk();
       revaliderBehandling();
+    }
+  };
+
+  const handleHoppOverTotrinnskontroll = async () => {
+    const respons = await hoppOverTotrinnskontroll(behandlingId);
+    if (respons.data) {
+      oppdaterEndringshistorikk();
+      revaliderBehandling();
+    }
+  };
+
+  const handleSendTilBeslutterKlikk = () => {
+    if (erHoppOverTotrinnskontrollAktiv) {
+      hoppOverModalRef.current?.showModal();
+    } else {
+      handleSendTilBeslutter();
     }
   };
 
@@ -108,10 +130,17 @@ export default function Brev() {
         sender={sender}
         sendPdfTilSak={sendPdfTilSak}
         senderTilBeslutter={senderTilBeslutter}
-        handleSendTilBeslutter={handleSendTilBeslutter}
+        handleSendTilBeslutter={handleSendTilBeslutterKlikk}
         erSendtTilBeslutter={erSendtTilBeslutter}
         harForrigeSteg={harForrigeSteg}
         navigerTilForrige={navigerTilForrige}
+      />
+
+      <HoppOverTotrinnskontrollModal
+        modalRef={hoppOverModalRef}
+        sender={senderTilBeslutter}
+        onHoppOver={handleHoppOverTotrinnskontroll}
+        onSendTilBeslutter={handleSendTilBeslutter}
       />
     </VStack>
   );

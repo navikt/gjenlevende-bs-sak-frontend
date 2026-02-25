@@ -2,14 +2,9 @@ import React from "react";
 import { BodyShort, Detail, Skeleton, Tag, Tooltip, VStack } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { useHentEndringshistorikk } from "~/hooks/useHentEndringshistorikk";
-import { formaterIsoDatoTid } from "~/utils/utils";
+import { formaterIsoDatoTid, formaterRelativTid } from "~/utils/utils";
 import type { BehandlingEndring } from "~/types/endringshistorikk";
-import {
-  endringMeta,
-  formaterRelativTid,
-  grupperKonsekutiveEndringer,
-  type EndringGruppe,
-} from "./endringMeta";
+import { endringMeta, grupperKonsekutiveEndringer, type EndringGruppe } from "./endringMeta";
 import styles from "./Endringshistorikk.module.css";
 
 const EndringRad = ({ endring }: { endring: BehandlingEndring }) => {
