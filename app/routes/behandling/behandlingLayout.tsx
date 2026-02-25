@@ -20,6 +20,7 @@ import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
 import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave";
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollStatus";
+import { LocalAlertBehandlingFerdigstilt } from "./LocalAlertBehandlingFerdigstilt";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -58,10 +59,8 @@ export default function BehandlingLayout() {
     hentPåNytt: hentAnsvarligSaksbehandlerPåNytt,
   } = useHentAnsvarligSaksbehandler(behandlingId);
 
-  const {
-    totrinnskontrollStatus,
-    hentPåNytt: hentTotrinnskontrollStatusPåNytt,
-  } = useHentTotrinnskontrollStatus(behandlingId);
+  const { totrinnskontrollStatus, hentPåNytt: hentTotrinnskontrollStatusPåNytt } =
+    useHentTotrinnskontrollStatus(behandlingId);
 
   const markerStegSomFerdig = useCallback((steg: Steg) => {
     settFerdigeSteg((prev) => (prev.includes(steg) ? prev : [...prev, steg]));
@@ -166,6 +165,8 @@ export default function BehandlingLayout() {
     }
   }, [behandlingId]);
 
+  const erBehandlingFerdigstilt = behandling?.status === "FERDIGSTILT";
+
   if (!behandlingId) {
     return <div>Mangler behandling id</div>;
   }
@@ -200,6 +201,9 @@ export default function BehandlingLayout() {
           </Box>
           <HøyreMeny>
             <TildelOppgave />
+
+            {erBehandlingFerdigstilt && <LocalAlertBehandlingFerdigstilt behandling={behandling} />}
+
             <Totrinnskontroll />
 
             <AnsvarligSaksbehandler />
