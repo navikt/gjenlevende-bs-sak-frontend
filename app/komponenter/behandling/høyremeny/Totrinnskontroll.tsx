@@ -21,7 +21,7 @@ import {
   ÅrsakUnderkjent,
   årsakUnderkjentTekst,
 } from "~/types/totrinnskontroll";
-import { formaterRelativTid } from "./endringMeta";
+import { formaterRelativTid } from "~/utils/utils";
 
 enum Totrinnsresultat {
   IKKE_VALGT = "IKKE_VALGT",
