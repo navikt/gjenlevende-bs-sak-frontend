@@ -8,7 +8,6 @@ import {
   NotePencilIcon,
   XMarkOctagonIcon,
 } from "@navikt/aksel-icons";
-import { formaterIsoDatoTid } from "~/utils/utils";
 import type { EndringType, BehandlingEndring } from "~/types/endringshistorikk";
 import type { TagFarge } from "~/types/farge";
 
