@@ -2,6 +2,7 @@ import React from "react";
 import { Button, HStack } from "@navikt/ds-react";
 import type { Brevmal, Tekstbolk } from "~/komponenter/brev/typer";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
+import { useBehandlingContext } from "~/contexts/BehandlingContext";
 
 interface Props {
   brevMal: Brevmal | null;
@@ -30,6 +31,10 @@ export function BrevHandlinger({
 }: Props) {
   const erLesevisning = useErLesevisning();
 
+  const { ansvarligSaksbehandler } = useBehandlingContext();
+
+  const erAnsvarligSaksbehandler = ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
+
   return (
     <HStack justify="space-between" flexShrink="0">
       {harForrigeSteg && (
@@ -48,7 +53,12 @@ export function BrevHandlinger({
           </Button>
           <Button
             onClick={handleSendTilBeslutter}
-            disabled={senderTilBeslutter || erLesevisning || erSendtTilBeslutter}
+            disabled={
+              senderTilBeslutter ||
+              erLesevisning ||
+              erSendtTilBeslutter ||
+              !erAnsvarligSaksbehandler
+            }
           >
             Send til beslutter
           </Button>
