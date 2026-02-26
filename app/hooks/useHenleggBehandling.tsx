@@ -3,16 +3,16 @@ import { apiCall } from "~/api/backend";
 
 interface HenleggBehandling {
   henleggBehandling: (behandlingId: string) => Promise<boolean>;
-  henlegger: boolean;
+  laster: boolean;
   henleggFeilmelding: string | null;
 }
 
 export const useHenleggBehandling = (): HenleggBehandling => {
-  const [henlegger, settHenlegger] = useState(false);
+  const [laster, settLaster] = useState(false);
   const [henleggFeilmelding, settHenleggFeilmelding] = useState<string | null>(null);
 
   const henleggBehandling = async (behandlingId: string): Promise<boolean> => {
-    settHenlegger(true);
+    settLaster(true);
     settHenleggFeilmelding(null);
 
     try {
@@ -28,13 +28,13 @@ export const useHenleggBehandling = (): HenleggBehandling => {
 
       return true;
     } finally {
-      settHenlegger(false);
+      settLaster(false);
     }
   };
 
   return {
     henleggBehandling,
-    henlegger,
+    laster: laster,
     henleggFeilmelding,
   };
 };

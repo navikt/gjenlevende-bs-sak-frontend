@@ -60,7 +60,7 @@ export default function BehandlingLayout() {
   const revalidator = useRevalidator();
   const navigate = useNavigate();
   const henleggModalRef = useRef<HTMLDialogElement>(null);
-  const { henleggBehandling, henlegger, henleggFeilmelding } = useHenleggBehandling();
+  const { henleggBehandling, laster, henleggFeilmelding } = useHenleggBehandling();
   const [personheaderActions, settPersonheaderActions] = useState<HTMLElement | null>(null);
 
   const {
@@ -231,7 +231,7 @@ export default function BehandlingLayout() {
           )}
         <HenleggBehandlingModal
           modalRef={henleggModalRef}
-          laster={henlegger}
+          laster={laster}
           feilmelding={henleggFeilmelding}
           onHenlegg={håndterHenlegg}
         />
