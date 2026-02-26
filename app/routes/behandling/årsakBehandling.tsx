@@ -35,6 +35,7 @@ const ÅRSAK_ALTERNATIVER = [
 
 export default function ArsakBehandling() {
   const erLesevisning = useErLesevisning();
+  const iDag = new Date();
 
   const { behandlingId, årsakDataHentet } = useBehandlingContext();
 
@@ -56,6 +57,7 @@ export default function ArsakBehandling() {
 
   const { datepickerProps, inputProps, setSelected } = useDatepicker({
     defaultSelected: kravdato,
+    toDate: iDag,
     onDateChange: oppdaterKravdato,
   });
 
@@ -89,10 +91,7 @@ export default function ArsakBehandling() {
       <Box shadow="dialog" background="neutral-soft" padding="space-24" borderRadius="4">
         <VStack gap="space-24" style={{ position: "relative" }}>
           {låst && !erLesevisning && (
-            <RedigerOgSlettKnapper
-              onRediger={() => settLåst(false)}
-              onSlett={tilbakestill}
-            />
+            <RedigerOgSlettKnapper onRediger={() => settLåst(false)} onSlett={tilbakestill} />
           )}
 
           <VStack gap="space-16">
@@ -118,7 +117,6 @@ export default function ArsakBehandling() {
                 </option>
               ))}
             </Select>
-
             <Textarea
               label="Beskrivelse av årsak (fylles ut ved behov)"
               onChange={(e) => oppdaterBeskrivelse(e.target.value)}
@@ -129,7 +127,11 @@ export default function ArsakBehandling() {
 
           {!låst && (
             <div>
-              <Button onClick={håndterLagring} disabled={!kanLagre || erLesevisning} loading={laster}>
+              <Button
+                onClick={håndterLagring}
+                disabled={!kanLagre || erLesevisning}
+                loading={laster}
+              >
                 Lagre
               </Button>
             </div>
