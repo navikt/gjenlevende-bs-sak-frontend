@@ -3,11 +3,11 @@ import { BodyLong, Button, HStack, Modal } from "@navikt/ds-react";
 
 interface Props {
   modalRef: React.RefObject<HTMLDialogElement | null>;
-  sender: boolean;
+  laster: boolean;
   onSendTilBeslutter: () => void;
 }
 
-export function SendTilBeslutterModal({ modalRef, sender, onSendTilBeslutter }: Props) {
+export function SendTilBeslutterModal({ modalRef, laster, onSendTilBeslutter }: Props) {
   const lukkModal = () => modalRef.current?.close();
 
   return (
@@ -24,11 +24,11 @@ export function SendTilBeslutterModal({ modalRef, sender, onSendTilBeslutter }: 
               onSendTilBeslutter();
               lukkModal();
             }}
-            disabled={sender}
+            disabled={laster}
           >
             Send til beslutter
           </Button>
-          <Button variant="secondary" onClick={lukkModal} disabled={sender}>
+          <Button variant="secondary" onClick={lukkModal} disabled={laster}>
             Avbryt
           </Button>
         </HStack>

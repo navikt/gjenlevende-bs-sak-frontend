@@ -122,7 +122,7 @@ export default function Brev() {
 
       <SendTilBeslutterModal
         modalRef={bekreftModalRef}
-        sender={senderTilBeslutter}
+        laster={senderTilBeslutter}
         onSendTilBeslutter={handleSendTilBeslutter}
       />
     </VStack>
