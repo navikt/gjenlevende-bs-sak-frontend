@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Outlet, useParams, useRevalidator } from "react-router";
+import React, { useRef, useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Outlet, useNavigate, useParams, useRevalidator } from "react-router";
 import { BehandlingContext, type ÅrsakState } from "~/contexts/BehandlingContext";
 import {
   BehandlingFaner,
@@ -13,7 +14,7 @@ import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
 import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
-import { Box } from "@navikt/ds-react";
+import { Box, Button } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
 import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
@@ -21,6 +22,8 @@ import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollStatus";
 import { LocalAlertBehandlingFerdigstilt } from "./LocalAlertBehandlingFerdigstilt";
+import { useHenleggBehandling } from "~/hooks/useHenleggBehandling";
+import { HenleggBehandlingModal } from "~/komponenter/behandling/HenleggBehandlingModal";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -45,13 +48,16 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
 ];
 
 export default function BehandlingLayout() {
-  const { behandlingId } = useParams<{ behandlingId: string }>();
+  const { behandlingId, fagsakPersonId } = useParams<{ behandlingId: string; fagsakPersonId: string }>();
   const [ferdigeSteg, settFerdigeSteg] = useState<Steg[]>([]);
   const [årsakState, settÅrsakState] = useState<ÅrsakState | undefined>(undefined);
   const [behandling, settBehandling] = useState<Behandling | undefined>(undefined);
   const [årsakDataHentet, settÅrsakDataHentet] = useState(false);
   const { settErLesevisning } = useLesevisningsContext();
   const revalidator = useRevalidator();
+  const navigate = useNavigate();
+  const henleggModalRef = useRef<HTMLDialogElement>(null);
+  const { henleggBehandling, henlegger } = useHenleggBehandling();
 
   const {
     ansvarligSaksbehandler,
@@ -166,6 +172,16 @@ export default function BehandlingLayout() {
   }, [behandlingId]);
 
   const erBehandlingFerdigstilt = behandling?.status === "FERDIGSTILT";
+  const erBehandlingIverksetter = behandling?.status === "IVERKSETTER_VEDTAK";
+  const kanHenlegges = behandling && !erBehandlingFerdigstilt && !erBehandlingIverksetter;
+
+  const håndterHenlegg = async () => {
+    if (!behandlingId) return;
+    const suksess = await henleggBehandling(behandlingId);
+    if (suksess) {
+      navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
+    }
+  };
 
   if (!behandlingId) {
     return <div>Mangler behandling id</div>;
@@ -192,6 +208,23 @@ export default function BehandlingLayout() {
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+        {kanHenlegges && document.getElementById("personheader-actions") &&
+          createPortal(
+            <Button
+              variant="danger"
+              size="small"
+              onClick={() => henleggModalRef.current?.showModal()}
+            >
+              Henlegg
+            </Button>,
+            document.getElementById("personheader-actions")!,
+          )}
+        <HenleggBehandlingModal
+          modalRef={henleggModalRef}
+          henlegger={henlegger}
+          onHenlegg={håndterHenlegg}
+          onAvbryt={() => {}}
+        />
         <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
         <Box style={{ display: "flex", flex: 1, minHeight: 0 }}>
           <Box style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
