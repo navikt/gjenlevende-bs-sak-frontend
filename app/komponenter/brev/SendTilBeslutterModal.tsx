@@ -7,7 +7,7 @@ interface Props {
   onSendTilBeslutter: () => void;
 }
 
-export function HoppOverTotrinnskontrollModal({ modalRef, sender, onSendTilBeslutter }: Props) {
+export function SendTilBeslutterModal({ modalRef, sender, onSendTilBeslutter }: Props) {
   const lukkModal = () => modalRef.current?.close();
 
   return (

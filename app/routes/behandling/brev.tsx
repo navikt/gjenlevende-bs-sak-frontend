@@ -11,7 +11,7 @@ import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 import { BrevRedigering } from "~/komponenter/brev/BrevRedigering";
 import { BrevForhåndsvisning } from "~/komponenter/brev/BrevForhåndsvisning";
 import { BrevHandlinger } from "~/komponenter/brev/BrevHandlinger";
-import { HoppOverTotrinnskontrollModal } from "~/komponenter/brev/HoppOverTotrinnskontrollModal";
+import { SendTilBeslutterModal } from "~/komponenter/brev/SendTilBeslutterModal";
 import styles from "./brev.module.css";
 
 export function meta(_args: Route.MetaArgs) {
@@ -120,7 +120,7 @@ export default function Brev() {
         navigerTilForrige={navigerTilForrige}
       />
 
-      <HoppOverTotrinnskontrollModal
+      <SendTilBeslutterModal
         modalRef={bekreftModalRef}
         sender={senderTilBeslutter}
         onSendTilBeslutter={handleSendTilBeslutter}
