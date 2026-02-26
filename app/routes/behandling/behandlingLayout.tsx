@@ -48,7 +48,10 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
 ];
 
 export default function BehandlingLayout() {
-  const { behandlingId, fagsakPersonId } = useParams<{ behandlingId: string; fagsakPersonId: string }>();
+  const { behandlingId, fagsakPersonId } = useParams<{
+    behandlingId: string;
+    fagsakPersonId: string;
+  }>();
   const [ferdigeSteg, settFerdigeSteg] = useState<Steg[]>([]);
   const [årsakState, settÅrsakState] = useState<ÅrsakState | undefined>(undefined);
   const [behandling, settBehandling] = useState<Behandling | undefined>(undefined);
@@ -214,7 +217,8 @@ export default function BehandlingLayout() {
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-        {kanHenlegges && personheaderActions &&
+        {kanHenlegges &&
+          personheaderActions &&
           createPortal(
             <Button
               variant="danger"
@@ -223,11 +227,11 @@ export default function BehandlingLayout() {
             >
               Henlegg
             </Button>,
-            personheaderActions,
+            personheaderActions
           )}
         <HenleggBehandlingModal
           modalRef={henleggModalRef}
-          henlegger={henlegger}
+          laster={henlegger}
           feilmelding={henleggFeilmelding}
           onHenlegg={håndterHenlegg}
         />

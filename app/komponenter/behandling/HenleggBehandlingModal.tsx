@@ -3,12 +3,12 @@ import { Alert, BodyLong, Button, HStack, Modal } from "@navikt/ds-react";
 
 interface Props {
   modalRef: RefObject<HTMLDialogElement | null>;
-  henlegger: boolean;
+  laster: boolean;
   feilmelding: string | null;
   onHenlegg: () => Promise<void>;
 }
 
-export function HenleggBehandlingModal({ modalRef, henlegger, feilmelding, onHenlegg }: Props) {
+export function HenleggBehandlingModal({ modalRef, laster, feilmelding, onHenlegg }: Props) {
   const lukkModal = () => modalRef.current?.close();
 
   return (
@@ -26,18 +26,10 @@ export function HenleggBehandlingModal({ modalRef, henlegger, feilmelding, onHen
       </Modal.Body>
       <Modal.Footer>
         <HStack gap="space-4" justify="end">
-          <Button
-            variant="danger"
-            onClick={onHenlegg}
-            loading={henlegger}
-          >
+          <Button variant="danger" onClick={onHenlegg} loading={laster}>
             Henlegg
           </Button>
-          <Button
-            variant="secondary"
-            onClick={lukkModal}
-            disabled={henlegger}
-          >
+          <Button variant="secondary" onClick={lukkModal} disabled={laster}>
             Avbryt
           </Button>
         </HStack>
