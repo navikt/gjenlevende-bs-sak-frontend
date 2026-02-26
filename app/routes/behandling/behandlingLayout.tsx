@@ -150,6 +150,23 @@ export default function BehandlingLayout() {
     }
   }, [behandling, totrinnskontrollStatus, settErLesevisning]);
 
+  const hentBehandlingPåNytt = useCallback(async () => {
+    if (!behandlingId) return;
+
+    try {
+      const response: ApiResponse<Behandling> = await apiCall(`/behandling/hent`, {
+        method: "POST",
+        body: JSON.stringify({ behandlingId }),
+      });
+
+      if (response.data) {
+        settBehandling(response.data);
+      }
+    } catch (error) {
+      console.error("Kunne ikke hente behandling:", error);
+    }
+  }, [behandlingId]);
+
   const revaliderBehandling = useCallback(() => {
     settÅrsakDataHentet(false);
     revalidator.revalidate();
@@ -208,6 +225,7 @@ export default function BehandlingLayout() {
         oppdaterÅrsakState,
         hentÅrsakData,
         årsakDataHentet,
+        hentBehandlingPåNytt,
         revaliderBehandling,
         ansvarligSaksbehandler,
         lasterAnsvarligSaksbehandler,
