@@ -24,6 +24,12 @@ export const AnsvarligSaksbehandler = () => {
       : `${ansvarligSaksbehandler.fornavn} ${ansvarligSaksbehandler.etternavn}`
     : null;
 
+  const erBehandlingFerdigstilt = behandling?.status === "FERDIGSTILT";
+
+  if (erBehandlingFerdigstilt) {
+    return null;
+  }
+
   return (
     <InfoCard data-color={dataColor}>
       <InfoCard.Header>

@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Outlet, useParams, useRevalidator } from "react-router";
+import React, { useRef, useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Outlet, useNavigate, useParams, useRevalidator } from "react-router";
 import { BehandlingContext, type ÅrsakState } from "~/contexts/BehandlingContext";
 import {
   BehandlingFaner,
@@ -13,13 +14,16 @@ import type { ÅrsakBehandlingResponse } from "~/hooks/useÅrsakBehandling";
 import type { VilkårVurderingResponse } from "~/hooks/useVilkårVurdering";
 import type { Behandling } from "~/types/behandling";
 import { useLesevisningsContext } from "~/contexts/LesevisningsContext";
-import { Box } from "@navikt/ds-react";
+import { Box, Button } from "@navikt/ds-react";
 import { AnsvarligSaksbehandler } from "~/komponenter/behandling/høyremeny/AnsvarligSaksbehandler";
 import { Totrinnskontroll } from "~/komponenter/behandling/høyremeny/Totrinnskontroll";
 import { SidebarTabs } from "~/komponenter/behandling/høyremeny/SidebarTabs";
 import { TildelOppgave } from "~/komponenter/behandling/høyremeny/TildelOppgave";
 import { useHentAnsvarligSaksbehandler } from "~/hooks/useHentAnsvarligSaksbehandler";
 import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollStatus";
+import { LocalAlertBehandlingFerdigstilt } from "./LocalAlertBehandlingFerdigstilt";
+import { useHenleggBehandling } from "~/hooks/useHenleggBehandling";
+import { HenleggBehandlingModal } from "~/komponenter/behandling/HenleggBehandlingModal";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -44,13 +48,20 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
 ];
 
 export default function BehandlingLayout() {
-  const { behandlingId } = useParams<{ behandlingId: string }>();
+  const { behandlingId, fagsakPersonId } = useParams<{
+    behandlingId: string;
+    fagsakPersonId: string;
+  }>();
   const [ferdigeSteg, settFerdigeSteg] = useState<Steg[]>([]);
   const [årsakState, settÅrsakState] = useState<ÅrsakState | undefined>(undefined);
   const [behandling, settBehandling] = useState<Behandling | undefined>(undefined);
   const [årsakDataHentet, settÅrsakDataHentet] = useState(false);
   const { settErLesevisning } = useLesevisningsContext();
   const revalidator = useRevalidator();
+  const navigate = useNavigate();
+  const henleggModalRef = useRef<HTMLDialogElement>(null);
+  const { henleggBehandling, laster, henleggFeilmelding } = useHenleggBehandling();
+  const [personheaderActions, settPersonheaderActions] = useState<HTMLElement | null>(null);
 
   const {
     ansvarligSaksbehandler,
@@ -58,10 +69,8 @@ export default function BehandlingLayout() {
     hentPåNytt: hentAnsvarligSaksbehandlerPåNytt,
   } = useHentAnsvarligSaksbehandler(behandlingId);
 
-  const {
-    totrinnskontrollStatus,
-    hentPåNytt: hentTotrinnskontrollStatusPåNytt,
-  } = useHentTotrinnskontrollStatus(behandlingId);
+  const { totrinnskontrollStatus, hentPåNytt: hentTotrinnskontrollStatusPåNytt } =
+    useHentTotrinnskontrollStatus(behandlingId);
 
   const markerStegSomFerdig = useCallback((steg: Steg) => {
     settFerdigeSteg((prev) => (prev.includes(steg) ? prev : [...prev, steg]));
@@ -166,6 +175,23 @@ export default function BehandlingLayout() {
     }
   }, [behandlingId]);
 
+  const erBehandlingFerdigstilt = behandling?.status === "FERDIGSTILT";
+  const erBehandlingIverksetter = behandling?.status === "IVERKSETTER_VEDTAK";
+  const kanHenlegges = behandling && !erBehandlingFerdigstilt && !erBehandlingIverksetter;
+
+  useEffect(() => {
+    settPersonheaderActions(document.getElementById("personheader-actions"));
+  }, []);
+
+  const håndterHenlegg = async () => {
+    if (!behandlingId) return;
+    const suksess = await henleggBehandling(behandlingId);
+    if (suksess) {
+      henleggModalRef.current?.close();
+      navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
+    }
+  };
+
   if (!behandlingId) {
     return <div>Mangler behandling id</div>;
   }
@@ -191,6 +217,24 @@ export default function BehandlingLayout() {
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+        {kanHenlegges &&
+          personheaderActions &&
+          createPortal(
+            <Button
+              variant="danger"
+              size="small"
+              onClick={() => henleggModalRef.current?.showModal()}
+            >
+              Henlegg
+            </Button>,
+            personheaderActions
+          )}
+        <HenleggBehandlingModal
+          modalRef={henleggModalRef}
+          laster={laster}
+          feilmelding={henleggFeilmelding}
+          onHenlegg={håndterHenlegg}
+        />
         <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
         <Box style={{ display: "flex", flex: 1, minHeight: 0 }}>
           <Box style={{ flex: 1, overflowY: "auto", minWidth: 0 }}>
@@ -200,6 +244,9 @@ export default function BehandlingLayout() {
           </Box>
           <HøyreMeny>
             <TildelOppgave />
+
+            {erBehandlingFerdigstilt && <LocalAlertBehandlingFerdigstilt behandling={behandling} />}
+
             <Totrinnskontroll />
 
             <AnsvarligSaksbehandler />

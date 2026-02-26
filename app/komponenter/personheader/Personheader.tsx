@@ -27,6 +27,8 @@ export const Personheader = () => {
           {personident && <CopyButton copyText={personident} size="small" />}
         </HStack>
       </li>
+
+      <li id="personheader-actions" className={styles.actions} />
     </ul>
   );
 };
