@@ -15,19 +15,21 @@ export const useHenleggBehandling = (): HenleggBehandling => {
     settHenlegger(true);
     settHenleggFeilmelding(null);
 
-    const response = await apiCall(`/behandling/henlegg`, {
-      method: "POST",
-      body: JSON.stringify({ behandlingId }),
-    });
+    try {
+      const response = await apiCall(`/behandling/henlegg`, {
+        method: "POST",
+        body: JSON.stringify({ behandlingId }),
+      });
 
-    if (response.melding) {
-      settHenleggFeilmelding(response.melding);
+      if (response.melding) {
+        settHenleggFeilmelding(response.melding);
+        return false;
+      }
+
+      return true;
+    } finally {
       settHenlegger(false);
-      return false;
     }
-
-    settHenlegger(false);
-    return true;
   };
 
   return {

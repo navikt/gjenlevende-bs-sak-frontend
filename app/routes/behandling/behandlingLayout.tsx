@@ -57,7 +57,8 @@ export default function BehandlingLayout() {
   const revalidator = useRevalidator();
   const navigate = useNavigate();
   const henleggModalRef = useRef<HTMLDialogElement>(null);
-  const { henleggBehandling, henlegger } = useHenleggBehandling();
+  const { henleggBehandling, henlegger, henleggFeilmelding } = useHenleggBehandling();
+  const [personheaderActions, settPersonheaderActions] = useState<HTMLElement | null>(null);
 
   const {
     ansvarligSaksbehandler,
@@ -175,10 +176,15 @@ export default function BehandlingLayout() {
   const erBehandlingIverksetter = behandling?.status === "IVERKSETTER_VEDTAK";
   const kanHenlegges = behandling && !erBehandlingFerdigstilt && !erBehandlingIverksetter;
 
+  useEffect(() => {
+    settPersonheaderActions(document.getElementById("personheader-actions"));
+  }, []);
+
   const håndterHenlegg = async () => {
     if (!behandlingId) return;
     const suksess = await henleggBehandling(behandlingId);
     if (suksess) {
+      henleggModalRef.current?.close();
       navigate(`/person/${fagsakPersonId}/behandlingsoversikt`);
     }
   };
@@ -208,7 +214,7 @@ export default function BehandlingLayout() {
       }}
     >
       <Box style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-        {kanHenlegges && document.getElementById("personheader-actions") &&
+        {kanHenlegges && personheaderActions &&
           createPortal(
             <Button
               variant="danger"
@@ -217,13 +223,13 @@ export default function BehandlingLayout() {
             >
               Henlegg
             </Button>,
-            document.getElementById("personheader-actions")!,
+            personheaderActions,
           )}
         <HenleggBehandlingModal
           modalRef={henleggModalRef}
           henlegger={henlegger}
+          feilmelding={henleggFeilmelding}
           onHenlegg={håndterHenlegg}
-          onAvbryt={() => {}}
         />
         <BehandlingFaner steg={BEHANDLING_STEG_LISTE} ferdigeSteg={ferdigeSteg} />
         <Box style={{ display: "flex", flex: 1, minHeight: 0 }}>

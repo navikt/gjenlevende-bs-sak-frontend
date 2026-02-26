@@ -1,14 +1,14 @@
-import React from "react";
-import { BodyLong, Button, HStack, Modal } from "@navikt/ds-react";
+import React, { type RefObject } from "react";
+import { Alert, BodyLong, Button, HStack, Modal } from "@navikt/ds-react";
 
 interface Props {
-  modalRef: React.RefObject<HTMLDialogElement | null>;
+  modalRef: RefObject<HTMLDialogElement | null>;
   henlegger: boolean;
+  feilmelding: string | null;
   onHenlegg: () => Promise<void>;
-  onAvbryt: () => void;
 }
 
-export function HenleggBehandlingModal({ modalRef, henlegger, onHenlegg, onAvbryt }: Props) {
+export function HenleggBehandlingModal({ modalRef, henlegger, feilmelding, onHenlegg }: Props) {
   const lukkModal = () => modalRef.current?.close();
 
   return (
@@ -18,24 +18,24 @@ export function HenleggBehandlingModal({ modalRef, henlegger, onHenlegg, onAvbry
           Dette vil henlegge behandlingen og sette den som ferdigstilt. Behandlingen kan ikke
           gjenåpnes etter henleggelse. Er du sikker på at du vil henlegge behandlingen?
         </BodyLong>
+        {feilmelding && (
+          <Alert variant="error" size="small" style={{ marginTop: "var(--ax-space-16)" }}>
+            {feilmelding}
+          </Alert>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <HStack gap="space-4" justify="end">
           <Button
             variant="danger"
-            onClick={async () => {
-              await onHenlegg();
-            }}
+            onClick={onHenlegg}
             loading={henlegger}
           >
             Henlegg
           </Button>
           <Button
             variant="secondary"
-            onClick={() => {
-              onAvbryt();
-              lukkModal();
-            }}
+            onClick={lukkModal}
             disabled={henlegger}
           >
             Avbryt
