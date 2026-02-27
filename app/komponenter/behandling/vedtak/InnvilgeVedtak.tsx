@@ -47,8 +47,11 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     const førsteBarnetilsynsperiodeLageretVedtak: string | undefined = lagretVedtak?.barnetilsynperioder.at(0)?.datoFra
     const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker({
-        defaultSelected: førsteBarnetilsynsperiodeLageretVedtak ? new Date(førsteBarnetilsynsperiodeLageretVedtak) : undefined
+        defaultSelected: førsteBarnetilsynsperiodeLageretVedtak ? new Date(førsteBarnetilsynsperiodeLageretVedtak) : undefined,
+        onMonthChange: () => settHarEndretMåned(true)
     });
+
+    const [harEndretMåned, settHarEndretMåned] = useState(false);
 
     const formatertValgtMåned = selectedMonth ? format(selectedMonth, 'yyyy-MM') : null;
     const {vedtak: historiskVedtak} = useHentVedtakHistorikk(
@@ -58,6 +61,10 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     const [perioder, settPerioder] = useState<Barnetilsynperiode[]>(lagretPerioder);
     const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
+
+    useEffect(() => {
+        settHarEndretMåned(false);
+    }, [lagretVedtak]);
 
     useEffect(() => {
         const hentVedtakHistorikkFraMåned = (selectedMonth: Date, historiskVedak: Vedtak): Barnetilsynperiode[] => {
@@ -80,16 +87,46 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
             return filteredPerioder.length > 0 ? filteredPerioder : [tomBarnetilsynperiode];
         };
 
-        if (behandling?.forrigeBehandlingId && selectedMonth && historiskVedtak && !lagretVedtak) {
+        const skalBrukeLagretVedtak = lagretVedtak && !harEndretMåned;
+        if (behandling?.forrigeBehandlingId && selectedMonth && historiskVedtak && !skalBrukeLagretVedtak) {
             const nyePerioder = hentVedtakHistorikkFraMåned(selectedMonth, historiskVedtak);
             settPerioder(prev => JSON.stringify(prev) !== JSON.stringify(nyePerioder) ? nyePerioder : prev);
         }
-    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId, lagretVedtak]);
+    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId, lagretVedtak, harEndretMåned]);
 
     const erLåst = erLesevisning || låst;
 
+    const [valideringsFeil, settValideringsFeil] = useState<string | null>(null);
+
+    const validerPerioder = (): boolean => {
+        for (let i = 0; i < perioder.length; i++) {
+            const periode = perioder[i];
+            const mangler: string[] = [];
+            
+            if (!periode.periodetype) mangler.push('periodetype');
+            if (!periode.aktivitetstype) mangler.push('aktivitet');
+            if (!periode.datoFra) mangler.push('periode fra');
+            if (!periode.datoTil) mangler.push('periode til');
+            
+            if (mangler.length > 0) {
+                settValideringsFeil(`Periode ${i + 1} mangler: ${mangler.join(', ')}`);
+                return false;
+            }
+        }
+        settValideringsFeil(null);
+        return true;
+    };
+
+    async function handleBergen(behandlingId : string | undefined, perioder : Barnetilsynperiode[]) {
+        if (!validerPerioder()) return;
+
+        hentBeløpsperioder(behandlingId, perioder)
+    }
+
     async function handleLagreVedtak() {
         if (!behandlingId) return;
+        if (!validerPerioder()) return;
+        
         const Vedtak = {
             resultatType: 'INNVILGET' as const,
             begrunnelse: begrunnelse,
@@ -119,7 +156,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     <Textarea label={'Begrunnelse'} value={begrunnelse}
                               onChange={e => settBegrunnelse(e.target.value)} disabled={erLåst}></Textarea>
                     <HStack>
-                        <Button variant="secondary" onClick={() => hentBeløpsperioder(behandlingId, perioder)}
+                        <Button variant="secondary" onClick={() => handleBergen(behandlingId, perioder)}
                                 disabled={erLåst}>
                             Beregn
                         </Button>
@@ -135,6 +172,9 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                             Lagre vedtak
                         </Button>
                     </HStack>)}
+                    {valideringsFeil && (
+                        <Alert variant="error">{valideringsFeil}</Alert>
+                    )}
                     {opprettFeilmelding && (
                         <Alert variant="warning">{opprettFeilmelding}</Alert>
                     )}
