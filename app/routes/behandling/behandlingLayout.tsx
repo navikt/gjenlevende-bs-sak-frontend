@@ -196,10 +196,11 @@ export default function BehandlingLayout() {
   }, [behandlingId]);
 
   const erBehandlingFerdigstilt = behandling?.status === "FERDIGSTILT";
-  const erBehandlingIverksetter = behandling?.status === "IVERKSETTER_VEDTAK";
   const erHenleggTogglePå = toggles[ToggleNavn.HenleggBehandling] ?? false;
-  const kanHenlegges =
-    erHenleggTogglePå && behandling && !erBehandlingFerdigstilt && !erBehandlingIverksetter;
+  const harHenleggbarStatus =
+    behandling?.status === "OPPRETTET" || behandling?.status === "UTREDES";
+  const harIngenResultat = behandling?.resultat === "IKKE_SATT";
+  const kanHenlegges = erHenleggTogglePå && harHenleggbarStatus && harIngenResultat;
 
   useEffect(() => {
     settPersonheaderActions(document.getElementById("personheader-actions"));
@@ -247,7 +248,7 @@ export default function BehandlingLayout() {
               variant="danger"
               size="small"
               onClick={() => henleggModalRef.current?.showModal()}
-              disabled={kanHenlegges}
+              disabled={!kanHenlegges}
             >
               Henlegg
             </Button>,
