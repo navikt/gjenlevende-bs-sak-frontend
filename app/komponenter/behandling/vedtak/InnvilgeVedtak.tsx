@@ -71,6 +71,8 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
         const hentVedtakHistorikkFraMåned = (selectedMonth: Date, historiskVedak: Vedtak): Barnetilsynperiode[] => {
             if (!historiskVedak?.barnetilsynperioder) return [tomBarnetilsynperiode];
 
+            const selectedYearMonth = format(selectedMonth, 'yyyy-MM');
+
             const filteredPerioder = historiskVedak.barnetilsynperioder.filter(periode => {
                 const periodeTil = new Date(periode.datoTil);
                 return periodeTil >= selectedMonth;
@@ -79,19 +81,39 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                 if (periodeFra < selectedMonth) {
                     return {
                         ...periode,
-                        datoFra: selectedMonth.toISOString().split('T')[0]
+                        datoFra: format(selectedMonth, 'yyyy-MM')
                     };
                 }
                 return periode;
             });
 
-            return filteredPerioder.length > 0 ? filteredPerioder : [tomBarnetilsynperiode];
+            if (filteredPerioder.length === 0) return [tomBarnetilsynperiode];
+
+            const førstePeriode = filteredPerioder[0];
+            const førstePeriodeYearMonth = førstePeriode.datoFra.substring(0, 7); // 'yyyy-MM'
+            
+            if (førstePeriodeYearMonth > selectedYearMonth) {
+                const førstePeriodeFra = new Date(førstePeriode.datoFra);
+                const tomPeriodeTil = new Date(førstePeriodeFra.getFullYear(), førstePeriodeFra.getMonth() - 1, 1);
+                
+                const tomPeriodeMedDatoer: Barnetilsynperiode = {
+                    datoFra: format(selectedMonth, 'yyyy-MM'),
+                    datoTil: format(tomPeriodeTil, 'yyyy-MM'),
+                    utgifter: 0,
+                    barn: [],
+                    periodetype: undefined,
+                    aktivitetstype: undefined,
+                };
+                return [tomPeriodeMedDatoer, ...filteredPerioder];
+            }
+
+            return filteredPerioder;
         };
 
         const skalBrukeLagretVedtak = lagretVedtak && !harEndretMåned;
         if (erRevurdering && selectedMonth && historiskVedtak && !skalBrukeLagretVedtak) {
             const nyePerioder = hentVedtakHistorikkFraMåned(selectedMonth, historiskVedtak);
-            settPerioder(prev => JSON.stringify(prev) !== JSON.stringify(nyePerioder) ? nyePerioder : prev);
+            settPerioder(nyePerioder);
         }
     }, [selectedMonth, historiskVedtak, erRevurdering, lagretVedtak, harEndretMåned]);
 

@@ -2,7 +2,7 @@ import React from "react";
 import {AktivitetstypeBarnetilsyn, type Barnetilsynperiode, Periodetype,} from "~/komponenter/behandling/vedtak/vedtak";
 import {Button, HStack, MonthPicker, Select, Table, TextField, UNSAFE_Combobox,} from "@navikt/ds-react";
 import {formaterYearMonthStringTilNorskDato, månedStringTilYearMonth} from "~/utils/utils";
-import {TrashIcon} from "@navikt/aksel-icons";
+import {TrashIcon, PlusIcon} from "@navikt/aksel-icons";
 import {useParams} from "react-router";
 
 export const BarnetilsynperiodeValg: React.FC<{
@@ -76,6 +76,22 @@ export const BarnetilsynperiodeValg: React.FC<{
     ]);
   }
 
+  function leggTilPeriodeEtter(index: number) {
+    settPerioder((prev) => {
+      const nyPeriode: Barnetilsynperiode = {
+        datoFra: "",
+        datoTil: "",
+        utgifter: 0,
+        barn: [],
+        periodetype: undefined,
+        aktivitetstype: undefined,
+      };
+      const nyePerioder = [...prev];
+      nyePerioder.splice(index + 1, 0, nyPeriode);
+      return nyePerioder;
+    });
+  }
+
   function slettPeriode(index: number) {
     settPerioder((prev) => prev.filter((_, i) => i !== index));
   }
@@ -109,11 +125,14 @@ export const BarnetilsynperiodeValg: React.FC<{
             <Table.HeaderCell scope="col" textSize="small">
               {" "}
             </Table.HeaderCell>
+            <Table.HeaderCell scope="col" textSize="small">
+              {" "}
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {perioder.map((periode, index) => (
-            <Table.Row key={index}>
+            <Table.Row key={`${index}-${periode.datoFra}-${periode.datoTil}`}>
               <Table.DataCell>
                 <Select
                   size="small"
@@ -258,6 +277,9 @@ export const BarnetilsynperiodeValg: React.FC<{
                   </Table.DataCell>
                 </>
               )}
+              <Table.DataCell>
+                <Button onClick={() => leggTilPeriodeEtter(index)} variant="tertiary" disabled={erLesevisning} icon={<PlusIcon fontSize="1.5rem"/>}></Button>
+              </Table.DataCell>
               <Table.DataCell>
                 <Button onClick={() => slettPeriode(index)} variant="tertiary" disabled={erLesevisning || (erRevurdering && index === 0)} icon={<TrashIcon fontSize="1.5rem"/>}></Button>
               </Table.DataCell>
