@@ -22,6 +22,7 @@ import {
   årsakUnderkjentTekst,
 } from "~/types/totrinnskontroll";
 import { formaterIsoDatoTid } from "~/utils/utils";
+import type { AnsvarligSaksbehandlerDto } from "~/types/saksbehandler";
 
 enum Totrinnsresultat {
   IKKE_VALGT = "IKKE_VALGT",
@@ -37,6 +38,7 @@ export const Totrinnskontroll = () => {
     totrinnskontrollStatus,
     hentTotrinnskontrollStatusPåNytt,
     hentAnsvarligSaksbehandlerPåNytt,
+    ansvarligSaksbehandler,
   } = useBehandlingContext();
   const { angreSendTilBeslutter, besluttVedtak, sender } = useBeslutter();
 
@@ -62,6 +64,7 @@ export const Totrinnskontroll = () => {
         revaliderBehandling={revaliderBehandling}
         hentTotrinnskontrollStatusPåNytt={hentTotrinnskontrollStatusPåNytt}
         hentAnsvarligSaksbehandlerPåNytt={hentAnsvarligSaksbehandlerPåNytt}
+        ansvarligSaksbehandler={ansvarligSaksbehandler}
       />
     );
   }
@@ -101,8 +104,10 @@ const SendtTilBeslutter: React.FC<{
   opprettetTid,
 }) => {
   const { ansvarligSaksbehandler } = useBehandlingContext();
-  const erAnsvarligSaksbehandler = ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
   const [laster, settLaster] = useState(false);
+
+  const erAnsvarligSaksbehandler = ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
+  const behandlingHarIngenAnsvarligSaksbehandler = ansvarligSaksbehandler === null;
 
   const handleAngreSendTilBeslutter = async () => {
     settLaster(true);
@@ -135,7 +140,7 @@ const SendtTilBeslutter: React.FC<{
           variant="secondary"
           onClick={handleAngreSendTilBeslutter}
           loading={laster}
-          disabled={!erAnsvarligSaksbehandler}
+          disabled={!erAnsvarligSaksbehandler || behandlingHarIngenAnsvarligSaksbehandler}
         >
           Angre send til beslutter
         </Button>
@@ -154,6 +159,7 @@ const FatterVedtak: React.FC<{
   revaliderBehandling: () => void;
   hentTotrinnskontrollStatusPåNytt: () => void;
   hentAnsvarligSaksbehandlerPåNytt: () => void;
+  ansvarligSaksbehandler: AnsvarligSaksbehandlerDto | null;
 }> = ({
   behandlingId,
   besluttVedtak,
@@ -161,6 +167,7 @@ const FatterVedtak: React.FC<{
   revaliderBehandling,
   hentTotrinnskontrollStatusPåNytt,
   hentAnsvarligSaksbehandlerPåNytt,
+  ansvarligSaksbehandler,
 }) => {
   const [totrinnsresultat, settTotrinnsresultat] = useState<Totrinnsresultat>(
     Totrinnsresultat.IKKE_VALGT
@@ -173,6 +180,7 @@ const FatterVedtak: React.FC<{
   const erUnderkjent = totrinnsresultat === Totrinnsresultat.UNDERKJENT;
   const erUtfylt =
     erGodkjent || (erUnderkjent && årsakUnderkjent !== null && begrunnelse.trim() !== "");
+  const erAnsvarligSaksbehandler = ansvarligSaksbehandler?.rolle === "INNLOGGET_SAKSBEHANDLER";
 
   const handleFullfør = async () => {
     settFeilmelding(null);
@@ -203,6 +211,7 @@ const FatterVedtak: React.FC<{
           value={totrinnsresultat}
           onChange={(val) => settTotrinnsresultat(val as Totrinnsresultat)}
           size="small"
+          disabled={!erAnsvarligSaksbehandler}
         >
           <Radio value={Totrinnsresultat.GODKJENT}>Godkjenn</Radio>
           <Radio value={Totrinnsresultat.UNDERKJENT}>Underkjenn</Radio>
