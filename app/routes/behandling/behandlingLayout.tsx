@@ -24,6 +24,8 @@ import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollSt
 import { LocalAlertBehandlingFerdigstilt } from "./LocalAlertBehandlingFerdigstilt";
 import { useHenleggBehandling } from "~/hooks/useHenleggBehandling";
 import { HenleggBehandlingModal } from "~/komponenter/behandling/HenleggBehandlingModal";
+import { useToggles } from "~/hooks/useToggles";
+import { ToggleNavn } from "~/types/toggles";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -61,6 +63,7 @@ export default function BehandlingLayout() {
   const navigate = useNavigate();
   const henleggModalRef = useRef<HTMLDialogElement>(null);
   const { henleggBehandling, laster, henleggFeilmelding } = useHenleggBehandling();
+  const { toggles } = useToggles();
   const [personheaderActions, settPersonheaderActions] = useState<HTMLElement | null>(null);
 
   const {
@@ -194,7 +197,9 @@ export default function BehandlingLayout() {
 
   const erBehandlingFerdigstilt = behandling?.status === "FERDIGSTILT";
   const erBehandlingIverksetter = behandling?.status === "IVERKSETTER_VEDTAK";
-  const kanHenlegges = behandling && !erBehandlingFerdigstilt && !erBehandlingIverksetter;
+  const erHenleggTogglePå = toggles[ToggleNavn.HenleggBehandling] ?? false;
+  const kanHenlegges =
+    erHenleggTogglePå && behandling && !erBehandlingFerdigstilt && !erBehandlingIverksetter;
 
   useEffect(() => {
     settPersonheaderActions(document.getElementById("personheader-actions"));
@@ -242,7 +247,7 @@ export default function BehandlingLayout() {
               variant="danger"
               size="small"
               onClick={() => henleggModalRef.current?.showModal()}
-              disabled={true} // TODO: Skal feature toggles.
+              disabled={kanHenlegges}
             >
               Henlegg
             </Button>,
