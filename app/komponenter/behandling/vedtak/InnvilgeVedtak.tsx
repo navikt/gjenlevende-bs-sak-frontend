@@ -117,6 +117,12 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
         return true;
     };
 
+    async function handleBergen(behandlingId : string | undefined, perioder : Barnetilsynperiode[]) {
+        if (!validerPerioder()) return;
+
+        hentBeløpsperioder(behandlingId, perioder)
+    }
+
     async function handleLagreVedtak() {
         if (!behandlingId) return;
         if (!validerPerioder()) return;
@@ -150,7 +156,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     <Textarea label={'Begrunnelse'} value={begrunnelse}
                               onChange={e => settBegrunnelse(e.target.value)} disabled={erLåst}></Textarea>
                     <HStack>
-                        <Button variant="secondary" onClick={() => hentBeløpsperioder(behandlingId, perioder)}
+                        <Button variant="secondary" onClick={() => handleBergen(behandlingId, perioder)}
                                 disabled={erLåst}>
                             Beregn
                         </Button>
