@@ -15,7 +15,7 @@ export enum ÅrsakUnderkjent {
 }
 
 export const årsakUnderkjentTekst: Record<ÅrsakUnderkjent, string> = {
-  [ÅrsakUnderkjent.ÅRSAK_BEHANDLING]: "Årsak/behandling",
+  [ÅrsakUnderkjent.ÅRSAK_BEHANDLING]: "Årsak behandling",
   [ÅrsakUnderkjent.VILKÅR]: "Vilkår",
   [ÅrsakUnderkjent.VEDTAK_OG_BEREGNING]: "Vedtak og beregning",
   [ÅrsakUnderkjent.SIMULERING]: "Simulering",
