@@ -54,8 +54,9 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     const [harEndretMåned, settHarEndretMåned] = useState(false);
 
     const formatertValgtMåned = selectedMonth ? format(selectedMonth, 'yyyy-MM') : null;
+    const erRevurdering = !!behandling?.forrigeBehandlingId;
     const {vedtak: historiskVedtak} = useHentVedtakHistorikk(
-        behandling?.forrigeBehandlingId ? behandlingId : undefined,
+        erRevurdering ? behandlingId : undefined,
         formatertValgtMåned
     );
 
@@ -88,11 +89,11 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
         };
 
         const skalBrukeLagretVedtak = lagretVedtak && !harEndretMåned;
-        if (behandling?.forrigeBehandlingId && selectedMonth && historiskVedtak && !skalBrukeLagretVedtak) {
+        if (erRevurdering && selectedMonth && historiskVedtak && !skalBrukeLagretVedtak) {
             const nyePerioder = hentVedtakHistorikkFraMåned(selectedMonth, historiskVedtak);
             settPerioder(prev => JSON.stringify(prev) !== JSON.stringify(nyePerioder) ? nyePerioder : prev);
         }
-    }, [selectedMonth, historiskVedtak, behandling?.forrigeBehandlingId, lagretVedtak, harEndretMåned]);
+    }, [selectedMonth, historiskVedtak, erRevurdering, lagretVedtak, harEndretMåned]);
 
     const erLåst = erLesevisning || låst;
 
@@ -140,7 +141,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     return (
         <VStack gap="space-24">
-                {behandling?.forrigeBehandlingId && (<MonthPicker {...monthpickerProps}>
+                {erRevurdering && (<MonthPicker {...monthpickerProps}>
                     <MonthPicker.Input
                         {...inputProps}
                         disabled={erLåst}
@@ -148,11 +149,12 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     />
                 </MonthPicker>
             )}
-            {(!behandling?.forrigeBehandlingId || selectedMonth || lagretVedtak) && (
+            {(!erRevurdering || selectedMonth || lagretVedtak) && (
                 <>
                     <BarnetilsynperiodeValg perioder={perioder}
                                             settPerioder={settPerioder}
-                                            erLesevisning={erLåst}></BarnetilsynperiodeValg>
+                                            erLesevisning={erLåst}
+                                            erRevurdering={erRevurdering}></BarnetilsynperiodeValg>
                     <Textarea label={'Begrunnelse'} value={begrunnelse}
                               onChange={e => settBegrunnelse(e.target.value)} disabled={erLåst}></Textarea>
                     <HStack>
