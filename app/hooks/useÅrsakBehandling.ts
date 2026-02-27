@@ -33,11 +33,16 @@ interface UseÅrsakBehandling {
 }
 
 const tilLocalDateString = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 };
 
 export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling => {
-  const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet } = useBehandlingContext();
+  const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet, hentBehandlingPåNytt } =
+    useBehandlingContext();
 
   const harEksisterendeData = årsakDataHentet && !!årsakState?.kravdato && !!årsakState?.årsak;
 
@@ -130,6 +135,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
       if (response.data) {
         settErLagret(true);
         oppdaterEndringshistorikk();
+        hentBehandlingPåNytt();
         return true;
       }
 
@@ -141,7 +147,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     } finally {
       settLaster(false);
     }
-  }, [behandlingId, årsakState]);
+  }, [behandlingId, årsakState, hentBehandlingPåNytt]);
 
   return {
     kravdato: årsakState?.kravdato,

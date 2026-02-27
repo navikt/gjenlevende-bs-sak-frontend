@@ -12,5 +12,12 @@
 }
 
 .li {
-  padding: 0.5rem 1rem;
+  padding-block: var(--ax-space-8);
+  padding-inline: var(--ax-space-16);
+}
+
+.actions {
+  margin-left: auto;
+  padding-inline: var(--ax-space-24);
+  padding-block: var(--ax-space-8);
 }

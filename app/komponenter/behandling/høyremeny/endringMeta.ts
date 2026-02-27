@@ -79,6 +79,12 @@ export const endringMeta: Record<EndringType, EndringMeta> = {
     farge: "warning",
     erMilepæl: true,
   },
+  BEHANDLING_HENLAGT: {
+    tekst: "Behandling henlagt",
+    ikon: XMarkOctagonIcon,
+    farge: "danger",
+    erMilepæl: true,
+  },
 };
 
 export interface EndringGruppe {
