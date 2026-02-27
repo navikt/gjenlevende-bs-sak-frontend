@@ -242,6 +242,7 @@ export default function BehandlingLayout() {
               variant="danger"
               size="small"
               onClick={() => henleggModalRef.current?.showModal()}
+              disabled={true} // TODO: Skal feature toggles.
             >
               Henlegg
             </Button>,
