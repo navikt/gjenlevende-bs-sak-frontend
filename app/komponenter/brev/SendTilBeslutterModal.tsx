@@ -18,7 +18,10 @@ export function SendTilBeslutterModal({ modalRef, laster, onSendTilBeslutter }: 
         </BodyLong>
       </Modal.Body>
       <Modal.Footer>
-        <HStack gap="space-4" justify="end">
+        <HStack width={"100%"} gap="space-16" justify={"space-between"}>
+          <Button variant="secondary" onClick={lukkModal} disabled={laster}>
+            Avbryt
+          </Button>
           <Button
             onClick={() => {
               onSendTilBeslutter();
@@ -27,9 +30,6 @@ export function SendTilBeslutterModal({ modalRef, laster, onSendTilBeslutter }: 
             disabled={laster}
           >
             Send til beslutter
-          </Button>
-          <Button variant="secondary" onClick={lukkModal} disabled={laster}>
-            Avbryt
           </Button>
         </HStack>
       </Modal.Footer>
