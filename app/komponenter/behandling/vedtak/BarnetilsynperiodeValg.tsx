@@ -9,7 +9,8 @@ export const BarnetilsynperiodeValg: React.FC<{
   perioder: Barnetilsynperiode[];
   settPerioder: React.Dispatch<React.SetStateAction<Barnetilsynperiode[]>>;
   erLesevisning: boolean;
-}> = ({ perioder, settPerioder, erLesevisning }) => {
+  erRevurdering?: boolean;
+}> = ({ perioder, settPerioder, erLesevisning, erRevurdering = false }) => {
   const { behandlingId } = useParams<{ behandlingId: string }>();
 
   const barnOptions = [
@@ -176,7 +177,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                   <MonthPicker.Input
                     size="small"
                     label="Fra og med"
-                    disabled={erLesevisning}
+                    disabled={erLesevisning || (erRevurdering && index === 0)}
                     hideLabel
                     value={formaterYearMonthStringTilNorskDato(periode.datoFra)}
                     onChange={(e) => handlePeriodeMonthChange(index, "datoFra", e.target.value)}
@@ -258,7 +259,7 @@ export const BarnetilsynperiodeValg: React.FC<{
                 </>
               )}
               <Table.DataCell>
-                <Button onClick={() => slettPeriode(index)} variant="tertiary" disabled={erLesevisning} icon={<TrashIcon fontSize="1.5rem"/>}></Button>
+                <Button onClick={() => slettPeriode(index)} variant="tertiary" disabled={erLesevisning || (erRevurdering && index === 0)} icon={<TrashIcon fontSize="1.5rem"/>}></Button>
               </Table.DataCell>
             </Table.Row>
           ))}
