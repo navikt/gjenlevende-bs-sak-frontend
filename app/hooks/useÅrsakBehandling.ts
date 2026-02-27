@@ -41,7 +41,8 @@ const tilLocalDateString = (date: Date): string => {
 };
 
 export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling => {
-  const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet } = useBehandlingContext();
+  const { årsakState, oppdaterÅrsakState, hentÅrsakData, årsakDataHentet, hentBehandlingPåNytt } =
+    useBehandlingContext();
 
   const harEksisterendeData = årsakDataHentet && !!årsakState?.kravdato && !!årsakState?.årsak;
 
@@ -134,6 +135,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
       if (response.data) {
         settErLagret(true);
         oppdaterEndringshistorikk();
+        hentBehandlingPåNytt();
         return true;
       }
 
@@ -145,7 +147,7 @@ export const useArsakBehandling = (behandlingId: string): UseÅrsakBehandling =>
     } finally {
       settLaster(false);
     }
-  }, [behandlingId, årsakState]);
+  }, [behandlingId, årsakState, hentBehandlingPåNytt]);
 
   return {
     kravdato: årsakState?.kravdato,

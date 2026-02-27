@@ -21,6 +21,7 @@ export const BehandlingContext = React.createContext<{
   oppdaterÅrsakState: (data: Partial<ÅrsakState>) => void;
   hentÅrsakData: () => Promise<void>;
   årsakDataHentet: boolean;
+  hentBehandlingPåNytt: () => void;
   revaliderBehandling: () => void;
   ansvarligSaksbehandler: AnsvarligSaksbehandlerDto | null;
   lasterAnsvarligSaksbehandler: boolean;
@@ -37,6 +38,7 @@ export const BehandlingContext = React.createContext<{
   oppdaterÅrsakState: () => {},
   hentÅrsakData: async () => {},
   årsakDataHentet: false,
+  hentBehandlingPåNytt: () => {},
   revaliderBehandling: () => {},
   ansvarligSaksbehandler: null,
   lasterAnsvarligSaksbehandler: true,
