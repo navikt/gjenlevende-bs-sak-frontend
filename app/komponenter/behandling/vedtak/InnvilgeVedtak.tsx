@@ -69,11 +69,16 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     useEffect(() => {
         const hentVedtakHistorikkFraMåned = (selectedMonth: Date, historiskVedak: Vedtak): Barnetilsynperiode[] => {
-            if (!historiskVedak?.barnetilsynperioder) return [tomBarnetilsynperiode];
-
             const selectedYearMonth = format(selectedMonth, 'yyyy-MM');
+            
+            if (!historiskVedak?.barnetilsynperioder) {
+                return [{
+                    ...tomBarnetilsynperiode,
+                    datoFra: selectedYearMonth,
+                }];
+            }
 
-            const filteredPerioder = historiskVedak.barnetilsynperioder.filter(periode => {
+            const filtrerteHistoriskePerioder = historiskVedak.barnetilsynperioder.filter(periode => {
                 const periodeTil = new Date(periode.datoTil);
                 return periodeTil >= selectedMonth;
             }).map(periode => {
@@ -81,16 +86,21 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                 if (periodeFra < selectedMonth) {
                     return {
                         ...periode,
-                        datoFra: format(selectedMonth, 'yyyy-MM')
+                        datoFra: selectedYearMonth
                     };
                 }
                 return periode;
             });
 
-            if (filteredPerioder.length === 0) return [tomBarnetilsynperiode];
+            if (filtrerteHistoriskePerioder.length === 0) {
+                return [{
+                    ...tomBarnetilsynperiode,
+                    datoFra: selectedYearMonth,
+                }];
+            }
 
-            const førstePeriode = filteredPerioder[0];
-            const førstePeriodeYearMonth = førstePeriode.datoFra.substring(0, 7); // 'yyyy-MM'
+            const førstePeriode = filtrerteHistoriskePerioder[0];
+            const førstePeriodeYearMonth = førstePeriode.datoFra.substring(0, 7);
             
             if (førstePeriodeYearMonth > selectedYearMonth) {
                 const førstePeriodeFra = new Date(førstePeriode.datoFra);
@@ -104,10 +114,10 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     periodetype: undefined,
                     aktivitetstype: undefined,
                 };
-                return [tomPeriodeMedDatoer, ...filteredPerioder];
+                return [tomPeriodeMedDatoer, ...filtrerteHistoriskePerioder];
             }
 
-            return filteredPerioder;
+            return filtrerteHistoriskePerioder;
         };
 
         const skalBrukeLagretVedtak = lagretVedtak && !harEndretMåned;
