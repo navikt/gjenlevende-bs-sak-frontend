@@ -4,6 +4,8 @@ import {Button, HStack, MonthPicker, Select, Table, TextField, UNSAFE_Combobox,}
 import {formaterYearMonthStringTilNorskDato, månedStringTilYearMonth} from "~/utils/utils";
 import {TrashIcon, PlusIcon} from "@navikt/aksel-icons";
 import {useParams} from "react-router";
+import {useHentBarn} from "~/hooks/useHentBarn";
+import {usePersonContext} from "~/contexts/PersonContext";
 
 export const BarnetilsynperiodeValg: React.FC<{
   perioder: Barnetilsynperiode[];
@@ -12,12 +14,13 @@ export const BarnetilsynperiodeValg: React.FC<{
   erRevurdering?: boolean;
 }> = ({ perioder, settPerioder, erLesevisning, erRevurdering = false }) => {
   const { behandlingId } = useParams<{ behandlingId: string }>();
+  const { personident } = usePersonContext();
+  const { barn, laster: lasterBarn } = useHentBarn(personident);
 
-  const barnOptions = [
-    { label: "Eksplosiv Skogfiol", value: "b1e1d2c3-1111-2222-3333-444455556666" },
-    { label: "Djerv Delegasjon", value: "b2e2d3c4-7777-8888-9999-000011112222" },
-    { label: "Ordinær Synd", value: "b3e3d4c5-aaaa-bbbb-cccc-ddddeeeeffff" },
-  ];
+  const barnOptions = barn.map((b) => ({
+    label: `${b.navn.fornavn}${b.navn.mellomnavn ? ` ${b.navn.mellomnavn}` : ''} ${b.navn.etternavn}`,
+    value: b.personIdent,
+  }));
 
   const getSelectedBarnOptions = (barnValues: string[]) => {
     return barnValues
