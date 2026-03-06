@@ -50,7 +50,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     const {lagreVedtak, opprettFeilmelding} = useLagreVedtak();
     const {beløpsperioder, hentBeløpsperioder, beregnFeilmelding} = useHentBeløpsPerioderForVedtak();
 
-    const { barn, laster: lasterBarn } = useHentBarn({ personIdent: personident, behandlingId: behandlingId});
+    const { barn} = useHentBarn({ personIdent: personident, behandlingId: behandlingId});
 
     const førsteBarnetilsynsperiodeLageretVedtak: string | undefined = lagretVedtak?.barnetilsynperioder.at(0)?.datoFra
     const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker({
