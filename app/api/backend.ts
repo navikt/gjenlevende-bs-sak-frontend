@@ -13,8 +13,11 @@ export interface Navn {
 }
 
 export interface Barn {
+  id: string
   personIdent: string;
-  navn: Navn;
+  navn: string;
+  fødselsdato: string;
+  hentetTidspunkt: string;
 }
 
 export type StønadType = "BARNETILSYN" | "SKOLEPENGER";

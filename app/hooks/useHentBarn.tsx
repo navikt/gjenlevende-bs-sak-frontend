@@ -7,27 +7,34 @@ interface HentBarnState {
     laster: boolean;
 }
 
-export function useHentBarn(personIdent: string | undefined) {
+export interface HentBarnRequest {
+    personIdent: string;
+    behandlingId: string | undefined;
+}
+
+export function useHentBarn(request: HentBarnRequest) {
     const [state, settState] = useState<HentBarnState>({
         barn: [],
         melding: null,
         laster: true,
     });
 
+    const { personIdent, behandlingId } = request;
+
     useEffect(() => {
-        const hentBarnFraPdl = async (personIdent: string): Promise<ApiResponse<Barn[]>> => {
-            return apiCall(`/pdl/barn`, {
+        const hentBarn = async (req: HentBarnRequest): Promise<ApiResponse<Barn[]>> => {
+            return apiCall(`/barn/hent`, {
                 method: "POST",
-                body: JSON.stringify({ personIdent }),
+                body: JSON.stringify(req),
             });
         };
 
         let avbrutt = false;
 
-        const hentBarn = async () => {
+        const fetchBarn = async () => {
             if (avbrutt) return;
 
-            if (!personIdent) {
+            if (!personIdent && !behandlingId) {
                 settState((prev) => ({
                     ...prev,
                     barn: [],
@@ -39,7 +46,7 @@ export function useHentBarn(personIdent: string | undefined) {
 
             settState((prev) => ({ ...prev, melding: null, laster: true }));
 
-            const response = await hentBarnFraPdl(personIdent);
+            const response = await hentBarn({ personIdent, behandlingId });
 
             if (avbrutt) return;
 
@@ -59,12 +66,12 @@ export function useHentBarn(personIdent: string | undefined) {
             }
         };
 
-        hentBarn();
+        fetchBarn();
 
         return () => {
             avbrutt = true;
         };
-    }, [personIdent]);
+    }, [personIdent, behandlingId]);
 
     return state;
 }

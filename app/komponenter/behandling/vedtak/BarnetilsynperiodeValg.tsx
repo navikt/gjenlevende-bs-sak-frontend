@@ -15,11 +15,11 @@ export const BarnetilsynperiodeValg: React.FC<{
 }> = ({ perioder, settPerioder, erLesevisning, erRevurdering = false }) => {
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const { personident } = usePersonContext();
-  const { barn, laster: lasterBarn } = useHentBarn(personident);
+  const { barn, laster: lasterBarn } = useHentBarn({ personIdent: personident, behandlingId: behandlingId});
 
   const barnOptions = barn.map((b) => ({
-    label: `${b.navn.fornavn}${b.navn.mellomnavn ? ` ${b.navn.mellomnavn}` : ''} ${b.navn.etternavn}`,
-    value: b.personIdent,
+    label: `${b.navn}`,
+    value: b.id,
   }));
 
   const getSelectedBarnOptions = (barnValues: string[]) => {
