@@ -43,7 +43,7 @@ export const OppgørVedtak: React.FC<OpphørVedtakProps> = ({lagretVedtak, erLes
                 <MonthPicker.Input
                     {...inputProps}
                     label="Velg måned"
-                    disabled={erLåst}
+                    readOnly={erLåst}
                 />
             </MonthPicker>
             <Textarea label={'Begrunnelse'} value={begrunnelse} disabled={erLåst}

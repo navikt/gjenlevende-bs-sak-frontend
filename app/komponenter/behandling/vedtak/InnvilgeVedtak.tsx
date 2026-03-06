@@ -6,7 +6,7 @@ import {useLagreVedtak} from "~/hooks/useLagreVedtak";
 import {
     Alert,
     Button,
-    HStack, MonthPicker,
+    HStack, InfoCard, MonthPicker,
     Textarea,
     useMonthpicker,
     VStack
@@ -17,6 +17,10 @@ import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/Beregn
 import {useHentVedtakHistorikk} from "~/hooks/useHentVedtakHistorikk";
 import {useBehandlingContext} from "~/contexts/BehandlingContext";
 import {format} from "date-fns";
+import {useHentBarn} from "~/hooks/useHentBarn";
+import {usePersonContext} from "~/contexts/PersonContext";
+import {FigureChildIcon} from "@navikt/aksel-icons";
+import {beregnAlder, formaterRelativTid} from "~/utils/utils";
 
 interface InnvilgeVedtakProps {
     lagretVedtak: Vedtak | null;
@@ -37,6 +41,7 @@ const tomBarnetilsynperiode: Barnetilsynperiode = {
 export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erLesevisning, låst, onLagreSuksess}) => {
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {behandling} = useBehandlingContext()
+    const {personident } = usePersonContext();
 
     const lagretPerioder = lagretVedtak?.barnetilsynperioder && lagretVedtak.barnetilsynperioder.length > 0
         ? lagretVedtak.barnetilsynperioder
@@ -44,6 +49,8 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     const {lagreVedtak, opprettFeilmelding} = useLagreVedtak();
     const {beløpsperioder, hentBeløpsperioder, beregnFeilmelding} = useHentBeløpsPerioderForVedtak();
+
+    const { barn} = useHentBarn({ personIdent: personident, behandlingId: behandlingId});
 
     const førsteBarnetilsynsperiodeLageretVedtak: string | undefined = lagretVedtak?.barnetilsynperioder.at(0)?.datoFra
     const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker({
@@ -173,6 +180,16 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     return (
         <VStack gap="space-24">
+            {barn.length > 0 && (
+                <InfoCard data-color="info">
+                    <InfoCard.Header icon={<FigureChildIcon aria-hidden />}>
+                        <InfoCard.Title>Barn tilknyttet person hentet: {formaterRelativTid(barn[0].hentetTidspunkt)}</InfoCard.Title>
+                    </InfoCard.Header>
+                    <InfoCard.Content>
+                        {barn.map((barn) => (<div key={barn.id}>{barn.navn} ({beregnAlder(barn.fødselsdato)} år)</div>))}
+                    </InfoCard.Content>
+                </InfoCard>
+            )}
                 {erRevurdering && (<MonthPicker {...monthpickerProps}>
                     <MonthPicker.Input
                         {...inputProps}
@@ -186,9 +203,10 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     <BarnetilsynperiodeValg perioder={perioder}
                                             settPerioder={settPerioder}
                                             erLesevisning={erLåst}
-                                            erRevurdering={erRevurdering}></BarnetilsynperiodeValg>
+                                            erRevurdering={erRevurdering}
+                                            barn={barn}></BarnetilsynperiodeValg>
                     <Textarea label={'Begrunnelse'} value={begrunnelse}
-                              onChange={e => settBegrunnelse(e.target.value)} disabled={erLåst}></Textarea>
+                              onChange={e => settBegrunnelse(e.target.value)} readOnly={erLåst}></Textarea>
                     <HStack>
                         <Button variant="secondary" onClick={() => handleBergen(behandlingId, perioder)}
                                 disabled={erLåst}>

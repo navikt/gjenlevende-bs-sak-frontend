@@ -12,6 +12,14 @@ export interface Navn {
   etternavn: string;
 }
 
+export interface Barn {
+  id: string
+  personIdent: string;
+  navn: string;
+  fødselsdato: string;
+  hentetTidspunkt: string;
+}
+
 export type StønadType = "BARNETILSYN" | "SKOLEPENGER";
 
 export interface FagsakRequest {
