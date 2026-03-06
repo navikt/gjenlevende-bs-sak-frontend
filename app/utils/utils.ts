@@ -72,6 +72,17 @@ export const formaterYearMonthStringTilNorskDato = (dateString: string | undefin
   }
 };
 
+export const beregnAlder = (fødselsdato: string): number => {
+  const fødselsDate = new Date(fødselsdato);
+  const idag = new Date();
+  let alder = idag.getFullYear() - fødselsDate.getFullYear();
+  const månedDiff = idag.getMonth() - fødselsDate.getMonth();
+  if (månedDiff < 0 || (månedDiff === 0 && idag.getDate() < fødselsDate.getDate())) {
+    alder--;
+  }
+  return alder;
+};
+
 export const formaterRelativTid = (isoTid: string): string => {
   const tid = new Date(isoTid);
   const nå = new Date();

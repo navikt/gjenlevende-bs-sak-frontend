@@ -1,24 +1,22 @@
 import React from "react";
 import {AktivitetstypeBarnetilsyn, type Barnetilsynperiode, Periodetype,} from "~/komponenter/behandling/vedtak/vedtak";
 import {Button, HStack, MonthPicker, Select, Table, TextField, UNSAFE_Combobox,} from "@navikt/ds-react";
-import {formaterYearMonthStringTilNorskDato, månedStringTilYearMonth} from "~/utils/utils";
+import {beregnAlder, formaterYearMonthStringTilNorskDato, månedStringTilYearMonth} from "~/utils/utils";
 import {TrashIcon, PlusIcon} from "@navikt/aksel-icons";
 import {useParams} from "react-router";
-import {useHentBarn} from "~/hooks/useHentBarn";
-import {usePersonContext} from "~/contexts/PersonContext";
+import type {Barn} from "~/api/backend";
 
 export const BarnetilsynperiodeValg: React.FC<{
   perioder: Barnetilsynperiode[];
   settPerioder: React.Dispatch<React.SetStateAction<Barnetilsynperiode[]>>;
   erLesevisning: boolean;
   erRevurdering?: boolean;
-}> = ({ perioder, settPerioder, erLesevisning, erRevurdering = false }) => {
+  barn: Barn[];
+}> = ({ perioder, settPerioder, erLesevisning, erRevurdering = false, barn }) => {
   const { behandlingId } = useParams<{ behandlingId: string }>();
-  const { personident } = usePersonContext();
-  const { barn, laster: lasterBarn } = useHentBarn({ personIdent: personident, behandlingId: behandlingId});
 
   const barnOptions = barn.map((b) => ({
-    label: `${b.navn}`,
+    label: `${b.navn} (${beregnAlder(b.fødselsdato)} år)`,
     value: b.id,
   }));
 
