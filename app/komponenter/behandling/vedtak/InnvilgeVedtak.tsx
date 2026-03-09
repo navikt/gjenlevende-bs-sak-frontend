@@ -53,9 +53,13 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     const { barn} = useHentBarn({ personIdent: personident, behandlingId: behandlingId});
 
     const førsteBarnetilsynsperiodeLageretVedtak: string | undefined = lagretVedtak?.barnetilsynperioder.at(0)?.datoFra
+    const [monthPickerError, setMonthPickerError] = useState(false);
     const { monthpickerProps, inputProps, selectedMonth } = useMonthpicker({
         defaultSelected: førsteBarnetilsynsperiodeLageretVedtak ? new Date(førsteBarnetilsynsperiodeLageretVedtak) : undefined,
-        onMonthChange: () => settHarEndretMåned(true)
+        onMonthChange: () => settHarEndretMåned(true),
+        onValidate: (val) => {
+            setMonthPickerError(!val.isValidMonth);
+        },
     });
 
     const [harEndretMåned, settHarEndretMåned] = useState(false);
@@ -110,12 +114,10 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
             const førstePeriodeYearMonth = førstePeriode.datoFra.substring(0, 7);
             
             if (førstePeriodeYearMonth > selectedYearMonth) {
-                const førstePeriodeFra = new Date(førstePeriode.datoFra);
-                const tomPeriodeTil = new Date(førstePeriodeFra.getFullYear(), førstePeriodeFra.getMonth() - 1, 1);
-                
+
                 const tomPeriodeMedDatoer: Barnetilsynperiode = {
                     datoFra: format(selectedMonth, 'yyyy-MM'),
-                    datoTil: format(tomPeriodeTil, 'yyyy-MM'),
+                    datoTil: '',
                     utgifter: 0,
                     barn: [],
                     periodetype: undefined,
@@ -194,6 +196,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     <MonthPicker.Input
                         {...inputProps}
                         disabled={erLåst}
+                        error={monthPickerError && "Du må velge måned"}
                         label="Revurderes fra og med"
                     />
                 </MonthPicker>

@@ -6,12 +6,13 @@ import { InnvilgeVedtak } from "~/komponenter/behandling/vedtak/InnvilgeVedtak";
 import { useHentVedtak } from "~/hooks/useHentVedtak";
 import { useParams } from "react-router";
 import { AvslåVedtak } from "~/komponenter/behandling/vedtak/AvslåVedtak";
-import { OppgørVedtak } from "~/komponenter/behandling/vedtak/OpphørVedtak";
+import { OpphørVedtak } from "~/komponenter/behandling/vedtak/OpphørVedtak";
 import { useErLesevisning } from "~/hooks/useErLesevisning";
 import { useMarkerStegFerdige } from "~/hooks/useMarkerStegFerdige";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 import { RedigerOgSlettKnapper } from "~/komponenter/behandling/RedigerOgSlettKnapper";
 import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
+import {useBehandlingContext} from "~/contexts/BehandlingContext";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Vedtak og beregning" }];
@@ -27,17 +28,28 @@ export default function VedtakOgBeregning() {
   const { behandlingId } = useParams<{ behandlingId: string }>();
   const { vedtak, laster: lasterVedtak } = useHentVedtak(behandlingId);
   const erLesevisning = useErLesevisning();
+  const [erFørstegangsBehandling, settErFørstegangsbehandling] = useState(false)
 
   useMarkerStegFerdige("Vedtak og beregning", erLagret);
 
+  const behandling = useBehandlingContext().behandling
+
+  React.useEffect(() => {
+    if (behandling && behandling.forrigeBehandlingId) {
+      settErFørstegangsbehandling(true);
+    }
+  }, [behandling]);
+
   const harSjekketInitiellLås = useRef(false);
 
-  if (vedtak?.resultatType && !harSjekketInitiellLås.current) {
-    harSjekketInitiellLås.current = true;
-    settVedtaksResultat(vedtak.resultatType);
-    settLåst(true);
-    settErLagret(true);
-  }
+  React.useEffect(() => {
+    if (vedtak?.resultatType && !harSjekketInitiellLås.current) {
+      harSjekketInitiellLås.current = true;
+      settVedtaksResultat(vedtak.resultatType);
+      settLåst(true);
+      settErLagret(true);
+    }
+  }, [vedtak]);
 
   const handleVedtaksresultatEndring = (value: string) => {
     const resultat = value === "" ? undefined : (value as ResultatType);
@@ -85,7 +97,7 @@ export default function VedtakOgBeregning() {
             <option value="">Velg</option>
             <option value="INNVILGET">Innvilge</option>
             <option value="AVSLÅTT">Avslå</option>
-            <option value="OPPHØR">Opphør</option>
+            <option value="OPPHØR" disabled={erFørstegangsBehandling}>Opphør</option>
           </Select>
           {vedtaksresultat === "INNVILGET" && (
             <InnvilgeVedtak
@@ -104,7 +116,7 @@ export default function VedtakOgBeregning() {
             />
           )}
           {vedtaksresultat === "OPPHØR" && (
-            <OppgørVedtak
+            <OpphørVedtak
               lagretVedtak={erSlettet ? null : vedtak}
               erLesevisning={erLesevisning}
               låst={låst}
