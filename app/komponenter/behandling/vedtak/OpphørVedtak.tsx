@@ -12,11 +12,15 @@ interface OpphørVedtakProps {
     onLagreSuksess: () => void;
 }
 
-export const OppgørVedtak: React.FC<OpphørVedtakProps> = ({lagretVedtak, erLesevisning, låst, onLagreSuksess}) => {
+export const OpphørVedtak: React.FC<OpphørVedtakProps> = ({lagretVedtak, erLesevisning, låst, onLagreSuksess}) => {
     const {lagreVedtak} = useLagreVedtak();
+    const [monthPickerError, setMonthPickerError] = useState(false);
     const {behandlingId} = useParams<{ behandlingId: string }>();
     const {monthpickerProps, inputProps, selectedMonth} = useMonthpicker({
         defaultSelected: lagretVedtak?.opphørFom ? new Date(lagretVedtak.opphørFom) : undefined,
+        onValidate: (val) => {
+            setMonthPickerError(!val.isValidMonth);
+        },
     });
 
     const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
@@ -42,7 +46,8 @@ export const OppgørVedtak: React.FC<OpphørVedtakProps> = ({lagretVedtak, erLes
             <MonthPicker {...monthpickerProps}>
                 <MonthPicker.Input
                     {...inputProps}
-                    label="Velg måned"
+                    label="Opphør fra og med"
+                    error={monthPickerError && "Du må velge måned"}
                     readOnly={erLåst}
                 />
             </MonthPicker>
