@@ -13,7 +13,7 @@ export interface Navn {
 }
 
 export interface Barn {
-  id: string
+  id: string;
   personIdent: string;
   navn: string;
   fødselsdato: string;

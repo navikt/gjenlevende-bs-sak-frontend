@@ -6,7 +6,7 @@ import { Side } from "~/komponenter/layout/Side";
 import Personheader from "~/komponenter/personheader/Personheader";
 import { PersonContext } from "~/contexts/PersonContext";
 import { LesevisningsContext } from "~/contexts/LesevisningsContext";
-import { useHentPersonNavn } from "~/hooks/useHentPersonNavn";
+import { useHentPdlNavn } from "~/hooks/useHentPerson";
 import { useFagsak } from "~/hooks/useFagsak";
 
 export default function PersonLayout() {
@@ -15,9 +15,9 @@ export default function PersonLayout() {
   const { fagsak, melding: fagsakMelding, laster: lasterFagsak } = useFagsak(fagsakPersonId);
 
   const personident = fagsak?.personident;
-  const { navn, melding, laster: lasterNavn } = useHentPersonNavn(fagsakPersonId);
+  const { person, melding, laster: lasterPerson } = useHentPdlNavn(fagsakPersonId);
 
-  const laster = lasterFagsak || lasterNavn;
+  const laster = lasterFagsak || lasterPerson;
   const [erLesevisning, settErLesevisning] = useState(false);
 
   if (laster) {
@@ -42,12 +42,12 @@ export default function PersonLayout() {
   return (
     <PersonContext.Provider
       value={{
-        navn: navn,
-        personident,
-        fagsakPersonId,
-        fagsak,
+        person: person,
+        personident: personident,
+        fagsakPersonId: fagsakPersonId,
+        fagsak: fagsak,
         fagsakId: fagsak?.id,
-        laster: lasterNavn,
+        laster: lasterPerson,
       }}
     >
       <LesevisningsContext.Provider value={{ erLesevisning, settErLesevisning }}>
