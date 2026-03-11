@@ -56,3 +56,5 @@ npm run dev
 ```
 
 Applikasjonen er tilgjengelig på http://localhost:8080/
+
+test
