@@ -13,6 +13,7 @@ interface UseSøkReturn {
 
 export interface Søkeresultat {
   navn: string;
+  fødselsdato: string;
   personident?: string;
   fagsakPersonId: string;
   harTilgang: boolean;

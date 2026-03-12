@@ -13,6 +13,7 @@ import { PersonIcon } from "@navikt/aksel-icons";
 import type { Søkeresultat } from "~/hooks/useSøk";
 import { useTemaContext } from "~/contexts/TemaContext";
 import styles from "./SøkePopover.module.css";
+import { beregnAlder } from "~/utils/utils";
 
 interface SøkePopoverProps {
   open: boolean;
@@ -42,8 +43,17 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
   const minBredde = anchorEl?.offsetWidth ? `${anchorEl.offsetWidth}px` : undefined;
   const temaKlasse = mørktTema ? "dark" : "light";
 
+  const alder = søkeresultat ? beregnAlder(søkeresultat?.fødselsdato) : null;
+
   return (
-    <Popover open={open} onClose={onClose} anchorEl={anchorEl} placement="bottom-start" className={temaKlasse} data-color="accent">
+    <Popover
+      open={open}
+      onClose={onClose}
+      anchorEl={anchorEl}
+      placement="bottom-start"
+      className={temaKlasse}
+      data-color="accent"
+    >
       <Popover.Content style={{ minWidth: minBredde }}>
         {søker && !søkeresultat ? (
           <HStack gap="space-4" align="center" justify="center" padding="space-2">
@@ -61,6 +71,7 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
               <div>
                 <BodyShort size="small" weight="semibold">
                   {søkeresultat.navn}
+                  {alder !== null ? ` (${alder})` : ""}
                 </BodyShort>
                 <Detail textColor="subtle">
                   {søkeresultat.personident || søkeresultat.fagsakPersonId}

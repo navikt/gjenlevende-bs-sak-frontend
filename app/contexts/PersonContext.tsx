@@ -1,8 +1,19 @@
 import { createContext, useContext } from "react";
-import type { Navn, FagsakDto } from "~/api/backend";
+import type { FagsakDto } from "~/hooks/useFagsak";
+
+export interface Person {
+  navn: Navn;
+  fødselsdato: string;
+}
+
+export interface Navn {
+  fornavn: string;
+  mellomnavn?: string;
+  etternavn: string;
+}
 
 interface PersonContextType {
-  navn: Navn | null;
+  person: Person | null;
   personident: string;
   fagsakPersonId: string;
   fagsak: FagsakDto | null;

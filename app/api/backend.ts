@@ -1,39 +1,7 @@
-import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
-
 export interface ApiResponse<T = unknown> {
   data?: T;
   status?: string;
   melding?: string;
-}
-
-export interface Navn {
-  fornavn: string;
-  mellomnavn?: string;
-  etternavn: string;
-}
-
-export interface Barn {
-  id: string
-  personIdent: string;
-  navn: string;
-  fødselsdato: string;
-  hentetTidspunkt: string;
-}
-
-export type StønadType = "BARNETILSYN" | "SKOLEPENGER";
-
-export interface FagsakRequest {
-  personident?: string;
-  fagsakPersonId?: string;
-  stønadstype: StønadType;
-}
-
-export interface FagsakDto {
-  id: string;
-  fagsakPersonId: string;
-  personident: string;
-  stønadstype: StønadType;
-  eksternId?: number;
 }
 
 export async function apiCall<T = unknown>(
@@ -69,24 +37,4 @@ export async function apiCall<T = unknown>(
       melding: error instanceof Error ? error.message : "Ukjent feil",
     };
   }
-}
-
-export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiResponse<FagsakDto>> {
-  // TODO: Refaktorer - kanskje dele opp i to funksjoner
-  const id = søkestreng.trim();
-
-  if (!erGyldigFagsakPersonId(id) && !erGyldigPersonident(id)) {
-    return {
-      melding: "Feil ved validering av fagsakPersonId/personident",
-    };
-  }
-
-  const request: FagsakRequest = erGyldigFagsakPersonId(id)
-    ? { fagsakPersonId: id, stønadstype: "BARNETILSYN" }
-    : { personident: id, stønadstype: "BARNETILSYN" };
-
-  return apiCall(`/fagsak`, {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
 }

@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import type { Navn } from "~/api/backend";
+import type { Navn } from "~/contexts/PersonContext";
 
 export const formaterNavn = (navn: Navn): string => {
   const deler = [navn.fornavn, navn.mellomnavn, navn.etternavn]
