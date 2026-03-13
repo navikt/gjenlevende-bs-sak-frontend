@@ -1,25 +1,30 @@
 import {useEffect, useState} from "react";
 import {apiCall, type ApiResponse} from "~/api/backend";
-import type {Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
+import type {Barnetilsynperiode, Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
 
-interface VedtakState {
-    vedtak: Vedtak | null;
+interface HistoriskVedtakState {
+    historiskVedtak: HistoriskVedtakResponse | null;
     melding: string | null;
     laster: boolean;
 }
 
+export interface HistoriskVedtakResponse{
+    barnetilsynperioder: Barnetilsynperiode[] | null;
+    fraErFørTidligsteVedtak: boolean;
+}
+
 export function useHentVedtakHistorikk(behandlingId: string | undefined, fra: string | null) {
-    const [state, settState] = useState<VedtakState>({
-        vedtak: null,
+    const [state, settState] = useState<HistoriskVedtakState>({
+        historiskVedtak: null,
         melding: null,
         laster: false,
     });
 
     useEffect(() => {
-        const hentVedtakForBehandling = async (
+        const hentHistoriskVedtakForBehandling = async (
             behandlingId: string,
             fra: string
-        ): Promise<ApiResponse<Vedtak>> => {
+        ): Promise<ApiResponse<HistoriskVedtakResponse>> => {
             return apiCall(`/vedtak/${behandlingId}/historikk/${fra}`, {
                 method: "GET",
             });
@@ -29,7 +34,7 @@ export function useHentVedtakHistorikk(behandlingId: string | undefined, fra: st
             if (!behandlingId || !fra) {
                 settState((prev) => ({
                     ...prev,
-                    vedtak: null,
+                    historiskVedtak: null,
                     laster: false,
                 }));
                 return;
@@ -37,11 +42,11 @@ export function useHentVedtakHistorikk(behandlingId: string | undefined, fra: st
 
             settState((prev) => ({...prev, melding: null, laster: true}));
 
-            const response = await hentVedtakForBehandling(behandlingId, fra);
+            const response = await hentHistoriskVedtakForBehandling(behandlingId, fra);
 
             settState((prev) => ({
                 ...prev,
-                vedtak: response.data ?? null,
+                historiskVedtak: response.data ?? null,
                 laster: false,
             }));
         };

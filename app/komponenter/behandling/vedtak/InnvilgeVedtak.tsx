@@ -14,7 +14,7 @@ import {
 import {useHentBeløpsPerioderForVedtak} from "~/hooks/useHentBeløpsPerioderForVedtak";
 import {BarnetilsynperiodeValg} from "~/komponenter/behandling/vedtak/BarnetilsynperiodeValg";
 import {BeregningBarnetilsynTabell} from "~/komponenter/behandling/vedtak/BeregningBarnetilsynTabell";
-import {useHentVedtakHistorikk} from "~/hooks/useHentVedtakHistorikk";
+import {type HistoriskVedtakResponse, useHentVedtakHistorikk} from "~/hooks/useHentVedtakHistorikk";
 import {useBehandlingContext} from "~/contexts/BehandlingContext";
 import {format} from "date-fns";
 import {useHentBarn} from "~/hooks/useHentBarn";
@@ -66,10 +66,11 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
 
     const formatertValgtMåned = selectedMonth ? format(selectedMonth, 'yyyy-MM') : null;
     const erRevurdering = !!behandling?.forrigeBehandlingId;
-    const {vedtak: historiskVedtak} = useHentVedtakHistorikk(
+    const {historiskVedtak} = useHentVedtakHistorikk(
         erRevurdering ? behandlingId : undefined,
         formatertValgtMåned
     );
+    const revurderFraDatoFørFørsteVedtak = historiskVedtak?.fraErFørTidligsteVedtak ?? false
 
     const [perioder, settPerioder] = useState<Barnetilsynperiode[]>(lagretPerioder);
     const [begrunnelse, settBegrunnelse] = useState<string>(lagretVedtak?.begrunnelse ?? "");
@@ -79,7 +80,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     }, [lagretVedtak]);
 
     useEffect(() => {
-        const hentVedtakHistorikkFraMåned = (selectedMonth: Date, historiskVedak: Vedtak): Barnetilsynperiode[] => {
+        const hentVedtakHistorikkFraMåned = (selectedMonth: Date, historiskVedak: HistoriskVedtakResponse): Barnetilsynperiode[] => {
             const selectedYearMonth = format(selectedMonth, 'yyyy-MM');
             
             if (!historiskVedak?.barnetilsynperioder) {
@@ -201,6 +202,9 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
                     />
                 </MonthPicker>
             )}
+            {revurderFraDatoFørFørsteVedtak && (
+                <Alert variant={"warning"}>Du har valgt å revurdere stønaden fra en måned det tidligere ikke er
+                    innvilget stønad for. Husk å fylle ut vedtaksperiode for den nye perioden.</Alert>)}
             {(!erRevurdering || selectedMonth || lagretVedtak) && (
                 <>
                     <BarnetilsynperiodeValg perioder={perioder}
