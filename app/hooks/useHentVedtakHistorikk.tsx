@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {apiCall, type ApiResponse} from "~/api/backend";
-import type {Barnetilsynperiode, Vedtak} from "~/komponenter/behandling/vedtak/vedtak";
+import type {Barnetilsynperiode} from "~/komponenter/behandling/vedtak/vedtak";
 
 interface HistoriskVedtakState {
     historiskVedtak: HistoriskVedtakResponse | null;
