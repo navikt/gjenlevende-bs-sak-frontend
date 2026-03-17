@@ -1,10 +1,26 @@
 import React from "react";
-import {AktivitetstypeBarnetilsyn, type Barnetilsynperiode, Periodetype,} from "~/komponenter/behandling/vedtak/vedtak";
-import {Button, HStack, MonthPicker, Select, Table, TextField, UNSAFE_Combobox,} from "@navikt/ds-react";
-import {beregnAlder, formaterYearMonthStringTilNorskDato, månedStringTilYearMonth} from "~/utils/utils";
-import {TrashIcon, PlusIcon} from "@navikt/aksel-icons";
-import {useParams} from "react-router";
-import type {Barn} from "~/api/backend";
+import {
+  AktivitetstypeBarnetilsyn,
+  type Barnetilsynperiode,
+  Periodetype,
+} from "~/komponenter/behandling/vedtak/vedtak";
+import {
+  Button,
+  HStack,
+  MonthPicker,
+  Select,
+  Table,
+  TextField,
+  UNSAFE_Combobox,
+} from "@navikt/ds-react";
+import {
+  beregnAlder,
+  formaterYearMonthStringTilNorskDato,
+  månedStringTilYearMonth,
+} from "~/utils/utils";
+import { TrashIcon, PlusIcon } from "@navikt/aksel-icons";
+import { useParams } from "react-router";
+import type { Barn } from "~/hooks/useHentBarn";
 
 export const BarnetilsynperiodeValg: React.FC<{
   perioder: Barnetilsynperiode[];
@@ -279,10 +295,20 @@ export const BarnetilsynperiodeValg: React.FC<{
                 </>
               )}
               <Table.DataCell>
-                <Button onClick={() => leggTilPeriodeEtter(index)} variant="tertiary" disabled={erLesevisning} icon={<PlusIcon fontSize="1.5rem"/>}></Button>
+                <Button
+                  onClick={() => leggTilPeriodeEtter(index)}
+                  variant="tertiary"
+                  disabled={erLesevisning}
+                  icon={<PlusIcon fontSize="1.5rem" />}
+                ></Button>
               </Table.DataCell>
               <Table.DataCell>
-                <Button onClick={() => slettPeriode(index)} variant="tertiary" disabled={erLesevisning || (erRevurdering && index === 0)} icon={<TrashIcon fontSize="1.5rem"/>}></Button>
+                <Button
+                  onClick={() => slettPeriode(index)}
+                  variant="tertiary"
+                  disabled={erLesevisning || (erRevurdering && index === 0)}
+                  icon={<TrashIcon fontSize="1.5rem" />}
+                ></Button>
               </Table.DataCell>
             </Table.Row>
           ))}

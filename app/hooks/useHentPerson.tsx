@@ -1,22 +1,30 @@
 import { useEffect, useState } from "react";
-import { apiCall, type ApiResponse, type Navn } from "~/api/backend";
+import { apiCall, type ApiResponse } from "~/api/backend";
+import type { Navn, Person } from "~/contexts/PersonContext";
 
-interface PersonNavnState {
-  navn: Navn | null;
+interface PersonState {
+  person: Person | null;
   melding: string | null;
   laster: boolean;
 }
 
-export function useHentPersonNavn(fagsakPersonId: string | undefined) {
-  const [state, settState] = useState<PersonNavnState>({
-    navn: null,
+interface PdlPersonResponse {
+  navn: Navn;
+  foedselsdato: string;
+}
+
+export function useHentPdlNavn(fagsakPersonId: string | undefined) {
+  const [state, settState] = useState<PersonState>({
+    person: null,
     melding: null,
     laster: true,
   });
 
   useEffect(() => {
-    const hentNavnFraPdl = async (fagsakPersonId: string): Promise<ApiResponse<Navn>> => {
-      return apiCall(`/pdl/navn`, {
+    const hentPersonFraPdl = async (
+      fagsakPersonId: string
+    ): Promise<ApiResponse<PdlPersonResponse>> => {
+      return apiCall(`/pdl/person`, {
         method: "POST",
         body: JSON.stringify({ fagsakPersonId }),
       });
@@ -24,13 +32,13 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
 
     let avbrutt = false;
 
-    const hentNavn = async () => {
+    const hentPerson = async () => {
       if (avbrutt) return;
 
       if (!fagsakPersonId) {
         settState((prev) => ({
           ...prev,
-          navn: null,
+          person: null,
           melding: null,
           laster: false,
         }));
@@ -39,27 +47,32 @@ export function useHentPersonNavn(fagsakPersonId: string | undefined) {
 
       settState((prev) => ({ ...prev, melding: null, laster: true }));
 
-      const response = await hentNavnFraPdl(fagsakPersonId);
+      const response = await hentPersonFraPdl(fagsakPersonId);
 
       if (avbrutt) return;
 
       if (response.data) {
+        const pdlPerson = response.data;
+
         settState((prev) => ({
           ...prev,
-          navn: response.data ?? null,
+          person: {
+            navn: pdlPerson.navn,
+            fødselsdato: pdlPerson.foedselsdato,
+          },
           laster: false,
         }));
       } else {
         settState((prev) => ({
           ...prev,
-          navn: null,
+          person: null,
           melding: response.melding ?? "Fant ikke navn i PDL",
           laster: false,
         }));
       }
     };
 
-    hentNavn();
+    hentPerson();
 
     return () => {
       avbrutt = true;

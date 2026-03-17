@@ -1,10 +1,47 @@
 import { useEffect, useState } from "react";
-import { hentEllerOpprettFagsak, type FagsakDto } from "~/api/backend";
+import { type ApiResponse, apiCall } from "~/api/backend";
+import { erGyldigFagsakPersonId, erGyldigPersonident } from "~/utils/utils";
+
+export type StønadType = "BARNETILSYN" | "SKOLEPENGER";
+
+export interface FagsakDto {
+  id: string;
+  fagsakPersonId: string;
+  personident: string;
+  stønadstype: StønadType;
+  eksternId?: number;
+}
+
+export interface FagsakRequest {
+  personident?: string;
+  fagsakPersonId?: string;
+  stønadstype: StønadType;
+}
 
 interface FagsakState {
   fagsak: FagsakDto | null;
   melding: string | null;
   laster: boolean;
+}
+
+export async function hentEllerOpprettFagsak(søkestreng: string): Promise<ApiResponse<FagsakDto>> {
+  // TODO: Refaktorer - kanskje dele opp i to funksjoner
+  const id = søkestreng.trim();
+
+  if (!erGyldigFagsakPersonId(id) && !erGyldigPersonident(id)) {
+    return {
+      melding: "Feil ved validering av fagsakPersonId/personident",
+    };
+  }
+
+  const request: FagsakRequest = erGyldigFagsakPersonId(id)
+    ? { fagsakPersonId: id, stønadstype: "BARNETILSYN" }
+    : { personident: id, stønadstype: "BARNETILSYN" };
+
+  return apiCall(`/fagsak`, {
+    method: "POST",
+    body: JSON.stringify(request),
+  });
 }
 
 export const useFagsak = (fagsakPersonId: string | undefined) => {

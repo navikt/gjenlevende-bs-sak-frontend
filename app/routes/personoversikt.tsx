@@ -9,8 +9,8 @@ export function meta(_: Route.MetaArgs) {
 }
 
 export default function PersonOversikt() {
-  const { navn, personident } = usePersonContext();
-  const visningsNavn = navn ? formaterNavn(navn) : "Navn ikke tilgjengelig";
+  const { personident, person } = usePersonContext();
+  const visningsNavn = person?.navn ? formaterNavn(person.navn) : "Navn ikke tilgjengelig";
 
   return (
     <VStack gap="space-6">
@@ -19,10 +19,12 @@ export default function PersonOversikt() {
       </Heading>
 
       <VStack gap="space-4">
-        <BodyShort size="large" weight="semibold">
-          {visningsNavn}
-        </BodyShort>
-        <BodyShort>Personident: {personident || "Ikke tilgjengelig"}</BodyShort>
+        <VStack gap="space-4">
+          <BodyShort size="large" weight="semibold">
+            {visningsNavn}
+          </BodyShort>
+          <BodyShort>Personident: {personident || "Ikke tilgjengelig"}</BodyShort>
+        </VStack>
       </VStack>
     </VStack>
   );
