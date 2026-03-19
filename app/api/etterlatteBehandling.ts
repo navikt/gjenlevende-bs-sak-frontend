@@ -12,7 +12,7 @@ export interface SakId {
 }
 
 export async function hentEtterlatteSakIdMedPersonident(args: { fnr: string }) {
-  return apiCall<SakId>(`/etterlatte-behandling/personer/sak`, {
+  return apiCall<SakId>(`/etterlatte-behandling/personer/sakid`, {
     method: "POST",
     body: JSON.stringify({ foedselsnummer: args.fnr }),
   });
