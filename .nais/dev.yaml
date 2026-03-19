@@ -67,3 +67,7 @@ spec:
       value: '{{version}}'
     - name: ENV
       value: development
+    - name: ETTERLATTE_BEHANDLING_URL
+      value: http://etterlatte-behandling
+    - name: ETTERLATTE_BEHANDLING_CLIENT_ID
+      value: dev-gcp.etterlatte.etterlatte-behandling

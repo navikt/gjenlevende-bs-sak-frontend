@@ -2,15 +2,16 @@ import type { Request, Response } from "express";
 import { hentAccessToken } from "./utils/token.js";
 import { exchangeTokenForBackend } from "./obo-token-exchange.js";
 
-const BACKEND_AUDIENCE = "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
+const GJENLEVENDE_BS_SAK_AUDIENCE = "api://dev-gcp.etterlatte.gjenlevende-bs-sak/.default";
 
-const byggBackendUrl = (backendUrl: string, req: Request): string => {
-  return `${backendUrl}/api${req.url}`;
+const byggBackendUrl = (backendUrl: string, req: Request, backendApiPrefix: string): string => {
+  return `${backendUrl}${backendApiPrefix}${req.url}`;
 };
 
 const hentTokenForBackend = async (
   req: Request,
-  erLokalt: boolean
+  erLokalt: boolean,
+  audience: string
 ): Promise<string | undefined> => {
   const token = hentAccessToken(req, erLokalt);
 
@@ -24,7 +25,7 @@ const hentTokenForBackend = async (
   }
 
   try {
-    return await exchangeTokenForBackend(token, BACKEND_AUDIENCE);
+    return await exchangeTokenForBackend(token, audience);
   } catch (error) {
     console.error("OBO token exchange feilet:", error);
     throw error;
@@ -42,17 +43,22 @@ const kallBackend = async (url: string, req: Request, token: string) => {
   });
 };
 
-export function lagApiProxy(backendUrl: string, erLokalt: boolean) {
+export function lagApiProxy(
+  backendUrl: string,
+  erLokalt: boolean,
+  audience = GJENLEVENDE_BS_SAK_AUDIENCE,
+  backendApiPrefix = "/api"
+) {
   return async (req: Request, res: Response) => {
     try {
-      const token = await hentTokenForBackend(req, erLokalt);
+      const token = await hentTokenForBackend(req, erLokalt, audience);
 
       if (!token) {
         res.status(401).json({ error: "Ikke autentisert" });
         return;
       }
 
-      const url = byggBackendUrl(backendUrl, req);
+      const url = byggBackendUrl(backendUrl, req, backendApiPrefix);
       console.log("Proxying request til:", url);
 
       const backendResponse = await kallBackend(url, req, token);

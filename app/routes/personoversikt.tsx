@@ -1,8 +1,9 @@
 import React from "react";
-import { Heading, VStack, BodyShort } from "@navikt/ds-react";
+import { Heading, VStack, BodyShort, Button } from "@navikt/ds-react";
 import type { Route } from "./+types/personoversikt";
 import { usePersonContext } from "~/contexts/PersonContext";
 import { formaterNavn } from "~/utils/utils";
+import { hentSakForPerson } from "~/api/etterlatteBehandling";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: `Personoversikt` }];
@@ -11,6 +12,16 @@ export function meta(_: Route.MetaArgs) {
 export default function PersonOversikt() {
   const { personident, person } = usePersonContext();
   const visningsNavn = person?.navn ? formaterNavn(person.navn) : "Navn ikke tilgjengelig";
+  const hentEtterlatteOmstillingsstønadPersonopplysning = () => {
+    // TODO: skal lage lenke
+    hentSakForPerson({ fnr: personident, type: "OMSTILLINGSSTOENAD" })
+      .then((sak) => {
+        console.log("Sak for omstillingsstønad:", sak);
+      })
+      .catch((error) => {
+        console.error("Feil ved henting av sak for omstillingsstønad:", error);
+      });
+  };
 
   return (
     <VStack gap="space-6">
@@ -24,6 +35,9 @@ export default function PersonOversikt() {
             {visningsNavn}
           </BodyShort>
           <BodyShort>Personident: {personident || "Ikke tilgjengelig"}</BodyShort>
+          <Button onClick={hentEtterlatteOmstillingsstønadPersonopplysning}>
+            Hent sak for omstillingsstønad
+          </Button>
         </VStack>
       </VStack>
     </VStack>

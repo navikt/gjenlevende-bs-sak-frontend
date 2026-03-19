@@ -26,6 +26,18 @@ const hentBackendUrl = (): string => {
   return "http://gjenlevende-bs-sak";
 };
 
+const hentEtterlatteBehandlingUrl = (): string => {
+  return process.env.ETTERLATTE_BEHANDLING_URL ?? "http://etterlatte-behandling";
+};
+
+const hentEtterlatteBehandlingAudience = (): string => {
+  const clientId = process.env.ETTERLATTE_BEHANDLING_CLIENT_ID;
+  if (!clientId) {
+    throw new Error("ETTERLATTE_BEHANDLING_CLIENT_ID miljøvariabel må være satt");
+  }
+  return `api://${clientId}/.default`;
+};
+
 const BACKEND_URL = hentBackendUrl();
 
 if (!BACKEND_URL) {
@@ -80,6 +92,15 @@ app.get("/isReady", (_req: Request, res: Response) => {
 
 app.use(express.json());
 
+app.use(
+  "/api/etterlatte-behandling",
+  lagApiProxy(
+    hentEtterlatteBehandlingUrl(),
+    erLokaltMiljø,
+    erLokaltMiljø ? undefined : hentEtterlatteBehandlingAudience(),
+    ""
+  )
+);
 app.use("/api", lagApiProxy(BACKEND_URL, erLokaltMiljø));
 
 if (erLokaltMiljø) {
