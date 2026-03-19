@@ -8,7 +8,7 @@ export const SAK_TYPE = {
 export type SakType = (typeof SAK_TYPE)[keyof typeof SAK_TYPE];
 
 export interface SakId {
-  id: number;
+  sakId: number;
 }
 
 export async function hentEtterlatteSakIdMedPersonident(args: { fnr: string }) {

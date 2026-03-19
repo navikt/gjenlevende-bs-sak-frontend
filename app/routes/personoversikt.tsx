@@ -24,7 +24,7 @@ export default function PersonOversikt() {
     }
 
     const gjennyUrl = GJENNY_URL_DEV;
-    window.open(`${gjennyUrl}/person/${sak.id}`, "_blank");
+    window.open(`${gjennyUrl}/person/${sak.sakId}`, "_blank");
   };
 
   return (
