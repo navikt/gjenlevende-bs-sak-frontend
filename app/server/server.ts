@@ -97,8 +97,7 @@ app.use(
   lagApiProxy(
     hentEtterlatteBehandlingUrl(),
     erLokaltMiljø,
-    erLokaltMiljø ? undefined : hentEtterlatteBehandlingAudience(),
-    ""
+    erLokaltMiljø ? undefined : hentEtterlatteBehandlingAudience()
   )
 );
 app.use("/api", lagApiProxy(BACKEND_URL, erLokaltMiljø));
