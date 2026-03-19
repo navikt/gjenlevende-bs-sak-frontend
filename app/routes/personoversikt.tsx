@@ -3,24 +3,28 @@ import { Heading, VStack, BodyShort, Button } from "@navikt/ds-react";
 import type { Route } from "./+types/personoversikt";
 import { usePersonContext } from "~/contexts/PersonContext";
 import { formaterNavn } from "~/utils/utils";
-import { hentSakForPerson } from "~/api/etterlatteBehandling";
+import { hentEtterlatteSakIdMedPersonident } from "~/api/etterlatteBehandling";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: `Personoversikt` }];
 }
 
+const GJENNY_URL_DEV = "https://etterlatte-saksbehandling.intern.dev.nav.no";
+
 export default function PersonOversikt() {
   const { personident, person } = usePersonContext();
   const visningsNavn = person?.navn ? formaterNavn(person.navn) : "Navn ikke tilgjengelig";
-  const hentEtterlatteOmstillingsstønadPersonopplysning = () => {
-    // TODO: skal lage lenke
-    hentSakForPerson({ fnr: personident, type: "OMSTILLINGSSTOENAD" })
-      .then((sak) => {
-        console.log("Sak for omstillingsstønad:", sak);
-      })
-      .catch((error) => {
-        console.error("Feil ved henting av sak for omstillingsstønad:", error);
-      });
+
+  const åpnePersonIGjenny = async () => {
+    const { data: sak, melding } = await hentEtterlatteSakIdMedPersonident({ fnr: personident! });
+
+    if (!sak) {
+      console.error("Klarte ikke hente etterlatte-sak:", melding);
+      return;
+    }
+
+    const gjennyUrl = GJENNY_URL_DEV;
+    window.open(`${gjennyUrl}/person/${sak.id}`, "_blank");
   };
 
   return (
@@ -35,9 +39,7 @@ export default function PersonOversikt() {
             {visningsNavn}
           </BodyShort>
           <BodyShort>Personident: {personident || "Ikke tilgjengelig"}</BodyShort>
-          <Button onClick={hentEtterlatteOmstillingsstønadPersonopplysning}>
-            Hent sak for omstillingsstønad
-          </Button>
+          <Button onClick={åpnePersonIGjenny}>Åpne personopplysninger i Gjenny</Button>
         </VStack>
       </VStack>
     </VStack>

@@ -7,15 +7,12 @@ export const SAK_TYPE = {
 
 export type SakType = (typeof SAK_TYPE)[keyof typeof SAK_TYPE];
 
-export interface ISak {
+export interface SakId {
   id: number;
-  sakType: SakType;
-  fnr: string;
-  enhet: string;
 }
 
-export async function hentSakForPerson(args: { fnr: string; type: SakType }) {
-  return apiCall<ISak>(`/etterlatte-behandling/personer/sak/${args.type}`, {
+export async function hentEtterlatteSakIdMedPersonident(args: { fnr: string }) {
+  return apiCall<SakId>(`/etterlatte-behandling/personer/sak`, {
     method: "POST",
     body: JSON.stringify({ foedselsnummer: args.fnr }),
   });
