@@ -15,6 +15,9 @@ import { session, lagSessionMiddleware } from "./session.js";
 import { lagViteDevServer } from "./vite-dev.js";
 
 const PORT_NUMMER = process.env.PORT;
+const ETTERLATTE_BEHANDLING_URL_DEV = "http://etterlatte-behandling";
+const ETTERLATTE_BEHANDLING_AUDIENCE_DEV =
+  "api://dev-gcp.etterlatte.etterlatte-behandling/.default";
 
 const hentBackendUrl = (): string => {
   if (MILJØ.env === "lokalt") {
@@ -24,18 +27,6 @@ const hentBackendUrl = (): string => {
     return "https://gjenlevende-bs-sak.intern.dev.nav.no";
   }
   return "http://gjenlevende-bs-sak";
-};
-
-const hentEtterlatteBehandlingUrl = (): string => {
-  return process.env.ETTERLATTE_BEHANDLING_URL ?? "http://etterlatte-behandling";
-};
-
-const hentEtterlatteBehandlingAudience = (): string => {
-  const clientId = process.env.ETTERLATTE_BEHANDLING_CLIENT_ID;
-  if (!clientId) {
-    throw new Error("ETTERLATTE_BEHANDLING_CLIENT_ID miljøvariabel må være satt");
-  }
-  return `api://${clientId}/.default`;
 };
 
 const BACKEND_URL = hentBackendUrl();
@@ -95,9 +86,9 @@ app.use(express.json());
 app.use(
   "/api/etterlatte-behandling",
   lagApiProxy(
-    hentEtterlatteBehandlingUrl(),
+    ETTERLATTE_BEHANDLING_URL_DEV,
     erLokaltMiljø,
-    erLokaltMiljø ? undefined : hentEtterlatteBehandlingAudience()
+    erLokaltMiljø ? undefined : ETTERLATTE_BEHANDLING_AUDIENCE_DEV
   )
 );
 app.use("/api", lagApiProxy(BACKEND_URL, erLokaltMiljø));
