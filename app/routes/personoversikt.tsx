@@ -18,7 +18,7 @@ export default function PersonOversikt() {
   const [laster, settLaster] = useState(false);
   const [feilmelding, settFeilmelding] = useState("");
 
-  const åpnePersonIGjenny = async () => {
+  const åpnePersonopplysningerIGjenny = async () => {
     if (!personident) return;
 
     settLaster(true);
@@ -32,7 +32,11 @@ export default function PersonOversikt() {
     }
 
     const gjennyUrl = GJENNY_URL_DEV;
-    window.open(`${gjennyUrl}/person/${sak.sakId}`, "_blank", "noopener,noreferrer");
+    window.open(
+      `${gjennyUrl}/person/${sak.sakId}?fane=PERSONOPPLYSNINGER`,
+      "_blank",
+      "noopener,noreferrer"
+    );
     settLaster(false);
   };
 
@@ -45,9 +49,9 @@ export default function PersonOversikt() {
 
       <div>
         <Button
-          onClick={åpnePersonIGjenny}
+          onClick={åpnePersonopplysningerIGjenny}
           size="small"
-          icon={<ExternalLinkIcon title="åpne lenke" />}
+          icon={<ExternalLinkIcon title="åpne lenke til personopplysninger i gjenny" />}
           loading={laster}
           disabled={laster}
         >
