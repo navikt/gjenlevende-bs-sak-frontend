@@ -1,12 +1,5 @@
 import { apiCall } from "./backend";
 
-export const SAK_TYPE = {
-  BARNEPENSJON: "BARNEPENSJON",
-  OMSTILLINGSSTOENAD: "OMSTILLINGSSTOENAD",
-} as const;
-
-export type SakType = (typeof SAK_TYPE)[keyof typeof SAK_TYPE];
-
 export interface SakId {
   sakId: number;
 }
