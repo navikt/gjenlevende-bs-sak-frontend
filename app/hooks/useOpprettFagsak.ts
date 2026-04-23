@@ -16,8 +16,6 @@ export const useOpprettFagsak = (): OpprettFagsak => {
 
   const opprettFagsak = useCallback(
     async (søkeresultat: Søkeresultat) => {
-      if (!søkeresultat?.personident) return;
-
       settOppretter(true);
       settOpprettFeilmelding(null);
 
