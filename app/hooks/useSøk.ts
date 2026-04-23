@@ -42,10 +42,10 @@ export const useSøk = (): UseSøkReturn => {
 
     const response = await søkPerson(søkestreng);
 
-    if (response.status) {
-      settFeilmelding(response.status);
-    } else if (response.data) {
+    if (response.data) {
       settSøkeresultat(response.data);
+    } else {
+      settFeilmelding(response.melding ?? "Kunne ikke utføre søket");
     }
 
     settSøker(false);

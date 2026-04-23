@@ -50,7 +50,7 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
       open={open}
       onClose={onClose}
       anchorEl={anchorEl}
-      placement="bottom-start"
+      placement="bottom"
       className={temaKlasse}
       data-color="accent"
     >
