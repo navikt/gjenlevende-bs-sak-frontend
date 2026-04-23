@@ -12,6 +12,7 @@ import { BrevRedigering } from "~/komponenter/brev/BrevRedigering";
 import { BrevForhåndsvisning } from "~/komponenter/brev/BrevForhåndsvisning";
 import { BrevHandlinger } from "~/komponenter/brev/BrevHandlinger";
 import { SendTilBeslutterModal } from "~/komponenter/brev/SendTilBeslutterModal";
+import { useErLesevisning } from "~/hooks/useErLesevisning";
 import styles from "./brev.module.css";
 
 export function meta(_args: Route.MetaArgs) {
@@ -49,15 +50,16 @@ export default function Brev() {
   const { sender: senderTilBeslutter, sendTilBeslutter } = useBeslutter();
   const { navigerTilForrige, harForrigeSteg } = useStegNavigering(STEG_PATH);
   const bekreftModalRef = useRef<HTMLDialogElement>(null);
+  const erLesevisning = useErLesevisning();
 
   useEffect(() => {
-    if (!brevMal) return;
+    if (!brevMal || erLesevisning) return;
     const timer = setTimeout(() => {
       mellomlagreBrev(behandlingId, brevMal, fritekstbolker);
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [behandlingId, brevMal, fritekstbolker, mellomlagreBrev]);
+  }, [behandlingId, brevMal, fritekstbolker, mellomlagreBrev, erLesevisning]);
 
   const handleSendTilBeslutter = async () => {
     const respons = await sendTilBeslutter(behandlingId);

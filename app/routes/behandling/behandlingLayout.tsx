@@ -24,6 +24,7 @@ import { useHentTotrinnskontrollStatus } from "~/hooks/useHentTotrinnskontrollSt
 import { LocalAlertBehandlingFerdigstilt } from "./LocalAlertBehandlingFerdigstilt";
 import { useHenleggBehandling } from "~/hooks/useHenleggBehandling";
 import { HenleggBehandlingModal } from "~/komponenter/behandling/HenleggBehandlingModal";
+import { lyttPåManglerTilgang } from "~/utils/manglerTilgangEvent";
 
 const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
   {
@@ -92,10 +93,6 @@ export default function BehandlingLayout() {
 
         if (behandlingResponse.data) {
           settBehandling(behandlingResponse.data);
-          const skalHaLesevisning =
-            behandlingResponse.data.status === "IVERKSETTER_VEDTAK" ||
-            behandlingResponse.data.status === "FERDIGSTILT";
-          settErLesevisning(skalHaLesevisning);
         }
 
         const årsakResponse: ApiResponse<ÅrsakBehandlingResponse> = await apiCall(
@@ -140,15 +137,27 @@ export default function BehandlingLayout() {
     };
 
     hentData();
-  }, [behandlingId, årsakDataHentet, settErLesevisning]);
+  }, [behandlingId, årsakDataHentet]);
 
   useEffect(() => {
-    if (!behandling || !totrinnskontrollStatus) return;
+    if (!behandling || !ansvarligSaksbehandler) return;
 
-    if (behandling.status === "FATTER_VEDTAK") {
-      settErLesevisning(true);
-    }
-  }, [behandling, totrinnskontrollStatus, settErLesevisning]);
+    const statusLåser =
+      behandling.status === "IVERKSETTER_VEDTAK" ||
+      behandling.status === "FERDIGSTILT" ||
+      behandling.status === "FATTER_VEDTAK";
+
+    const erIkkeAnsvarligSaksbehandler =
+      ansvarligSaksbehandler.rolle !== "INNLOGGET_SAKSBEHANDLER";
+
+    settErLesevisning(statusLåser || erIkkeAnsvarligSaksbehandler);
+  }, [behandling, ansvarligSaksbehandler, settErLesevisning]);
+
+  useEffect(() => {
+    return lyttPåManglerTilgang(() => {
+      hentAnsvarligSaksbehandlerPåNytt();
+    });
+  }, [hentAnsvarligSaksbehandlerPåNytt]);
 
   const hentBehandlingPåNytt = useCallback(async () => {
     if (!behandlingId) return;

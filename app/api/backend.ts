@@ -1,6 +1,9 @@
+import { varsleManglerTilgang } from "~/utils/manglerTilgangEvent";
+
 export interface ApiResponse<T = unknown> {
   data?: T;
   status?: string;
+  httpStatus?: number;
   melding?: string;
 }
 
@@ -24,8 +27,12 @@ export async function apiCall<T = unknown>(
     const data = await response.json();
 
     if (!response.ok) {
+      if (response.status === 403) {
+        varsleManglerTilgang();
+      }
       return {
         status: data?.status,
+        httpStatus: response.status,
         melding: data?.melding,
       };
     }
