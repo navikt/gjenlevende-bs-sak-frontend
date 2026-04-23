@@ -1,5 +1,5 @@
 import React from "react";
-import { InfoCard, VStack, Heading, Skeleton } from "@navikt/ds-react";
+import { BodyShort, InfoCard, VStack, Heading, Skeleton } from "@navikt/ds-react";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { formaterIsoDatoTid, formatterEnumVerdi } from "~/utils/utils";
 import { InfoRad } from "./InfoRad";
@@ -37,11 +37,19 @@ export const AnsvarligSaksbehandler = () => {
       </InfoCard.Header>
       <InfoCard.Content>
         <VStack gap={"space-16"}>
-          {lasterAnsvarligSaksbehandler ? (
-            <Skeleton variant="text" width="60%" />
-          ) : (
-            <Heading size={"xsmall"}>{visningNavn ?? "-"}</Heading>
-          )}
+          <VStack gap={"space-4"}>
+            {lasterAnsvarligSaksbehandler ? (
+              <Skeleton variant="text" width="60%" />
+            ) : (
+              <Heading size={"xsmall"}>{visningNavn ?? "-"}</Heading>
+            )}
+            {ansvarligSaksbehandler &&
+              ansvarligSaksbehandler.rolle !== "INNLOGGET_SAKSBEHANDLER" && (
+                <BodyShort size="small">
+                  Du kan se innholdet, men ikke gjøre endringer.
+                </BodyShort>
+              )}
+          </VStack>
 
           <VStack gap={"space-6"}>
             <InfoRad
