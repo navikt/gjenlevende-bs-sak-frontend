@@ -72,8 +72,12 @@ export const formaterYearMonthStringTilNorskDato = (dateString: string | undefin
   }
 };
 
-export const beregnAlder = (fødselsdato: string): number => {
+export function beregnAlder(fødselsdato: string): number;
+export function beregnAlder(fødselsdato: string | null | undefined): number | null;
+export function beregnAlder(fødselsdato: string | null | undefined): number | null {
+  if (!fødselsdato) return null;
   const fødselsDate = new Date(fødselsdato);
+  if (isNaN(fødselsDate.getTime())) return null;
   const idag = new Date();
   let alder = idag.getFullYear() - fødselsDate.getFullYear();
   const månedDiff = idag.getMonth() - fødselsDate.getMonth();
@@ -81,7 +85,7 @@ export const beregnAlder = (fødselsdato: string): number => {
     alder--;
   }
   return alder;
-};
+}
 
 export const formaterRelativTid = (isoTid: string): string => {
   const tid = new Date(isoTid);

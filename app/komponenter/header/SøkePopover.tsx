@@ -43,14 +43,14 @@ export const SøkePopover: React.FC<SøkePopoverProps> = ({
   const minBredde = anchorEl?.offsetWidth ? `${anchorEl.offsetWidth}px` : undefined;
   const temaKlasse = mørktTema ? "dark" : "light";
 
-  const alder = søkeresultat ? beregnAlder(søkeresultat?.fødselsdato) : null;
+  const alder = beregnAlder(søkeresultat?.fødselsdato);
 
   return (
     <Popover
       open={open}
       onClose={onClose}
       anchorEl={anchorEl}
-      placement="bottom-start"
+      placement="bottom"
       className={temaKlasse}
       data-color="accent"
     >

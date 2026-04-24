@@ -13,10 +13,9 @@ interface UseSøkReturn {
 
 export interface Søkeresultat {
   navn: string;
-  fødselsdato: string;
-  personident?: string;
+  fødselsdato: string | null;
+  personident: string;
   fagsakPersonId: string;
-  harTilgang: boolean;
   harFagsak: boolean;
 }
 
@@ -43,10 +42,10 @@ export const useSøk = (): UseSøkReturn => {
 
     const response = await søkPerson(søkestreng);
 
-    if (response.status) {
-      settFeilmelding(response.status);
-    } else if (response.data) {
+    if (response.data) {
       settSøkeresultat(response.data);
+    } else {
+      settFeilmelding(response.melding ?? "Kunne ikke utføre søket");
     }
 
     settSøker(false);
