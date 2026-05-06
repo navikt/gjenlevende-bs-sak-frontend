@@ -69,6 +69,20 @@ export function lagApiProxy(
         return;
       }
 
+      const contentType = backendResponse.headers.get("Content-Type") ?? "";
+      if (!contentType.includes("application/json")) {
+        const body = await backendResponse.text();
+        console.error(
+          `Backend returnerte uventet Content-Type: ${contentType || "ukjent"} (HTTP ${backendResponse.status})`,
+          body.substring(0, 500)
+        );
+        res.status(backendResponse.status).json({
+          error: "Uventet svar fra backend",
+          melding: `Forventet JSON, men mottok ${contentType || "ukjent innholdstype"} (HTTP ${backendResponse.status})`,
+        });
+        return;
+      }
+
       const data = await backendResponse.json();
       res.status(backendResponse.status).send(data);
     } catch (error) {
