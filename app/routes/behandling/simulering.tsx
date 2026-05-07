@@ -102,7 +102,7 @@ export default function Simulering() {
   }
 
   return (
-    <VStack align={"center"}>
+    <VStack align={"center"} gap={"space-24"}>
       {/*TODO Fjerne Øverste knappen. Skal skje etter "beregn" i forrige steg */}
       <Box>
         <Button onClick={handleSimulering}>Simuler</Button>

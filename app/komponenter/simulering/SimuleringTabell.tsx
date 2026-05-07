@@ -2,11 +2,22 @@ import React from "react";
 import { Table } from "@navikt/ds-react";
 import type { SimuleringResultat } from "~/routes/behandling/simulering";
 
+const månedNavn = (dato: string): string => {
+  const date = new Date(dato);
+  return date.toLocaleDateString("nb-NO", { month: "long" });
+};
+
 export const SimuleringTabell: React.FC<{ resultat: SimuleringResultat }> = ({ resultat }) => {
   const periodeData = resultat.perioder.map((periode) => {
     const tidligereUtbetalt = periode.utbetalinger.reduce((sum, u) => sum + u.tidligereUtbetalt, 0);
     const nyttBeløp = periode.utbetalinger.reduce((sum, u) => sum + u.nyttBeløp, 0);
-    return { fom: periode.fom, tidligereUtbetalt, nyttBeløp, differanse: nyttBeløp - tidligereUtbetalt };
+    return {
+      fom: periode.fom,
+      måned: månedNavn(periode.fom),
+      tidligereUtbetalt,
+      nyttBeløp,
+      differanse: nyttBeløp - tidligereUtbetalt,
+    };
   });
 
   return (
@@ -15,7 +26,7 @@ export const SimuleringTabell: React.FC<{ resultat: SimuleringResultat }> = ({ r
         <Table.Row>
           <Table.HeaderCell />
           {periodeData.map((p) => (
-            <Table.HeaderCell key={p.fom}>{p.fom}</Table.HeaderCell>
+            <Table.HeaderCell key={p.fom}>{p.måned}</Table.HeaderCell>
           ))}
         </Table.Row>
       </Table.Header>
@@ -37,9 +48,7 @@ export const SimuleringTabell: React.FC<{ resultat: SimuleringResultat }> = ({ r
           {periodeData.map((p) => (
             <Table.DataCell key={p.fom}>
               {p.differanse !== 0 && (
-                <span style={{ color: p.differanse > 0 ? "var(--a-green-600)" : "var(--a-red-500)" }}>
-                  {p.differanse}
-                </span>
+                <span style={{ color: p.differanse > 0 ? "green" : "red" }}>{p.differanse}</span>
               )}
             </Table.DataCell>
           ))}
