@@ -1,5 +1,5 @@
-import { Button, HStack } from "@navikt/ds-react";
-import React, { useState } from "react";
+import { Box, Button, Loader, VStack } from "@navikt/ds-react";
+import React, { useEffect, useState } from "react";
 import type { Route } from "./+types/simulering";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 import { useStegNavigering } from "~/hooks/useStegNavigering";
@@ -52,7 +52,39 @@ export default function Simulering() {
   const { behandlingId } = useBehandlingContext();
   const { navigerTilForrige, harForrigeSteg } = useStegNavigering(STEG_PATH);
   const [simuleringResultat, settSimuleringResultat] = useState<SimuleringResultat | null>(null);
-  const [statusMelding, settStatusMelding] = useState<string>("Ikke mottatt noe");
+  const [statusMelding, settStatusMelding] = useState<string>("");
+  const [laster, settLaster] = useState(true);
+
+  const handleHentResultat = async () => {
+    const resultat = await hentSimulertResultat(behandlingId);
+    if (resultat.data) {
+      settSimuleringResultat(resultat.data);
+      settStatusMelding("Simulering fullført");
+      settLaster(false);
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    let avbrutt = false;
+
+    const hentVedInnlasting = async () => {
+      const fantSimuleringResultat = await handleHentResultat();
+      if (fantSimuleringResultat || avbrutt) return;
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (!avbrutt) {
+        settLaster(false);
+        settStatusMelding("Simulering er ikke ferdig. Prøv igjen om litt");
+      }
+    };
+
+    hentVedInnlasting();
+    return () => {
+      avbrutt = true;
+    };
+  }, [behandlingId]);
 
   const handleSimulering = async () => {
     const respons = await simuler(behandlingId);
@@ -61,28 +93,29 @@ export default function Simulering() {
     }
   };
 
-  const handleHentResultat = async () => {
-    const resultat = await hentSimulertResultat(behandlingId);
-    if (resultat.data) {
-      settSimuleringResultat(resultat.data);
-      settStatusMelding("Simulering fullført");
-    } else {
-      settStatusMelding("Simulering er ikke ferdig. Prøv igjen om litt");
-    }
-  };
+  if (laster) {
+    return <Loader size="medium" title="Henter simuleringsresultat..." />;
+  }
 
   return (
-    <HStack>
-      <Button onClick={handleSimulering}>Simuler</Button>
-      <Button variant="secondary" onClick={handleHentResultat}>
-        Hent simuleringsresultat
-      </Button>
-      <p>{simuleringResultat ? simuleringResultat.status.toString() : statusMelding}</p>
+    <VStack align={"center"}>
+      {/*TODO Fjerne Øverste knappen. Skal skje etter "beregn" i forrige steg */}
+      <Box>
+        <Button onClick={handleSimulering}>Simuler</Button>
+        {!simuleringResultat && (
+          <Button variant="secondary" onClick={handleHentResultat}>
+            Hent simuleringsresultat
+          </Button>
+        )}
+        <p>{simuleringResultat ? simuleringResultat.status.toString() : statusMelding}</p>
+      </Box>
       {harForrigeSteg && (
-        <Button variant="secondary" onClick={navigerTilForrige}>
-          Tilbake
-        </Button>
+        <Box>
+          <Button variant="secondary" onClick={navigerTilForrige}>
+            Tilbake
+          </Button>
+        </Box>
       )}
-    </HStack>
+    </VStack>
   );
 }
