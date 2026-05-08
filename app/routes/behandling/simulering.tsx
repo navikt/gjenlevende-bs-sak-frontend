@@ -1,4 +1,4 @@
-import { Box, Button, Loader, VStack } from "@navikt/ds-react";
+import { Alert, Box, Button, Loader, VStack } from "@navikt/ds-react";
 import React, { useCallback, useEffect, useState } from "react";
 import type { Route } from "./+types/simulering";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
@@ -22,8 +22,8 @@ const STEG_PATH: StegPath = "simulering";
 
 export interface SimuleringResultat {
   perioder: SimuleringPeriode[];
-  fom: string;
-  tomSisteUtbetaling: string;
+  fom: string | null;
+  tomSisteUtbetaling: string | null;
   fomDatoNestePeriode: string | null;
   etterbetaling: number;
   feilutbetaling: number;
@@ -97,10 +97,17 @@ export default function Simulering() {
           </Button>
         )}
         {simuleringResultat ? (
-          <VStack gap="space-8">
-            <SimuleringOppsummering resultat={simuleringResultat} />
-            <SimuleringTabell resultat={simuleringResultat} />
-          </VStack>
+          simuleringResultat.perioder.length === 0 ? (
+            <Alert variant="info">
+              I dette vedtaket er det ingen nye utbetalinger tilbake i tid og/eller i inneværende
+              måned. Det er derfor det ikke blir vist simulering i dette vedtaket.
+            </Alert>
+          ) : (
+            <VStack gap="space-8">
+              <SimuleringOppsummering resultat={simuleringResultat} />
+              <SimuleringTabell resultat={simuleringResultat} />
+            </VStack>
+          )
         ) : (
           <p>{statusMelding}</p>
         )}

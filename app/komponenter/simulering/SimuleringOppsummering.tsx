@@ -46,7 +46,7 @@ export const SimuleringOppsummering: React.FC<{ resultat: SimuleringResultat }> 
       </Heading>
       <Box borderWidth="1" borderRadius="4" padding="space-8" style={{ display: "inline-block" }}>
         <VStack gap="space-4">
-          {harHistoriskePerioder && (
+          {harHistoriskePerioder && fom && tomSisteUtbetaling && (
             <VStack gap="space-2">
               <Label>
                 Totalt for periode {formaterIsoMånedÅr(fom)} til og med{" "}
