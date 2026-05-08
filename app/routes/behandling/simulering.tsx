@@ -49,7 +49,7 @@ const hentSimulertResultat = async (
 
 export default function Simulering() {
   const { behandlingId } = useBehandlingContext();
-  const { navigerTilForrige, harForrigeSteg, navigerTilNeste } = useStegNavigering(STEG_PATH);
+  const { harForrigeSteg, navigerTilNeste } = useStegNavigering(STEG_PATH);
   const [simuleringResultat, settSimuleringResultat] = useState<SimuleringResultat | null>(null);
   const [statusMelding, settStatusMelding] = useState<string>("");
   const [laster, settLaster] = useState(true);
