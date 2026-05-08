@@ -87,6 +87,17 @@ export function beregnAlder(fødselsdato: string | null | undefined): number | n
   return alder;
 }
 
+export const formaterBelop = (beløp: number): string =>
+  new Intl.NumberFormat("nb-NO").format(beløp) + " kr";
+
+export const formaterIsoMånedÅr = (dato: string): string => {
+  const [år, måned] = dato.split("-");
+  return new Date(Number(år), Number(måned) - 1, 1).toLocaleString("nb-NO", {
+    month: "long",
+    year: "numeric",
+  });
+};
+
 export const formaterRelativTid = (isoTid: string): string => {
   const tid = new Date(isoTid);
   const nå = new Date();

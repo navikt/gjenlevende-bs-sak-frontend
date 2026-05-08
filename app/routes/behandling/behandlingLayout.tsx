@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Outlet, useNavigate, useParams, useRevalidator } from "react-router";
 import { BehandlingContext, type ÅrsakState } from "~/contexts/BehandlingContext";
@@ -41,6 +41,10 @@ const BEHANDLING_STEG_LISTE: BehandlingSteg[] = [
     path: "vedtak-og-beregning",
     navn: "Vedtak og beregning",
     kanStarte: (ferdigeSteg) => ferdigeSteg.includes("Vilkår"),
+  },
+  {
+    path: "simulering",
+    navn: "Simulering",
   },
   {
     path: "brev",
@@ -147,8 +151,7 @@ export default function BehandlingLayout() {
       behandling.status === "FERDIGSTILT" ||
       behandling.status === "FATTER_VEDTAK";
 
-    const erIkkeAnsvarligSaksbehandler =
-      ansvarligSaksbehandler.rolle !== "INNLOGGET_SAKSBEHANDLER";
+    const erIkkeAnsvarligSaksbehandler = ansvarligSaksbehandler.rolle !== "INNLOGGET_SAKSBEHANDLER";
 
     settErLesevisning(statusLåser || erIkkeAnsvarligSaksbehandler);
   }, [behandling, ansvarligSaksbehandler, settErLesevisning]);
