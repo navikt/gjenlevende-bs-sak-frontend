@@ -6,6 +6,7 @@ import { useStegNavigering } from "~/hooks/useStegNavigering";
 import { apiCall, type ApiResponse } from "~/api/backend";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { SimuleringTabell } from "~/komponenter/simulering/SimuleringTabell";
+import { SimuleringOppsummering } from "~/komponenter/simulering/SimuleringOppsummering";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -21,28 +22,21 @@ const STEG_PATH: StegPath = "simulering";
 
 export interface SimuleringResultat {
   perioder: SimuleringPeriode[];
+  fom: string;
+  tomSisteUtbetaling: string;
+  fomDatoNestePeriode: string | null;
+  etterbetaling: number;
+  feilutbetaling: number;
 }
 
-interface SimuleringPeriode {
+export interface SimuleringPeriode {
   fom: string;
   tom: string;
-  utbetalinger: SimuleringUtbetaling[];
-}
-
-interface SimuleringUtbetaling {
-  fagsystem: string;
-  sakId: string;
-  utbetalesTil: number;
-  stønadstype: string;
-  tidligereUtbetalt: number;
   nyttBeløp: number;
+  tidligereUtbetalt: number;
+  resultat: number;
+  feilutbetaling: number;
 }
-
-const simuler = async (behandlingId: string): Promise<ApiResponse<string>> => {
-  return await apiCall(`/simulering/${behandlingId}`, {
-    method: "GET",
-  });
-};
 
 const hentSimulertResultat = async (
   behandlingId: string
@@ -90,29 +84,23 @@ export default function Simulering() {
     };
   }, [behandlingId, handleHentResultat]);
 
-  const handleSimulering = async () => {
-    const respons = await simuler(behandlingId);
-    if (respons.data) {
-      settStatusMelding(respons.data);
-    }
-  };
-
   if (laster) {
     return <Loader size="medium" title="Henter simuleringsresultat..." />;
   }
 
   return (
     <VStack align={"center"} gap={"space-24"}>
-      {/*TODO Fjerne Øverste knappen. Skal skje etter "beregn" i forrige steg */}
       <Box>
-        <Button onClick={handleSimulering}>Simuler</Button>
         {!simuleringResultat && (
           <Button variant="secondary" onClick={handleHentResultat}>
             Hent simuleringsresultat
           </Button>
         )}
         {simuleringResultat ? (
-          <SimuleringTabell resultat={simuleringResultat} />
+          <VStack gap="space-8">
+            <SimuleringOppsummering resultat={simuleringResultat} />
+            <SimuleringTabell resultat={simuleringResultat} />
+          </VStack>
         ) : (
           <p>{statusMelding}</p>
         )}

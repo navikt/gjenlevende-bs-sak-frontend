@@ -1,24 +1,17 @@
 import React from "react";
 import { Table } from "@navikt/ds-react";
 import type { SimuleringResultat } from "~/routes/behandling/simulering";
-
-const månedNavn = (dato: string): string => {
-  const date = new Date(dato);
-  return date.toLocaleDateString("nb-NO", { month: "long" });
-};
+import { formaterBelop, formaterIsoMånedÅr } from "~/utils/utils";
 
 export const SimuleringTabell: React.FC<{ resultat: SimuleringResultat }> = ({ resultat }) => {
-  const periodeData = resultat.perioder.map((periode) => {
-    const tidligereUtbetalt = periode.utbetalinger.reduce((sum, u) => sum + u.tidligereUtbetalt, 0);
-    const nyttBeløp = periode.utbetalinger.reduce((sum, u) => sum + u.nyttBeløp, 0);
-    return {
-      fom: periode.fom,
-      måned: månedNavn(periode.fom),
-      tidligereUtbetalt,
-      nyttBeløp,
-      differanse: nyttBeløp - tidligereUtbetalt,
-    };
-  });
+  const periodeData = resultat.perioder.map((periode) => ({
+    fom: periode.fom,
+    måned: formaterIsoMånedÅr(periode.fom),
+    nyttBeløp: periode.nyttBeløp,
+    tidligereUtbetalt: periode.tidligereUtbetalt,
+    resultat: periode.resultat,
+    gjelderNestePeriode: periode.fom === resultat.fomDatoNestePeriode,
+  }));
 
   return (
     <Table>
@@ -32,23 +25,27 @@ export const SimuleringTabell: React.FC<{ resultat: SimuleringResultat }> = ({ r
       </Table.Header>
       <Table.Body>
         <Table.Row>
-          <Table.HeaderCell>Tidligere utbetalt</Table.HeaderCell>
-          {periodeData.map((p) => (
-            <Table.DataCell key={p.fom}>{p.tidligereUtbetalt}</Table.DataCell>
-          ))}
-        </Table.Row>
-        <Table.Row>
           <Table.HeaderCell>Nytt beløp</Table.HeaderCell>
           {periodeData.map((p) => (
-            <Table.DataCell key={p.fom}>{p.nyttBeløp}</Table.DataCell>
+            <Table.DataCell key={p.fom}>{formaterBelop(p.nyttBeløp)}</Table.DataCell>
           ))}
         </Table.Row>
         <Table.Row>
-          <Table.HeaderCell>Differanse</Table.HeaderCell>
+          <Table.HeaderCell>Tidligere utbetalt</Table.HeaderCell>
+          {periodeData.map((p) => (
+            <Table.DataCell key={p.fom}>{formaterBelop(p.tidligereUtbetalt)}</Table.DataCell>
+          ))}
+        </Table.Row>
+        <Table.Row>
+          <Table.HeaderCell>Resultat</Table.HeaderCell>
           {periodeData.map((p) => (
             <Table.DataCell key={p.fom}>
-              {p.differanse !== 0 && (
-                <span style={{ color: p.differanse > 0 ? "green" : "red" }}>{p.differanse}</span>
+              {p.resultat !== 0 && (
+                <span
+                  style={{ color: p.resultat > 0 ? "var(--a-green-600)" : "var(--a-red-600)" }}
+                >
+                  {formaterBelop(p.resultat)}
+                </span>
               )}
             </Table.DataCell>
           ))}
