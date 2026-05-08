@@ -1,5 +1,5 @@
 import { Box, Button, Loader, VStack } from "@navikt/ds-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import type { Route } from "./+types/simulering";
 import type { StegPath } from "~/komponenter/navbar/BehandlingFaner";
 import { useStegNavigering } from "~/hooks/useStegNavigering";
@@ -59,7 +59,7 @@ export default function Simulering() {
   const [statusMelding, settStatusMelding] = useState<string>("");
   const [laster, settLaster] = useState(true);
 
-  const handleHentResultat = async () => {
+  const handleHentResultat = useCallback(async () => {
     const resultat = await hentSimulertResultat(behandlingId);
     if (resultat.data) {
       settSimuleringResultat(resultat.data);
@@ -68,7 +68,7 @@ export default function Simulering() {
       return true;
     }
     return false;
-  };
+  }, [behandlingId]);
 
   useEffect(() => {
     let avbrutt = false;
@@ -88,7 +88,7 @@ export default function Simulering() {
     return () => {
       avbrutt = true;
     };
-  }, [behandlingId]);
+  }, [behandlingId, handleHentResultat]);
 
   const handleSimulering = async () => {
     const respons = await simuler(behandlingId);
