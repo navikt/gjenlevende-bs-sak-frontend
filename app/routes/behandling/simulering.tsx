@@ -89,7 +89,7 @@ export default function Simulering() {
   }
 
   return (
-    <VStack align={"center"} gap={"space-24"}>
+    <VStack gap={"space-24"}>
       <Box>
         {!simuleringResultat && (
           <Button variant="secondary" onClick={handleHentResultat}>

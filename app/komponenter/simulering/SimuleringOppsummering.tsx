@@ -15,7 +15,7 @@ const Rad: React.FC<{ tittel: string; verdi: string; farge?: string }> = ({
 );
 
 const NestePeriode: React.FC<{ nestePeriode: SimuleringPeriode }> = ({ nestePeriode }) => (
-  <VStack gap="space-1">
+  <VStack gap="space-2">
     <Label>Neste utbetaling</Label>
     <Rad
       tittel={formaterIsoMånedÅr(nestePeriode.fom)}
@@ -44,23 +44,26 @@ export const SimuleringOppsummering: React.FC<{ resultat: SimuleringResultat }> 
       <Heading size="medium" level="2">
         Simulering
       </Heading>
-      <Box
-        borderWidth="1"
-        borderRadius="medium"
-        padding="8"
-        style={{ display: "inline-flex", flexDirection: "column", gap: "1rem" }}
-      >
-        {harHistoriskePerioder && (
-          <VStack gap="space-1">
-            <Label>
-              Totalt for periode {formaterIsoMånedÅr(fom)} til og med{" "}
-              {formaterIsoMånedÅr(tomSisteUtbetaling)}
-            </Label>
-            <Rad tittel="Feilutbetaling" verdi={`-${formaterBelop(feilutbetaling)}`} />
-            <Rad tittel="Etterbetaling" verdi={formaterBelop(etterbetaling)} />
-          </VStack>
-        )}
-        {nestePeriode && <NestePeriode nestePeriode={nestePeriode} />}
+      <Box borderWidth="1" borderRadius="4" padding="space-8" style={{ display: "inline-block" }}>
+        <VStack gap="space-4">
+          {harHistoriskePerioder && (
+            <VStack gap="space-2">
+              <Label>
+                Totalt for periode {formaterIsoMånedÅr(fom)} til og med{" "}
+                {formaterIsoMånedÅr(tomSisteUtbetaling)}
+              </Label>
+              <Rad
+                tittel="Feilutbetaling"
+                verdi={feilutbetaling > 0 ? `-${formaterBelop(feilutbetaling)}` : formaterBelop(0)}
+              />
+              <Rad tittel="Etterbetaling" verdi={formaterBelop(etterbetaling)} />
+            </VStack>
+          )}
+          {harHistoriskePerioder && nestePeriode && (
+            <hr style={{ border: "none", borderTop: "1px solid var(--a-border-subtle)", margin: 0 }} />
+          )}
+          {nestePeriode && <NestePeriode nestePeriode={nestePeriode} />}
+        </VStack>
       </Box>
     </VStack>
   );
