@@ -108,9 +108,6 @@ export default function Simulering() {
       </Box>
       {harForrigeSteg && (
         <Box>
-          <Button variant="secondary" onClick={navigerTilForrige}>
-            Tilbake
-          </Button>
           <StegNavigering stegPath={STEG_PATH} onNeste={navigerTilNeste} />
         </Box>
       )}
