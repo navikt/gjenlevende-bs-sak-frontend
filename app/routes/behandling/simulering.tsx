@@ -7,6 +7,7 @@ import { apiCall, type ApiResponse } from "~/api/backend";
 import { useBehandlingContext } from "~/contexts/BehandlingContext";
 import { SimuleringTabell } from "~/komponenter/simulering/SimuleringTabell";
 import { SimuleringOppsummering } from "~/komponenter/simulering/SimuleringOppsummering";
+import { StegNavigering } from "~/komponenter/behandling/StegNavigering";
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -48,7 +49,7 @@ const hentSimulertResultat = async (
 
 export default function Simulering() {
   const { behandlingId } = useBehandlingContext();
-  const { navigerTilForrige, harForrigeSteg } = useStegNavigering(STEG_PATH);
+  const { navigerTilForrige, harForrigeSteg, navigerTilNeste } = useStegNavigering(STEG_PATH);
   const [simuleringResultat, settSimuleringResultat] = useState<SimuleringResultat | null>(null);
   const [statusMelding, settStatusMelding] = useState<string>("");
   const [laster, settLaster] = useState(true);
@@ -110,6 +111,7 @@ export default function Simulering() {
           <Button variant="secondary" onClick={navigerTilForrige}>
             Tilbake
           </Button>
+          <StegNavigering stegPath={STEG_PATH} onNeste={navigerTilNeste} />
         </Box>
       )}
     </VStack>
