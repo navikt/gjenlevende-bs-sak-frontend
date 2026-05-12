@@ -33,13 +33,15 @@ const hentTokenForBackend = async (
 };
 
 const kallBackend = async (url: string, req: Request, token: string) => {
+  const harBody = req.method.toUpperCase() === "POST";
+
   return await fetch(url, {
     method: req.method,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(req.body),
+    body: harBody ? JSON.stringify(req.body) : undefined,
   });
 };
 
@@ -50,14 +52,23 @@ export function lagApiProxy(
   backendApiPrefix = "/api"
 ) {
   return async (req: Request, res: Response) => {
+    let token: string | undefined;
+
     try {
-      const token = await hentTokenForBackend(req, erLokalt, audience);
+      token = await hentTokenForBackend(req, erLokalt, audience);
+    } catch (error) {
+      const errorMelding = error instanceof Error ? error.message : "Ukjent feil";
+      console.error("Token-utveksling feilet:", error);
+      res.status(401).json({ error: "Token-utveksling feilet", melding: errorMelding });
+      return;
+    }
 
-      if (!token) {
-        res.status(401).json({ error: "Ikke autentisert" });
-        return;
-      }
+    if (!token) {
+      res.status(401).json({ error: "Ikke autentisert" });
+      return;
+    }
 
+    try {
       const url = byggBackendUrl(backendUrl, req, backendApiPrefix);
       console.log("Proxying request til:", url);
 
