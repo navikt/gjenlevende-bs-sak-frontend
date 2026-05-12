@@ -98,8 +98,13 @@ export function lagApiProxy(
       res.status(backendResponse.status).send(data);
     } catch (error) {
       const errorMelding = error instanceof Error ? error.message : "Ukjent feil";
+      const url = byggBackendUrl(backendUrl, req, backendApiPrefix);
 
-      console.error("API proxy error:", error);
+      console.error(`Kall til backend feilet [${req.method} ${url}]:`, error);
+      if (error instanceof Error && error.cause) {
+        console.error("Rotårsak:", error.cause);
+      }
+
       res.status(500).json({ error: "Feil ved kall til backend", melding: errorMelding });
     }
   };
