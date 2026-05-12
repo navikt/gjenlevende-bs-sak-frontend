@@ -49,12 +49,6 @@ spec:
     sidecar:
       enabled: true
       autoLogin: true
-  resources:
-    limits:
-      memory: 256Mi
-    requests:
-      memory: 256Mi
-      cpu: 22m
 
   accessPolicy:
     outbound:
