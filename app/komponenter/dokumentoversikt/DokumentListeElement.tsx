@@ -53,6 +53,17 @@ export interface Props {
   dokument: Dokumentinfo;
 }
 
+const tittelMedUrlGodkjenteTegn = (tittel?: string) => {
+  if (!tittel) {
+    return 'uten_tittel';
+  }
+  const tittelUtenTvilsommeTegn = tittel
+      .replaceAll('/', '_')
+      .replaceAll('\\', '_')
+      .replaceAll('%', 'pst');
+  return encodeURIComponent(tittelUtenTvilsommeTegn);
+};
+
 export const DokumentListeElement: React.FC<Props> = ({ dokument }) => {
   const meta = journalposttypeMeta[dokument.journalposttype];
   const Ikon = meta.ikon;
@@ -69,7 +80,13 @@ export const DokumentListeElement: React.FC<Props> = ({ dokument }) => {
       <div className={styles.dokumentInnhold}>
         <Tooltip content={dokument.tittel} placement="top">
           <BodyShort size="small" weight="semibold" truncate>
-            {dokument.tittel}
+            <a
+              href={`/api/saf/${dokument.journalpostId}/dokument-pdf/${dokument.dokumentinfoId}/${tittelMedUrlGodkjenteTegn(dokument.tittel)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {dokument.tittel}
+            </a>
           </BodyShort>
         </Tooltip>
         <div className={styles.dokumentMeta}>
