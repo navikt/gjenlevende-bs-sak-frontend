@@ -4,6 +4,11 @@
   gap: 0.25rem;
 }
 
+.dokumentListeMedScroll {
+  overflow-y: auto;
+  max-height: calc(100vh - var(--personheader-høyde) - var(--navbar-høyde) - 4rem);
+}
+
 .dokumentRad {
   display: flex;
   gap: 0.625rem;
