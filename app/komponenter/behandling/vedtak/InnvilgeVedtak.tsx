@@ -184,7 +184,7 @@ export const InnvilgeVedtak: React.FC<InnvilgeVedtakProps> = ({lagretVedtak, erL
     return (
         <VStack gap="space-24">
             {barn.length > 0 && (
-                <InfoCard data-color="info">
+                <InfoCard data-color={erLesevisning ? "neutral" : "info"} >
                     <InfoCard.Header icon={<FigureChildIcon aria-hidden />}>
                         <InfoCard.Title>Barn tilknyttet person hentet: {formaterRelativTid(barn[0].hentetTidspunkt)}</InfoCard.Title>
                     </InfoCard.Header>
