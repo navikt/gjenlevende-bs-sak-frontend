@@ -81,6 +81,21 @@ export function lagApiProxy(
       }
 
       const contentType = backendResponse.headers.get("Content-Type") ?? "";
+
+      const erPdfRespons = contentType.includes("application/pdf");
+
+      if (erPdfRespons) {
+        res.status(backendResponse.status);
+        res.setHeader("Content-Type", contentType);
+        const contentDisposition = backendResponse.headers.get("Content-Disposition");
+        if (contentDisposition) {
+          res.setHeader("Content-Disposition", contentDisposition);
+        }
+        const buffer = await backendResponse.arrayBuffer();
+        res.end(Buffer.from(buffer));
+        return;
+      }
+
       if (!contentType.includes("application/json")) {
         const body = await backendResponse.text();
         console.error(
