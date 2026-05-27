@@ -29,7 +29,7 @@ const DokumenterTab = () => {
     );
   }
 
-  return <Dokumentliste dokumenter={dokumenter} />;
+  return <Dokumentliste dokumenter={dokumenter} medScroll={false} />;
 };
 
 export const SidebarTabs = () => {

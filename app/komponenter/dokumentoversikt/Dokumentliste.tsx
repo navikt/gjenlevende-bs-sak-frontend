@@ -7,9 +7,10 @@ import styles from "./Dokumentliste.module.css";
 
 export interface Props {
   dokumenter: Dokumentinfo[];
+  medScroll: boolean;
 }
 
-export const Dokumentliste: React.FC<Props> = ({ dokumenter }) => {
+export const Dokumentliste: React.FC<Props> = ({ dokumenter, medScroll = false }) => {
   if (dokumenter.length === 0) {
     return (
       <div className={styles.tomtResultat}>
@@ -22,7 +23,7 @@ export const Dokumentliste: React.FC<Props> = ({ dokumenter }) => {
   }
 
   return (
-    <div className={styles.dokumentListe}>
+    <div className={`${styles.dokumentListe}${medScroll ? ` ${styles.dokumentListeMedScroll}` : ""}`}>
       {dokumenter.map((dokument: Dokumentinfo) => (
         <DokumentListeElement
           key={dokument.dokumentinfoId}
